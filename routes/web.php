@@ -25,6 +25,8 @@ Route::resource('/productos', ProductosController::class);
 Route::resource('/ingresos', IngresosController::class);
 
 Route::get('/actualizaringresos/{id}/{sucursalid}', [ProductosController::class, 'edit']);
+Route::post('/transferencia', [ProductosController::class, 'transferencia']);
+
 Route::get('/list_marcas', [ProductosController::class, 'marcas']);
 Route::get('/list_sucursales', [ProductosController::class, 'sucursales']);
 Route::get('/list_categorias', [ProductosController::class, 'categorias']);

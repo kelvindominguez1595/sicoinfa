@@ -10,6 +10,7 @@ use App\Models\Precios;
 use App\Models\Productos;
 use App\Models\Proveedores;
 use App\Models\Unidaddemedidas;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use App\Models\Sucursales;
 use App\Http\Requests\StoreProductosRequest;
@@ -187,7 +188,6 @@ class ProductosController extends Controller
                 'ds.register_date',
                 'ds.created_at',
             )
-
             ->where('ds.state', '=', 1)
             ->orderBy('dprice.updated_at', 'DESC')
             ->take(5)
@@ -248,7 +248,6 @@ class ProductosController extends Controller
             ->latest('created_at')
             ->first();
 
-        $idSucursal = Auth::user()->branch_offices_id;
         if (isset($detalle_stock)) {
             $detalle_price = Precios::where('detalle_stock_id', $detalle_stock->id)
                 ->limit(1)
@@ -259,11 +258,12 @@ class ProductosController extends Controller
         }
 
         $detalle_pro = Almacenes::where('branch_offices_id', $sucursalid)->where('stocks_id', $id)->first();
+        $almacenes = Sucursales::all();
         $Detalle_products = DB::table('detalle_products as dp')
             ->leftJoin('branch_offices as bf', 'dp.branch_offices_id', 'bf.id')
             ->select('dp.quantity', 'bf.name', 'dp.stocks_id')
             ->where('stocks_id', $id)->get();
-        return view('productos.actualizar', compact('stock', 'detalle_stock', 'detalle_stock2', 'id', 'detalle_price','detalle_pro'));
+        return view('productos.actualizar', compact('stock', 'detalle_stock', 'detalle_stock2', 'id', 'detalle_price','detalle_pro', 'almacenes'));
     }
 
     /**
@@ -513,7 +513,46 @@ class ProductosController extends Controller
                 'dp.updated_at')
             ->orderBy('sk.code', 'ASC')
             ->get();
-
         return response()->json($data);
+    }
+
+    public function transferencia(Request $request){
+        $desde = $request->desde;
+        $hasta = $request->hasta;
+        $cantidad = $request->cantidadtransferrer;
+        $stockid = $request->stockid;
+        /** message y codigo*/
+        $message = "";
+        $code = "";
+        /** */
+        // verificar que la cantidad en la sucursal sea mayor a 0
+        $almacendesde = Almacenes::where('branch_offices_id', $desde)->where('stocks_id', $stockid)->first();
+        $almacenhasta = Almacenes::where('branch_offices_id', $hasta)->where('stocks_id', $stockid)->first();
+        if($almacendesde->quantity == 0 ) {
+            $message = "No hay suficiente productos en inventario";
+            $code = 400;
+        } else {
+            if($cantidad > $almacendesde->quantity) {
+                $message = "La cantidad a trasladar es mayor a la de inventarios";
+                $code = 400;
+            } else {
+                // esto es para descontar los produtos de donde se envio
+                $cantidaddescuento = $almacendesde->quantity - $cantidad;
+                // buscamos el origin de envio
+                $updatedesde = Almacenes::find($almacendesde->id);
+                $updatedesde->quantity = $cantidaddescuento;
+                $updatedesde->save();
+                /** --------------------------------------------------------------- */
+                // esto es para actualizar el producto hasta donde se envia
+                $cantidad =  $cantidad + $almacenhasta->quantity;
+                // destino final de envio
+                $updatehasta = Almacenes::find($almacenhasta->id);
+                $updatehasta->quantity = $cantidad;
+                $updatehasta->save();
+                $message = "Traslado realizado correctamente";
+                $code = 200;
+            }
+        }
+            return response()->json(["message"=> $message], $code);
     }
 }

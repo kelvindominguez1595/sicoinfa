@@ -232,7 +232,6 @@ $(function () {
     // creamos un nuevo ingresos de productos
     $( "#frmentradaproductos" ).submit(function( event ) {
         var form = new FormData($("#frmentradaproductos")[0]);
-
         $.ajax({
             url: "/ingresos",
             type: "POST",
@@ -281,6 +280,60 @@ $(function () {
         event.preventDefault();
     });
 
+    // para hacer la transferencia de productos a otra sucursal
+    $("#desde").change(function () {
+        var desde = $(this).val();
+        if(desde == 1) {
+            $("#hasta").val(2)
+        } else {
+            $("#hasta").val(1)
+        }
+    });
+    $("#hasta").change(function () {
+        var desde = $(this).val();
+        if(desde == 1) {
+            $("#desde").val(2)
+        } else {
+            $("#desde").val(1)
+        }
+    });
+
+    /**
+     * Debemos valiar que el almacen tenga stock para hacer transferencia
+     * verificar que no sea al mismo almacen
+     * */
+
+    $("#traslado").submit(function (event) {
+        var frm = $(this).serialize();
+        var cantidad = $("#cantidadtransferrer").val();
+        var desde = $("#desde").val();
+        var hasta = $("#hasta").val();
+
+        if(Number(cantidad) == 0){
+            AlertError("La cantidad debe ser mayor a 0");
+        } else if(desde == 0){
+            AlertError("Debe seleccionar la sucursal desde donde realizará el envio");
+        }
+         else if(hasta == 0){
+            AlertError("Debe seleccionar la sucursal que recibira el producto enviado");
+        }
+        else{
+            $.ajax({
+                url: "/transferencia",
+                type: "POST",
+                dataType: "JSON",
+                data: frm,
+                success: function (response) {
+                    AlertConfirmacin(response.message);
+                    listarExistencia(stockid);
+                },
+                error: function (response) {
+                    AlertError(response.responseJSON.message);
+                }
+            });
+        }
+        event.preventDefault();
+    })
 });
 
 function listarExistencia(id){
