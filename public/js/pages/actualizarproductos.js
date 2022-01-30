@@ -324,6 +324,7 @@ $(function () {
                 dataType: "JSON",
                 data: frm,
                 success: function (response) {
+                    $("#cantidadtransferrer").val(0);
                     AlertConfirmacin(response.message);
                     listarExistencia(stockid);
                 },
