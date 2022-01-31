@@ -15,11 +15,15 @@ use App\Http\Controllers\IngresosController;
 */
 
 Route::get('/', function () {
-    return view('auth.login');
+    if(Auth::check()){
+        return view('home');
+    } else {
+        return view('auth.login');
+    }
 });
 
 Auth::routes();
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('auth');
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::resource('/productos', ProductosController::class);
     Route::resource('/ingresos', IngresosController::class);
