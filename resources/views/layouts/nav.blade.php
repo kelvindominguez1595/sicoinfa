@@ -62,7 +62,7 @@
         </li>
     @else
         <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{{ url('productos') }}">
+            <a class="nav-link active" aria-current="page" href="{{ url('inventarios') }}">
                 <i class="fas fa-boxes"></i> Productos
             </a>
         </li>
