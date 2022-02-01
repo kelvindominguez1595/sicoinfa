@@ -381,6 +381,7 @@ class ProductosController extends Controller
                 'state' => 1,
                 'detalle_stock_id' => $ingreso->id,
             ]);
+            $message = 'Precio de venta del producto actualizado correctamente';
         }
         return response()->json(["message" =>  $message], 200);
     }
@@ -575,36 +576,62 @@ class ProductosController extends Controller
         /** message y codigo*/
         $message = "";
         $code = "";
-        /** */
-        // verificar que la cantidad en la sucursal sea mayor a 0
-        $almacendesde = Almacenes::where('branch_offices_id', $desde)->where('stocks_id', $stockid)->first();
-        $almacenhasta = Almacenes::where('branch_offices_id', $hasta)->where('stocks_id', $stockid)->first();
-        if($almacendesde->quantity == 0 ) {
-            $message = "No hay suficiente productos en inventario";
-            $code = 400;
-        } else {
-            if($cantidad > $almacendesde->quantity) {
-                $message = "La cantidad a trasladar es mayor a la de inventarios";
+
+        /**
+         * ---------------------------------------------------------------
+         * Debo verificar que la sucusarl este creado el producto caso contrario debo de crearlo
+         */
+        $desdeverify = Almacenes::where('branch_offices_id', $desde)->where('stocks_id', $stockid)->exists();
+        $hastaverify = Almacenes::where('branch_offices_id', $hasta)->where('stocks_id', $stockid)->exists();
+
+        if(!$desdeverify) {
+            Almacenes::create([
+                   'stock_min' => 1,
+                   'quantity' => 0,
+                   'branch_offices_id' => $desde,
+                   'stocks_id' => $stockid,
+               ]);
+        }
+       if(!$hastaverify) {
+             Almacenes::create([
+                 'stock_min' => 1,
+                 'quantity' => 0,
+                 'branch_offices_id' => $hasta,
+                 'stocks_id' => $stockid,
+             ]);
+        }
+
+            // verificar que la cantidad en la sucursal sea mayor a 0
+            $almacendesde = Almacenes::where('branch_offices_id', $desde)->where('stocks_id', $stockid)->first();
+            $almacenhasta = Almacenes::where('branch_offices_id', $hasta)->where('stocks_id', $stockid)->first();
+            if($almacendesde->quantity == 0 ) {
+                $message = "No hay suficiente productos en inventario";
                 $code = 400;
             } else {
-                // esto es para descontar los produtos de donde se envio
-                $cantidaddescuento = $almacendesde->quantity - $cantidad;
-                // buscamos el origin de envio
-                $updatedesde = Almacenes::find($almacendesde->id);
-                $updatedesde->quantity = $cantidaddescuento;
-                $updatedesde->save();
-                /** --------------------------------------------------------------- */
-                // esto es para actualizar el producto hasta donde se envia
-                $cantidad =  $cantidad + $almacenhasta->quantity;
-                // destino final de envio
-                $updatehasta = Almacenes::find($almacenhasta->id);
-                $updatehasta->quantity = $cantidad;
-                $updatehasta->save();
-                $message = "Traslado realizado correctamente";
-                $code = 200;
+                if($cantidad > $almacendesde->quantity) {
+                    $message = "La cantidad a trasladar es mayor a la de inventarios";
+                    $code = 400;
+                } else {
+
+                    // esto es para descontar los produtos de donde se envio
+                    $cantidaddescuento = $almacendesde->quantity - $cantidad;
+                    // buscamos el origin de envio
+                    $updatedesde = Almacenes::find($almacendesde->id);
+                    $updatedesde->quantity = $cantidaddescuento;
+                    $updatedesde->save();
+                    /** --------------------------------------------------------------- */
+                    // esto es para actualizar el producto hasta donde se envia
+                    $cant =  $cantidad + $almacenhasta->quantity;
+                    // destino final de envio
+                    $updatehasta = Almacenes::find($almacenhasta->id);
+                    $updatehasta->quantity = $cant;
+                    $updatehasta->save();
+                    $message = "Traslado realizado correctamente";
+                    $code = 200;
+                }
             }
-        }
             return response()->json(["message"=> $message], $code);
+
     }
 
     public function inventarios(Request $request) {

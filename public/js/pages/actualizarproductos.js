@@ -328,7 +328,7 @@ $(function () {
                     listarExistencia(stockid);
                 },
                 error: function (response) {
-                    AlertError(response.responseJSON.message);
+                    AlertError(response.responseJSON.error.message);
                 }
             });
         }
