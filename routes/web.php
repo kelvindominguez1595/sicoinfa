@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductosController;
 use App\Http\Controllers\IngresosController;
+use App\Http\Controllers\MarcasController;
+use App\Http\Controllers\CategoriasController;
+use App\Http\Controllers\MedidasController;
+use App\Http\Controllers\ProveedoresController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -25,6 +29,7 @@ Route::get('/', function () {
 Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::group(['middleware' => ['auth', 'admin']], function () {
+    /** TODO ESTO ES PARA HACER UN INGRESO Y FILTRO DE PRODUCTOS */
     Route::resource('/productos', ProductosController::class);
     Route::resource('/ingresos', IngresosController::class);
 
@@ -44,6 +49,15 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/categoriasid/{id}', [ProductosController::class, 'categoriasid']);
     Route::get('/proveedoresid/{id}', [ProductosController::class, 'proveedoresid']);
     Route::get('/unidadmedidaid/{id}', [ProductosController::class, 'unidadmedidaid']);
+
+    /** MARCAS */
+    Route::resource('/marcas', MarcasController::class);
+    /** CATEGORIAS */
+    Route::resource('/categorias', CategoriasController::class);
+    /** MEDIDAS */
+    Route::resource('/medidas', MedidasController::class);
+    /** PROVEEDORES */
+    Route::resource('/proveedores', ProveedoresController::class);
 });
 
 
