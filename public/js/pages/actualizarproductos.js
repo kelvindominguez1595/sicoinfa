@@ -213,10 +213,8 @@ $(function () {
                         text: '¡Error algo salio mal!'
                     });
                 }
-
             },
             error: function (response) {
-                //4
                 if (response.responseJSON.errors.name) {
                     $("#idCpro4").addClass("has-error");
                     $("#txt_name").text('El campo nombre es obligatorio.');
@@ -229,6 +227,7 @@ $(function () {
         });
         event.preventDefault();
     });
+
     // creamos un nuevo ingresos de productos
     $( "#frmentradaproductos" ).submit(function( event ) {
         var form = new FormData($("#frmentradaproductos")[0]);

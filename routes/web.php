@@ -30,6 +30,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 
     Route::get('/actualizaringresos/{id}/{sucursalid}', [ProductosController::class, 'edit']);
     Route::post('/transferencia', [ProductosController::class, 'transferencia']);
+    Route::post('/ajusteproducto', [ProductosController::class, 'ajusteproducto']);
 
     Route::get('/list_marcas', [ProductosController::class, 'marcas']);
     Route::get('/list_sucursales', [ProductosController::class, 'sucursales']);

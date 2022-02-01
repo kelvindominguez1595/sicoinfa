@@ -6,23 +6,7 @@
 @endsection
 @section('js')
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
-    <script>
-        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-            return new bootstrap.Popover(popoverTriggerEl)
-        })
-        $(function() {
-
-            $('.imgzoom').popover({
-                html: true,
-                trigger: 'hover',
-                content: function () {
-                    return '<img src="'+$(this).attr('src') + '" width="150" height="150" />';
-                }
-            });
-        });
-    </script>
-
+    <script src="{{ asset('js/pages/filterproductos.js') }}"></script>
 @endsection
 
 @section('content')
@@ -37,7 +21,7 @@
                     <form action="{{ route('productos.index')}}" method="get">
                         @csrf
                         <div class="mb-3 d-flex justify-content-center">
-                            <button class="btn btn-primary btn-sm" type="button" id="btnresetall" onclick="$(location).attr('href','productos');">Mostrar Todo</button>
+                            <button class="btn btn-primary btn-sm" type="button" id="btnresetall" onclick="$(location).attr('href','productos?estado=activos&pages=25&page=1');">Mostrar Todo</button>
                         </div>
                         <div class="row">
 
@@ -105,9 +89,7 @@
                     <div class="">
                         {{ $data->total() }} Resultados
                     </div>
-                    @can('manufacturer.create')
-                        <a class="btn btn btn-light btn-sm" href="{{ route('ingresos.create') }}">Nuevo Producto&nbsp;<i class="fa fa-save"></i></a>
-                    @endcan
+                    <!-- <a class="btn btn btn-light btn-sm" href="{{ route('productos.create') }}">Nuevo Producto&nbsp;<i class="fa fa-save"></i></a>-->
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -142,7 +124,7 @@
                                             <td class="small">
                                                 <a href="{{ url("actualizaringresos",[$item->id, $item->branch_offices_id])}}">{!! $item->name !!}</a>
                                             </td>
-                                            <td class="small">{{ $item->quantity }}</td>
+                                            <td class="small"> {{ $item->cantidadnew }}</td>
                                             <td class="small"> {{ $item->medida_name }}</td>
                                             <td class="small">
                                                 @isset($item->description)
@@ -206,7 +188,7 @@
                                             </td>
                                         </tr>
                                     @endforeach
-                                    <button type="button" id="Updated_canti"></button>
+                                    <button type="button" id="Updated_canti" class="d-none"></button>
                                 </form>
                             @endif
                             </tbody>

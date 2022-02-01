@@ -75,6 +75,7 @@ class ProductosController extends Controller
                     'me.name as medida_name',
                     'sk.category_id',
                     'sk.manufacturer_id',
+                    DB::raw('(SELECT SUM(dp.quantity) as cantidadnew FROM detalle_products AS dp WHERE dp.stocks_id = sk.id) as cantidadnew'),
                     DB::raw('(SELECT ds.id  FROM detalle_stock AS ds WHERE ds.stocks_id = sk.id  ORDER BY ds.created_at DESC LIMIT 1) as iddetalllestock'),
                     DB::raw('(SELECT dp.cost_c_iva  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as costosiniva'),
                     DB::raw('(SELECT dp.sale_price  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as precioventa'),
@@ -110,18 +111,14 @@ class ProductosController extends Controller
                 }
             }
             // busqueda por almacen
-            if(!empty($almacen)){
-                if($almacen=="todos"){
+            if(empty($almacen)){ // esta vacio si lo esta debe agrupar todo
+                $query->groupBy('sk.id');
+
+            } else {
+                if($almacen =="todos"){
                     // se mostraran todos los productos del almacen
-                    $query->groupBy('sk.id', 'sk.image', 'sk.code',  'sk.barcode',
-                        'sk.name',
-                        'sk.exempt_iva',
-                        'sk.stock_min',
-                        'sk.description',
-                        'dp.quantity',
-                        'dp.branch_offices_id', 'c.name','man.name', 'me.name','sk.category_id', 'sk.manufacturer_id');
+                    $query->groupBy('sk.id');
                 } else {
-                    // se mostraran los productos por almacen
                     $query->where('dp.branch_offices_id', '=', $almacen);
                     $query->groupBy('sk.id', 'sk.image', 'sk.code',  'sk.barcode',
                         'sk.name',
@@ -155,18 +152,13 @@ class ProductosController extends Controller
                     'c.name as category_name',
                     'man.name as marca_name',
                     'me.name as medida_name',
+                    DB::raw('(SUM(dp.quantity) as cantidadnew)'),
                     DB::raw('(SELECT ds.id  FROM detalle_stock AS ds WHERE ds.stocks_id = sk.id  ORDER BY ds.created_at DESC LIMIT 1) as iddetalllestock'),
                     DB::raw('(SELECT dp.cost_c_iva  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as costosiniva'),
                     DB::raw('(SELECT dp.sale_price  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as precioventa'),
                 )
                 ->where('sk.state', '=', 1)
-                ->groupBy('sk.id', 'sk.image', 'sk.code',  'sk.barcode',
-                    'sk.name',
-                    'sk.exempt_iva',
-                    'sk.stock_min',
-                    'sk.description',
-                    'dp.quantity',
-                    'dp.branch_offices_id', 'c.name','man.name', 'me.name')
+                ->groupBy('sk.id')
                 ->orderBy('sk.code', 'ASC')
                 ->paginate($pages);
         }
@@ -174,20 +166,7 @@ class ProductosController extends Controller
         $ultimoPro = DB::table('stocks as s')
             ->leftJoin('detalle_stock as ds', 's.id', 'ds.stocks_id')
             ->leftJoin('detalle_price as dprice', 'ds.id', 'dprice.detalle_stock_id')
-            ->select(
-                'dprice.sale_price',
-                'dprice.state',
-                'dprice.created_at',
-                'dprice.updated_at',
-                'ds.unit_price',
-                'ds.quantity',
-                'ds.invoice_number',
-                'ds.state',
-                's.state',
-                's.name',
-                'ds.register_date',
-                'ds.created_at',
-            )
+            ->select('dprice.sale_price', 'dprice.state', 'dprice.created_at', 'dprice.updated_at', 'ds.unit_price', 'ds.quantity', 'ds.invoice_number', 'ds.state', 's.state', 's.name', 'ds.register_date', 'ds.created_at')
             ->where('ds.state', '=', 1)
             ->orderBy('dprice.updated_at', 'DESC')
             ->take(5)
@@ -204,18 +183,54 @@ class ProductosController extends Controller
      */
     public function create()
     {
-        //
+        return view('productos.nuevo');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreProductosRequest  $request
+     * @param  \App\Http\Requests\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreProductosRequest $request)
+    public function store(Request $request)
     {
-        //
+        $exento = 0;
+        if(!empty($request->exentoiva)){
+            $exento = 1;
+        }
+        $request->validate([
+            'code' => 'required|unique:stocks|max:255',
+        ]);
+
+        $data = new Productos();
+        if($request->hasFile("imagen")){
+            $imagen = $request->file("imagen");
+            $nombreimagen = time().".".$imagen->guessExtension();
+            $ruta = public_path()."/images/productos/";
+            $imagen->move($ruta,$nombreimagen);
+            $data->image =  $nombreimagen;
+        }
+        $data->code = $request->code;
+        $data->barcode = $request->codigobarra;
+        $data->name = $request->nombre;
+        $data->exempt_iva = $exento;
+        $data->stock_min = 1;
+        $data->state = 1;
+        $data->category_det = $request->category_det;
+        $data->reference_det = $request->reference_det;
+        $data->manufacturer_id = $request->marca;
+        $data->category_id = $request->categoria;
+        $data->measures_id = $request->medidas;
+        $data->save();
+        // debo guardar en almacen
+        $sucursal = new Almacenes();
+        $sucursal->stock_min = 1;
+        $sucursal->quantity = 0;
+        $sucursal->branch_offices_id = 1;
+        $sucursal->stocks_id = $data->id;
+        $sucursal->save();
+        // return redirect()->route('actualizaringresos', [$data->id, 1]);
+        return response()->json(["message" => "Nuevo producto Registrado", "productoid" => $data->id, "sucursal" => 1]);
     }
 
     /**
@@ -305,17 +320,58 @@ class ProductosController extends Controller
             ->limit(1)
             ->orderBy('id', 'DESC')
             ->first();
+        if( $ingreso ) {
+            $precioingreso = Precios::where('detalle_stock_id', '=', $ingreso->id)
+                ->where('sale_price', '=', $request->sale_price)
+                ->limit(1)
+                ->orderBy('detalle_stock_id', 'DESC')
+                ->exists();
+            //->first();
+            // si encuentro el mismo precio de venta no realizar nada
+            if (!$precioingreso) {
+                Precios::create([
+                    'unit_price' => $request->unit_price,
+                    'cost_s_iva' => $request->cost_s_iva,
+                    'cost_c_iva' => $request->cost_c_iva,
+                    'earn_c_iva' => $request->earn_c_iva,
+                    'earn_porcent' => $request->earn_porcent,
+                    'sale_price' => $request->sale_price,
+                    'state' => 1,
+                    'detalle_stock_id' => $ingreso->id,
+                ]);
+                $message = 'Producto y precio de venta actualizado correctamente';
+            } else {
+                $message = 'Producto actualizado correctamente';
+            }
+        } else {
+            /**
+             * si no esta el ingreso le crearemos uno para que pueda mostrar el precio de venta,
+             * ya que estos productos solo son por encargos pero se puede ver el precio de venta.
+             */
 
-        $precioingreso = Precios::where('detalle_stock_id', '=', $ingreso->id)
-            ->where('sale_price', '=', $request->sale_price)
-            ->limit(1)
-            ->orderBy('detalle_stock_id', 'DESC')
-            ->exists();
-        //->first();
-        // si encuentro el mismo precio de venta no realizar nada
-        if (!$precioingreso) {
-            Precios::where('detalle_stock_id', $ingreso->id)->update(['state' => 0]);
-            Precios::create([
+            // voy a registrar un cliente factrura que no es ninguna empresa
+            $noempresa = Proveedores::where('tipo_cliente', 3)
+                ->where('state', 3)->first();
+            // creamos el ingreso en la tabla detalle_stock
+            /**
+             * en el state pondremos 4 para que al sacar reporte estos registros no los tome en cuenta
+             * ya que es un producto sin costo solo tiene precio venta
+             */
+            $ingreso = Ingresos::create([
+                'invoice_number' => 0,
+                'invoice_date' => date('Y-m-d'),
+                'register_date' => date('Y-m-d'),
+                'quantity' => 0,
+                'unit_price' => 0,
+                'state' => 4,
+                'state_price' => '',
+                'stocks_id' => $request->stocks_id,
+                'clientefacturas_id' => $noempresa->id,
+            ]);
+            /**
+             * Ya creado el ingreso pondremos el precio de venta al producto
+             */
+            $precio = Precios::create([
                 'unit_price' => $request->unit_price,
                 'cost_s_iva' => $request->cost_s_iva,
                 'cost_c_iva' => $request->cost_c_iva,
@@ -325,11 +381,6 @@ class ProductosController extends Controller
                 'state' => 1,
                 'detalle_stock_id' => $ingreso->id,
             ]);
-            $message = 'Producto y precio de venta actualizado correctamente';
-
-        } else {
-            $message = 'Producto actualizado correctamente';
-
         }
         return response()->json(["message" =>  $message], 200);
     }
@@ -445,7 +496,7 @@ class ProductosController extends Controller
     public function unidaddenedida(Request $request) {
         if($request->ajax()) {
             $term = trim($request->term);
-            $manufacturer = Marcas::select('id', 'name as text')
+            $manufacturer = Unidaddemedidas::select('id', 'name as text')
                 ->where('name', 'LIKE', '%' . $term . '%')
                 ->orderBy('name', 'ASC')
                 ->simplePaginate(10);
@@ -702,4 +753,28 @@ class ProductosController extends Controller
         $almaceneslist = Sucursales::all();
         return view('productos.empleados', compact('data', 'estado', 'codigo', 'codbarra', 'categoria', 'marca', 'nombre', 'almacen', 'pages', 'almaceneslist'));
     }
+    // para realizar los ajustes
+    public function ajusteproducto(Request $request)
+    {
+        $detalle_producto = '';
+        foreach ($request['update_quantity'] as $key => $value) {
+            if (is_null($request['update_quantity'][$key])) {
+                # code...
+            } else {
+                $quantity = 0;
+                $valor = 0;
+                $detalle_pro = Almacenes::where('stocks_id', $request['idProducto'][$key])->first();
+
+                $valor = $request['update_quantity'][$key];
+                $quantity = $detalle_pro->quantity + $valor;
+
+                //dd($quantity);
+                $detalle_producto =  Almacenes::find($detalle_pro->id);
+                $detalle_producto->quantity = $quantity;
+                $detalle_producto->save();
+            }
+        }
+        return response()->json(['detalle_producto' => $detalle_producto]);
+    }
+
 }
