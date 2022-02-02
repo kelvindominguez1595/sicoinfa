@@ -16,7 +16,7 @@
                 Producto
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-                <li><a class="dropdown-item" href=""><i class="fas fa-tags"></i> Marcas</a></li>
+                <li><a class="dropdown-item" href="{{ url('marcas') }}"><i class="fas fa-tags"></i> Marcas</a></li>
                 <li><a class="dropdown-item" href="#"><i class="fas fa-sitemap"></i> Categorías</a></li>
                 <li><a class="dropdown-item" href="#"><i class="fas fa-ruler"></i> Medidas</a></li>
                 <li><a class="dropdown-item" href="#"><i class="fas fa-user-tag"></i> Proveedores</a></li>
