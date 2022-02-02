@@ -49,6 +49,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/categoriasid/{id}', [ProductosController::class, 'categoriasid']);
     Route::get('/proveedoresid/{id}', [ProductosController::class, 'proveedoresid']);
     Route::get('/unidadmedidaid/{id}', [ProductosController::class, 'unidadmedidaid']);
+    Route::get('/historialcompras', [ProductosController::class, 'historialcompras']);
 
     /** MARCAS */
     Route::resource('/marcas', MarcasController::class);

@@ -22,7 +22,7 @@
                 <li><a class="dropdown-item" href="{{ url('proveedores') }}"><i class="fas fa-user-tag"></i> Proveedores</a></li>
                 <li><a class="dropdown-item" href="{{ route('productos.create') }}"><i class="fas fa-plus"></i> Nuevo producto</a></li>
                 <li><a class="dropdown-item" href="{{ url('productos?estado=activos&pages=25&page=1') }}"><i class="fas fa-store-alt"></i> Productos</a></li>
-                <li><a class="dropdown-item" href="#"><i class="fas fa-list"></i> Lista de Entrada de Productos</a></li>
+                <li><a class="dropdown-item" href="{{ url('historialcompras') }}"><i class="fas fa-list"></i> Históricos de Compra</a></li>
 
             </ul>
         </li>

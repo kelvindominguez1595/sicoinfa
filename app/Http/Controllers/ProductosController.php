@@ -804,4 +804,9 @@ class ProductosController extends Controller
         return response()->json(['detalle_producto' => $detalle_producto]);
     }
 
+    // para ver el historial de compras realizadas recientemente
+    public function historialcompras(Request $request){
+        return view('productos.historicocompras');
+    }
+
 }
