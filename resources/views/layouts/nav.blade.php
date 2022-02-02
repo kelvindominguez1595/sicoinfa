@@ -17,9 +17,9 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
                 <li><a class="dropdown-item" href="{{ url('marcas') }}"><i class="fas fa-tags"></i> Marcas</a></li>
-                <li><a class="dropdown-item" href="#"><i class="fas fa-sitemap"></i> Categorías</a></li>
-                <li><a class="dropdown-item" href="#"><i class="fas fa-ruler"></i> Medidas</a></li>
-                <li><a class="dropdown-item" href="#"><i class="fas fa-user-tag"></i> Proveedores</a></li>
+                <li><a class="dropdown-item" href="{{ url('categorias') }}"><i class="fas fa-sitemap"></i> Categorías</a></li>
+                <li><a class="dropdown-item" href="{{ url('medidas') }}"><i class="fas fa-ruler"></i> Medidas</a></li>
+                <li><a class="dropdown-item" href="{{ url('proveedores') }}"><i class="fas fa-user-tag"></i> Proveedores</a></li>
                 <li><a class="dropdown-item" href="{{ route('productos.create') }}"><i class="fas fa-plus"></i> Nuevo producto</a></li>
                 <li><a class="dropdown-item" href="{{ url('productos?estado=activos&pages=25&page=1') }}"><i class="fas fa-store-alt"></i> Productos</a></li>
                 <li><a class="dropdown-item" href="#"><i class="fas fa-list"></i> Lista de Entrada de Productos</a></li>
