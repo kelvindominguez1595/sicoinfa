@@ -95,6 +95,7 @@ $(document).ready(function (){
                 html += '<div class="fw-normal text-center">¿Está seguro de borrar el registro? <br> Sí borra el registro no hay forma de volver a recuperarlo</div>';
                 html += '</p>';
                 html += '</div>';
+                $("#btnborramodal").removeClass('d-none');
                 $("#contenedor").html(html);
                 $("#idite").val(res[0].id);
                 $("#btnborramodal").text("Borrar");

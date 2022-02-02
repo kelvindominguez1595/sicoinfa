@@ -103,7 +103,7 @@ class CategoriasController extends Controller
         $data->name = $request->name;
         $data->save();
         if($data){
-            $message = "Registro actualizado correcatemente";
+            $message = "Registro actualizado correctamente";
             $code = 200;
         } else {
             $message = "No se pudo registrar la marca";

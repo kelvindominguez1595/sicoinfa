@@ -9,7 +9,7 @@ $(document).ready(function (){
         // abrir modal
         $("#frmdata").trigger("reset");
         $("#modaldata").modal("show");
-        $(".modal-title").text("Nueva Marca");
+        $(".modal-title").text("Nueva Unidad de Medida");
     })
 
     $("#frmdata").submit(function (event) {
@@ -55,7 +55,7 @@ $(document).ready(function (){
         $.get('/medidas/'+ id +'/edit', function (res) {
             // mostrar el modal
             $("#modaldata").modal("show");
-            $(".modal-title").text("Editar Marca");
+            $(".modal-title").text("Editar Unidad de Medida");
             $("#btnmodal").text("Actualizar");
             $("#id").val(res.id);
             $("#name").val(res.name);
@@ -79,8 +79,8 @@ $(document).ready(function (){
                 html += '<p>';
                 html += '<div class="fw-normal">Existe <strong>'+ res[0].marcacount +'</strong> '+plural+' que serán afectados, así que tiene dos opciones:</div>';
                 html += '<ol>';
-                html += '<li>Actualizar la marca para que afecte a los registros.</li>';
-                html += '<li>Cambiar los productos a otra marca</li>';
+                html += '<li>Actualizar la unidad de medida para que afecte a los registros.</li>';
+                html += '<li>Cambiar los productos a otra unidad de medida</li>';
                 html += '</ol>';
                 html += '</p>';
                 html += '</div>';
@@ -95,6 +95,7 @@ $(document).ready(function (){
                 html += '<div class="fw-normal text-center">¿Está seguro de borrar el registro? <br> Sí borra el registro no hay forma de volver a recuperarlo</div>';
                 html += '</p>';
                 html += '</div>';
+                $("#btnborramodal").removeClass('d-none');
                 $("#contenedor").html(html);
                 $("#idite").val(res[0].id);
                 $("#btnborramodal").text("Borrar");

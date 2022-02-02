@@ -10,8 +10,8 @@
                     <div class="row g-3">
                         <div class="col-12 col-sm-12 col-md-12 col-xl-12">
                             <input type="hidden" name="id" id="id">
-                            <label class="form-label" for="name">Marca</label>
-                            <input type="text" class="form-control" name="name" autocomplete="false" id="name" placeholder="Marca">
+                            <label class="form-label" for="name">Unidad de medida</label>
+                            <input type="text" class="form-control" name="name" autocomplete="false" id="name" placeholder="Unidad de medida">
                             <input type="hidden" name="state" id="state" value="1">
                         </div>
                     </div>
