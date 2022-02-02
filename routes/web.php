@@ -58,6 +58,8 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::resource('/medidas', MedidasController::class);
     /** PROVEEDORES */
     Route::resource('/proveedores', ProveedoresController::class);
+    Route::get('/desactivarproveedores/{id}', [ProveedoresController::class, 'desactivarproveedores']);
+
 });
 
 
