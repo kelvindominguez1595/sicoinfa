@@ -24,7 +24,6 @@
                             <button class="btn btn-primary btn-sm" type="button" id="btnresetall" onclick="$(location).attr('href','productos?estado=activos&pages=25&page=1');">Mostrar Todo</button>
                         </div>
                         <div class="row">
-
                             <div class="col-12  mb-2">
                                 <label for="codigo" class="form-label fw-bold">Código</label>
                                 <input type="text" class="form-control" id="codigo" name="codigo" value="{{ $codigo }}" placeholder="Código">

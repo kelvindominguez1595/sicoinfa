@@ -15,8 +15,22 @@ class MarcasController extends Controller
      */
     public function index(Request $request)
     {
-        $data = Marcas::paginate(25);
-        return view('marcas.index', compact('data'));
+        if (!empty($request->pages)) {
+            $pages = $request->pages;
+        } else {
+            $pages = 25;
+        }
+        $marca = $request->marca;
+        if(!empty($request->marca)){
+            $query = DB::table('manufacturers')
+            ->select('id','name', 'state');
+            $query->where('name','LIKE', '%'.$request->marca.'%');
+            $data = $query->paginate($pages);
+
+        } else {
+            $data = Marcas::paginate($pages);
+        }
+        return view('marcas.index', compact('data', 'marca', 'pages'));
     }
 
     /**
