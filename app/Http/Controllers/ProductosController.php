@@ -515,6 +515,45 @@ class ProductosController extends Controller
             return response()->json($results);
         }
      }
+    // listar productos
+    public function listarproductos(Request $request) {
+        if($request->ajax()) {
+            $term = trim($request->term);
+            $data = DB::table('stocks as s')
+                ->join('categories as c', 's.category_id', '=', 'c.id')
+                ->join('manufacturers as ma', 's.manufacturer_id', '=', 'ma.id') // esta es la marca
+                ->join('measures as me', 's.measures_id', '=', 'me.id') // esta es la unidad de medida
+                ->select('s.id', 's.name as text', 'c.name as categoria', 'ma.name as marca', 'me.name as unidademedida')
+                ->where('s.name', 'LIKE', '%' . $term . '%')
+                ->where('s.state', '=', 1)
+                ->orderBy('s.code', 'ASC')
+                ->simplePaginate(10);
+            $morePages = true;
+            if (empty($data->nextPageUrl())) {
+                $morePages = false;
+            }
+            $results = array(
+                "results" => $data->items(),
+                "pagination" => array(
+                    "more" => $morePages,
+                ),
+            );
+            return response()->json($results);
+        }
+    }
+    // buscar id
+    public function productoid($id){
+        $data = DB::table('stocks as s')
+            ->join('categories as c', 's.category_id', '=', 'c.id')
+            ->join('manufacturers as ma', 's.manufacturer_id', '=', 'ma.id') // esta es la marca
+            ->join('measures as me', 's.measures_id', '=', 'me.id') // esta es la unidad de medida
+            ->select('s.id', 's.name as text', 'c.name as categoria', 'ma.name as marca', 'me.name as unidademedida')
+            ->where('s.id', '=', $id)
+            ->where('s.state', '=', 1)
+            ->orderBy('s.code', 'ASC')
+            ->first();
+        return response()->json($data);
+    }
      // buscar por id
     public function categoriasid($id) {
         $data = Categorias::find($id);

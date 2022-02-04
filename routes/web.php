@@ -50,6 +50,8 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/proveedoresid/{id}', [ProductosController::class, 'proveedoresid']);
     Route::get('/unidadmedidaid/{id}', [ProductosController::class, 'unidadmedidaid']);
     Route::get('/historialcompras', [ProductosController::class, 'historialcompras']);
+    Route::get('/listarproductos', [ProductosController::class, 'listarproductos']);
+    Route::get('/productoid/{id}', [ProductosController::class, 'productoid']);
 
     /** MARCAS */
     Route::resource('/marcas', MarcasController::class);
