@@ -18,7 +18,7 @@ class IngresosController extends Controller
      */
     public function index()
     {
-        //
+        return view('ingresos.index');
     }
 
     /**
@@ -48,7 +48,7 @@ class IngresosController extends Controller
             ->orderBy('id','DESC')
             ->first();
 
-        // si es prinera ves el nuevo producto
+        // si es primera ves el nuevo producto
         if(empty($ingreso ->id)){
             // creo el producto en stock si no esta
             $ds = Ingresos::create([

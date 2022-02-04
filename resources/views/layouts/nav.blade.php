@@ -16,6 +16,7 @@
                 Producto
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+                <li><a class="dropdown-item" href="{{ url('ingresos') }}"><i class="fas fa-dolly"></i> Ingreso de facturas</a></li>
                 <li><a class="dropdown-item" href="{{ url('marcas') }}"><i class="fas fa-tags"></i> Marcas</a></li>
                 <li><a class="dropdown-item" href="{{ url('categorias') }}"><i class="fas fa-sitemap"></i> Categorías</a></li>
                 <li><a class="dropdown-item" href="{{ url('medidas') }}"><i class="fas fa-ruler"></i> Medidas</a></li>

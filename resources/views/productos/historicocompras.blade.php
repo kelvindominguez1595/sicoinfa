@@ -30,13 +30,48 @@
             <div class="card mb-4 border-primary">
                 <div class="card-header bg-primary text-white d-flex justify-content-between">
                     <div class="">
-
+                        HISTORICO DE COMPRAS
                     </div>
 
                 </div>
                 <div class="card-body">
 
-
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <th>CÓDIGO</th>
+                                <th>CATEGORÍA</th>
+                                <th>MARCA</th>
+                                <th>PRODUCTO</th>
+                                <th>PROVEEDOR</th>
+                                <th>CANTIDAD</th>
+                                <th>U. DE MEDIDA</th>
+                                <th>P. UNI. SIN IVA</th>
+                                <th>P. UNI. CON IVA</th>
+                                <th>ALMACÉN</th>
+                                <th>FECHA INGRESO</th>
+                                <th>CRÉDITO FISCAL</th>
+                                <th>FECHA FACTURA</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 {{--                        <div class="d-flex justify-content-between">--}}
 {{--                            <div>Mostrando {{ $data->firstItem() }}  a  {{ $data->lastItem() }} de {{ $data->total() }} registros.</div>--}}
 {{--                            <div>--}}
