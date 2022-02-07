@@ -4,6 +4,7 @@ $(function () {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
+    showTime();
     var stockid = $('#stocks_id').val();
     // cargamos los select2
     $('#category_id').select2({
@@ -356,3 +357,21 @@ function readURL(input) {
         reader.readAsDataURL(input.files[0]);
     }
 }
+
+function showTime() {
+    var fecha = new Date(); //Fecha actual
+    var month = fecha.getMonth() + 1; //obteniendo mes
+    var day = fecha.getDate(); //obteniendo dia
+    var year = fecha.getFullYear(); //obteniendo año
+    // hora
+    hours = fecha.getHours();
+    minutes = fecha.getMinutes();
+    seconds = fecha.getSeconds();
+    let hora =  fecha.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true })
+    if (hours < 10) hours = 0 + hours;
+    if (minutes < 10) minutes = "0" + minutes;
+    if (seconds < 10) seconds = "0" + seconds;
+    $("#fechaingreso").val(day + "-" + month + "-" + year + " " + hora);
+    setTimeout("showTime()", 1000);
+}
+

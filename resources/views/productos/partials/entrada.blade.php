@@ -38,11 +38,12 @@
                     <div class="row">
                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
                             <label for="unidaddemedida" class="fw-bold">Fecha de Factura</label>
-                            <input type="date" class="form-control" name="invoice_date" id="invoice_date" value="{{$detalle_stock2->invoice_date}}">
+                            <input type="date" class="form-control" name="invoice_date" id="invoice_date" value="{{$ultimoingreso->invoice_date}}">
                         </div>
                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
                             <label for="categoria" class="fw-bold">Fecha de Ingreso</label>
-                            <input type="datetime-local" class="form-control" name="register_date" id="register_date">
+                            <input type="text" class="form-control" id="fechaingreso" readonly name="fechaingreso" value="" placeholder="">
+
                         </div>
                     </div>
                 </div>
