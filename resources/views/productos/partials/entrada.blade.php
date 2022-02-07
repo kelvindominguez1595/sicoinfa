@@ -23,7 +23,7 @@
                     @enderror
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                    <label for="categoria" class="fw-bold">Número Credito Fiscal</label>
+                    <label for="categoria" class="fw-bold">Número Crédito Fiscal</label>
                     <input type="text" class="form-control" name="invoice_number"
                            id="invoice_number" value="{{$detalle_stock2->invoice_number}}">
                 </div>
