@@ -224,7 +224,7 @@ class IngresosController extends Controller
     public function ingresofactura(Request $request){
 
         // registramos los datos de la factura
-        DatosIngresos::created([
+       $datoingreso = DatosIngresos::created([
             'proveedor_id' => $request->proveedor_id,
             'numerofiscal' => $request->creditofiscal,
             'fechafactura' => $request->fechafactura,
@@ -242,6 +242,7 @@ class IngresosController extends Controller
                 'stocks_id' => $request['productid'][$key],
                 'state' => 1,
                 'clientefacturas_id' => $request->proveedor_id,
+                'datosingresos_id' => $datoingreso->id,
             ]);
 
             // creamos un precio
