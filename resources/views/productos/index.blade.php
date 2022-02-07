@@ -137,7 +137,7 @@
                                             <td class="small">{{ $item->category_name }}</td>
                                             <td class="small">{{ $item->marca_name }}</td>
                                             <td class="small">
-                                                <a href="{{ url("actualizaringresos",[$item->id, $item->branch_offices_id])}}">{!! $item->name !!}</a>
+                                                <a href="{{ url("actualizaringresos",[$item->id, !isset($item->branch_offices_id) ? 1 : $item->branch_offices_id])}}">{!! $item->name !!}</a>
                                             </td>
                                             <td class="small"> {{ $item->cantidadnew }}</td>
                                             <td class="small"> {{ $item->medida_name }}</td>
