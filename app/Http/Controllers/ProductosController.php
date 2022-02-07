@@ -259,6 +259,11 @@ class ProductosController extends Controller
     public function edit($id, $sucursalid)
     {
         $stock = Productos::where('id', $id)->first();
+        // obtendre el ultimo registro de ingreso
+        $ultimoingreso = Ingresos::where('stocks_id', $id)
+            ->limit(1)
+            ->orderBy('id','DESC')
+            ->first();
         $detalle_stock = Ingresos::where('stocks_id', $id)
             ->limit(1)
             ->orderBy('id','DESC')
@@ -281,7 +286,7 @@ class ProductosController extends Controller
         $detalle_pro = Almacenes::where('branch_offices_id', $sucursalid)->where('stocks_id', $id)->first();
         $almacenes = Sucursales::all();
         $promedio = Ingresos::where('stocks_id', '=', $id)->get();
-        return view('productos.actualizar', compact('stock', 'detalle_stock', 'detalle_stock2', 'id', 'detalle_price','detalle_pro', 'almacenes', 'promedio'));
+        return view('productos.actualizar', compact('stock', 'detalle_stock', 'detalle_stock2', 'id', 'detalle_price','detalle_pro', 'almacenes', 'promedio', 'ultimoingreso'));
     }
 
     /**
