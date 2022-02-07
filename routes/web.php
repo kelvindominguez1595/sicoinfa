@@ -38,8 +38,8 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::post('/ajusteproducto', [ProductosController::class, 'ajusteproducto']);
 
     Route::get('/list_marcas', [ProductosController::class, 'marcas']);
-    Route::get('/list_sucursales', [ProductosController::class, 'sucursales']);
     Route::get('/list_categorias', [ProductosController::class, 'categorias']);
+    Route::get('/list_sucursales', [ProductosController::class, 'sucursales']);
     Route::get('/list_proveedores', [ProductosController::class, 'proveedores']);
     Route::get('/list_unidaddenedida', [ProductosController::class, 'unidaddenedida']);
     Route::get('/existenciaProducto/{id}', [ProductosController::class, 'existenciaProducto']);
@@ -69,4 +69,6 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 
 Route::group(['middleware' => ['auth', 'user']], function () {
     Route::get('/inventarios', [ProductosController::class, 'inventarios']); // listado para el area de ventas
+    Route::get('/list_marcasempleado', [ProductosController::class, 'marcas']);
+    Route::get('/list_categoriasempleado', [ProductosController::class, 'categorias']);
 });

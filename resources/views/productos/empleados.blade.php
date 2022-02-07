@@ -6,22 +6,7 @@
 @endsection
 @section('js')
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
-    <script>
-        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-            return new bootstrap.Popover(popoverTriggerEl)
-        })
-        $(function() {
-
-            $('.imgzoom').popover({
-                html: true,
-                trigger: 'hover',
-                content: function () {
-                    return '<img src="'+$(this).attr('src') + '" width="150" height="150" />';
-                }
-            });
-        });
-    </script>
+    <script src="{{ asset('js/pages/empleado.js') }}"></script>
 
 @endsection
 
@@ -34,10 +19,10 @@
                     Filtros de búsqueda
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('productos.index')}}" method="get">
+                    <form action="{{ url('inventarios')}}" method="get">
                         @csrf
                         <div class="mb-3 d-flex justify-content-center">
-                            <button class="btn btn-primary btn-sm" type="button" id="btnresetall" onclick="$(location).attr('href','productos');">Mostrar Todo</button>
+                            <button class="btn btn-primary btn-sm" type="button" id="btnresetall" onclick="$(location).attr('href','inventarios');">Mostrar Todo</button>
                         </div>
                         <div class="row">
 
