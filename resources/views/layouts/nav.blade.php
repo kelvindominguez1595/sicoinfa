@@ -77,25 +77,18 @@
                 height="25"
                 alt="Black and White Portrait of a Man"
                 loading="lazy"
-            />  {{ Auth::user()->name }}
+            />
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+            <li class="border-bottom"><label class="ms-4 mb-2">{{ Auth::user()->name }}</label></li>
             <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Configuración</a></li>
-            <li><a class="dropdown-item" href="#">
-
-
-                    <a class="dropdown-item" href="{{ route('logout') }}"
-                       onclick="event.preventDefault();
-                                document.getElementById('logout-form').submit();">
-                        <i class="fas fa-sign-out-alt"></i>
-                        {{ __('Cerrar Sesión') }}
-                    </a>
-
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                        @csrf
-                    </form>
-
-                </a></li>
+            <li>
+                <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="fas fa-sign-out-alt"></i>
+                    {{ __('Cerrar Sesión') }}
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none"> @csrf </form>
+            </li>
         </ul>
     </li>
 </ul>
