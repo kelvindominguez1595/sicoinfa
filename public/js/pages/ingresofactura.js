@@ -63,7 +63,6 @@ $(function () {
             costosiniva.val('')
             $("#costototal").val('')
             sumarCostoTotalFinal()
-
         }
     })
     // para borrar el item
@@ -153,6 +152,31 @@ $(function () {
         sumarCostoTotalFinal()
     });
 
+    // guardar los datos del ingreso
+    $("#btnguardar").click(function (event){
+        let form = $("#frmingreo").serialize();
+        $.ajax({
+            url: '/ingresofactura',
+            type: 'POST',
+            dataType: 'JSON',
+            data: form,
+            success: function (res){
+                AlertConfirmacin("Guardado correctamente el ingreso");
+                setTimeout(function (){
+                    location.reload();
+                }, 3000);
+
+            },
+            error: function (err){
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: '¡Error algo salio mal!'
+                });
+            }
+        })
+        event.preventDefault();
+    })
 });
 // para que no se repita el producto
 function checkId (id) {
@@ -161,7 +185,6 @@ function checkId (id) {
 }
 
 // para sumar todos los costos totales del ingreso
-
 function sumarCostoTotalFinal(){
     let total = 0;
     $(".costotal").each(function(){

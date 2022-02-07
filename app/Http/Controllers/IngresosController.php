@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Almacenes;
+use App\Models\DatosIngresos;
 use App\Models\Ingresos;
 use App\Models\Precios;
 use App\Http\Requests\StoreIngresosRequest;
 use App\Http\Requests\UpdateIngresosRequest;
+use App\Models\Sucursales;
 use Illuminate\Http\Request;
 
 class IngresosController extends Controller
@@ -18,7 +20,8 @@ class IngresosController extends Controller
      */
     public function index()
     {
-        return view('ingresos.index');
+        $sucursal = Sucursales::all();
+        return view('ingresos.index', compact('sucursal'));
     }
 
     /**
@@ -217,4 +220,68 @@ class IngresosController extends Controller
     {
         //
     }
+
+    public function ingresofactura(Request $request){
+
+        // registramos los datos de la factura
+        DatosIngresos::created([
+            'proveedor_id' => $request->proveedor_id,
+            'numerofiscal' => $request->creditofiscal,
+            'fechafactura' => $request->fechafactura,
+            'fechaingreso' => $request->fechaingreso
+        ]);
+        // recorremos los datos de la tabla registrada
+        foreach($request['productid'] as $key => $value){
+            // hacemos el ingreso del producto
+            $ingreso = Ingresos::create([
+                'invoice_number' => $request->creditofiscal,
+                'invoice_date' => $request->fechafactura,
+                'register_date' => $request->fechaingreso,
+                'quantity' => $request['cant'][$key],
+                'unit_price' => $request['cotsin'][$key],
+                'stocks_id' => $request['productid'][$key],
+                'state' => 1,
+                'clientefacturas_id' => $request->proveedor_id,
+            ]);
+
+            // creamos un precio
+            Precios::create([
+                'cost_s_iva' => $request['cotsin'][$key],
+                'cost_c_iva' => 0,
+                'earn_c_iva' => 0,
+                'earn_porcent' => 0,
+                'sale_price' => 0,
+                'detalle_stock_id' => $ingreso->id
+            ]);
+            /**
+             * DEBEMOS DE PREGUNTAR SI EL PRODUCTO EXISTE EN EL ALMACEN
+            */
+            $dataalmacenes = Almacenes::where('branch_offices_id', $request->branch_offices_id)
+                ->where('stocks_id', $request['productid'][$key])
+                ->exists();
+            if($dataalmacenes){
+                // si existe solo actualizamos la cantidad del producto
+                $data = Almacenes::where('branch_offices_id', $request->branch_offices_id)
+                    ->where('stocks_id', $request['productid'][$key])
+                    ->first();
+
+                // se busca el producto y se actualiza
+                $cantidad = $request['cant'][$key] + $data->quantity;
+                $buscarinfo = Almacenes::find($data->id);
+                $buscarinfo->quantity = $cantidad;
+                $buscarinfo->save();
+            } else {
+                // creamos el producto
+                Almacenes::create([
+                    'stock_min' => 2,
+                    'quantity' =>  $request['cant'][$key],
+                    'branch_offices_id' => $request->branch_offices_id,
+                    'stocks_id' => $request['productid'][$key]
+                ]);
+            }
+
+        }
+        return response()->json(["message" => "Guardado"], 200);
+    }
+
 }

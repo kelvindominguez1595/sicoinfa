@@ -52,7 +52,8 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/historialcompras', [ProductosController::class, 'historialcompras']);
     Route::get('/listarproductos', [ProductosController::class, 'listarproductos']);
     Route::get('/productoid/{id}', [ProductosController::class, 'productoid']);
-
+    /** NUEVO INGRESO DE FACTURAS DE PRODUCTOS */
+    Route::post('/ingresofactura',[IngresosController::class, 'ingresofactura']);
     /** MARCAS */
     Route::resource('/marcas', MarcasController::class);
     /** CATEGORIAS */
