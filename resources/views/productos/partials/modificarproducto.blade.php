@@ -100,7 +100,13 @@
                         $pre = $pre + ($p->quantity * $p->unit_price);
                         $can += $p->quantity;
                     }
-                    $resul = $pre / $can;
+                    if($can == 0){
+                        $resul = 0;
+                    } else if($pre == 0){
+                        $resul = 0;
+                    } else {
+                        $resul = $pre / $can;
+                    }
                     $precioconiva = $resul + ($resul * 0.13);
 
                     $preciosiniva = 0;
