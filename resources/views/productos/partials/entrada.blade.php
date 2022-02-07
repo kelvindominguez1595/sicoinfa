@@ -31,7 +31,7 @@
             <div class="row mb-3">
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
                     <label for="codigo" class="fw-bold">Elige el Almacen a ingresar</label>
-                    <select class="form-control" name="branch_offices_id" id="branch_offices_id" data-branchoffice="{{$detalle_pro->branch_offices_id}}"></select>
+                    <select class="form-control" name="branch_offices_id" id="branch_offices_id" data-branchoffice="{{ !isset($detalle_pro->branch_offices_id) ? 1 : $detalle_pro->branch_offices_id }}"></select>
                 </div>
 
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
