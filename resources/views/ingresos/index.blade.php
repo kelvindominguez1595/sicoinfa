@@ -19,13 +19,19 @@
                 <div class="card-body">
 
                         <form id="frmingreo" name="frmingreo" class="row g-3">
+                            <div class="d-flex flex-row-reverse">
+                                <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                                    <label for="fechafactura" class="form-label fw-bold">Fecha Ingreso</label>
+                                    <input type="text" class="form-control" id="fechaingreso" readonly name="fechaingreso" value="" placeholder="Código">
+                                </div>
+                            </div>
                             <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
                                 <label for="proveedor_id" class="form-label fw-bold">Empresa Proveedora</label>
                                 <select class="form-control" id="proveedor_id" name="proveedor_id"></select>
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
                                 <label for="creditofiscal" class="form-label fw-bold">Crédito Fiscal</label>
-                                <input type="text" class="form-control" id="creditofiscal" name="creditofiscal" value="" placeholder="000">
+                                <input type="text" class="form-control" id="creditofiscal" name="creditofiscal" value="" placeholder="0000-000000-000-0">
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
                                 <label for="fechafactura" class="form-label fw-bold">Fecha Factura</label>

@@ -79,7 +79,6 @@
                     </div>
                     <div class="" id="imagecontainer">
                         <div class="d-flex justify-content-center mb-2" id="addimagen">
-
                             @if (!empty($stock->image))
                                 <img src="{{asset("images/productos/{$stock->image}")}}" class=" img-thumbnail" width="100px" height="100px" id="imagenmuestra">
                             @else
@@ -93,46 +92,55 @@
 
             <div class="row mb-3">
                 @php
-                    // echo $detalle_price->detalle_stock_id;
-                        $preciosiniva = 0;
-                        $precioconiva = 0;
+                    $can = 0;
+                    $pre = 0;
+                    $resul = 0;
+                    $precioconiva = 0;
+                    foreach ($promedio as $p){
+                        $pre = $pre + ($p->quantity * $p->unit_price);
+                        $can += $p->quantity;
+                    }
+                    $resul = $pre / $can;
+                    $precioconiva = $resul + ($resul * 0.13);
+
+                    $preciosiniva = 0;
+                    $ganancia = 0;
+                    $porcentaje = 0;
+                    $preciofinal = 0;
+                    $veralerta = false;
+                    if(isset($detalle_price->detalle_stock_id)){
+                        $preciosiniva = $detalle_price->cost_s_iva;
+             /*           if(empty($detalle_price->cost_c_iva))  {
+                            $precioconiva = $preciosiniva + ($preciosiniva * 0.13);
+                        } else {
+                            $precioconiva = $detalle_price->cost_c_iva;
+                        }*/
+
+                        $ganancia = $detalle_price->earn_c_iva;
+                        $porcentaje = $detalle_price->earn_porcent;
+                        $preciofinal = $detalle_price->sale_price;
+                        $veralerta = false;
+                    } else {
+                        if(isset($detalle_stock->unit_price)){
+                            $preciosiniva = $detalle_stock->unit_price;
+                     /*       $precioconiva = $preciosiniva + ($preciosiniva * 0.13);*/
+                            $veralerta = true;
+                        } else {
+                            $preciosiniva = 0;
+/*                            $precioconiva = 0;*/
+                            $veralerta = false;
+                        }
                         $ganancia = 0;
                         $porcentaje = 0;
                         $preciofinal = 0;
-                        $veralerta = false;
-                        if(isset($detalle_price->detalle_stock_id)){
-                            $preciosiniva = $detalle_price->cost_s_iva;
-                            if(empty($detalle_price->cost_c_iva))  {
-                                $precioconiva = $preciosiniva + ($preciosiniva * 0.13);
-                            } else {
-                                $precioconiva = $detalle_price->cost_c_iva;
-                            }
 
-                            $ganancia = $detalle_price->earn_c_iva;
-                            $porcentaje = $detalle_price->earn_porcent;
-                            $preciofinal = $detalle_price->sale_price;
-                            $veralerta = false;
-                        } else {
-                            if(isset($detalle_stock->unit_price)){
-                                $preciosiniva = $detalle_stock->unit_price;
-                                $precioconiva = $preciosiniva + ($preciosiniva * 0.13);
-                                $veralerta = true;
-                            } else {
-                                $preciosiniva = 0;
-                                $precioconiva = 0;
-                                $veralerta = false;
-                            }
-                            $ganancia = 0;
-                            $porcentaje = 0;
-                            $preciofinal = 0;
-
-                        }
+                    }
                 @endphp
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
                     <label for="categoria" class="fw-bold">Costo del producto (SIN IVA) </label>
                     <div class="input-group mb-3">
                         <span class="input-group-text fw-bold" id="basic-addon1">$</span>
-                        <input type="number" min="0" step="any" class="form-control" name="cost_s_iva" id="cost_s_iva" readonly value="{{number_format($preciosiniva, 4)}}">
+                        <input type="number" min="0" step="any" class="form-control" name="cost_s_iva" id="cost_s_iva" readonly value="{{number_format($resul, 4)}}">
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">

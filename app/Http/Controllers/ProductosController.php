@@ -274,11 +274,8 @@ class ProductosController extends Controller
 
         $detalle_pro = Almacenes::where('branch_offices_id', $sucursalid)->where('stocks_id', $id)->first();
         $almacenes = Sucursales::all();
-        $Detalle_products = DB::table('detalle_products as dp')
-            ->leftJoin('branch_offices as bf', 'dp.branch_offices_id', 'bf.id')
-            ->select('dp.quantity', 'bf.name', 'dp.stocks_id')
-            ->where('stocks_id', $id)->get();
-        return view('productos.actualizar', compact('stock', 'detalle_stock', 'detalle_stock2', 'id', 'detalle_price','detalle_pro', 'almacenes'));
+        $promedio = Ingresos::where('stocks_id', '=', $id)->get();
+        return view('productos.actualizar', compact('stock', 'detalle_stock', 'detalle_stock2', 'id', 'detalle_price','detalle_pro', 'almacenes', 'promedio'));
     }
 
     /**
