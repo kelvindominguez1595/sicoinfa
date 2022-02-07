@@ -101,7 +101,23 @@
                             <th class="small">Nombre</th>
                             <th class="small">Cantidad</th>
                             <th class="small">Unidad</th>
-                            <th class="small">P/Venta</th>
+                            <th class="small">P/Venta
+                                <form action="{{ route('productos.index')}}" method="get">
+                                    @php
+                                        $res;
+                                        if($orderby == 'DESC'){
+                                            $res = "ASC";
+                                        } else {
+                                            $res = "DESC";
+                                        }
+                                    @endphp
+                                    <input type="hidden" name="orderby" id="orderby" value="{{$res}}">
+                                    <button type="submit">
+                                        <i class="fas fa-sort-down"></i>
+
+                                    </button>
+                                </form>
+                            </th>
                             <th class="small">Costo</th>
                             <th class="small">Imagen</th>
                             <th class="small">Ajuste</th>

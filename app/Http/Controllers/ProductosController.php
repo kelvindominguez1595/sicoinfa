@@ -38,6 +38,7 @@ class ProductosController extends Controller
         $marca = $request->marca;
         $nombre = $request->nombre;
         $almacen = $request->almacen;
+        $orderby = $request->orderby;
 
 
         if (!empty($request->pages)) {
@@ -53,7 +54,8 @@ class ProductosController extends Controller
             !empty($marca) OR
             !empty($nombre) OR
             !empty($almacen) OR
-            !empty($request->estado)){
+            !empty($request->estado) OR
+            !empty($request->orderby)){
             $query = DB::table('stocks as sk')
                 ->leftJoin('categories as c', 'sk.category_id', 'c.id')
                 ->leftJoin('manufacturers as man', 'sk.manufacturer_id', 'man.id')
@@ -130,7 +132,11 @@ class ProductosController extends Controller
                 }
             }
             // aqui pondria la logica para ordernar los productos
-            $query->orderBy('sk.code', 'ASC');
+            if(!empty($orderby)){
+                $query->orderBy('precioventa', $orderby);
+            } else {
+                $query->orderBy('sk.code', 'ASC');
+            }
             $data = $query->paginate($pages);
         } else {
             $data = DB::table('stocks as sk')
@@ -173,7 +179,7 @@ class ProductosController extends Controller
             ->get();
         // ver los almacenes
         $almaceneslist = Sucursales::all();
-        return view('productos.index', compact('data', 'estado', 'codigo', 'codbarra', 'categoria', 'marca', 'nombre', 'almacen', 'pages', 'ultimoPro', 'almaceneslist'));
+        return view('productos.index', compact('data','orderby', 'estado', 'codigo', 'codbarra', 'categoria', 'marca', 'nombre', 'almacen', 'pages', 'ultimoPro', 'almaceneslist'));
     }
 
     /**
