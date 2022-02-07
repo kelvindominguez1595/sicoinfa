@@ -25,7 +25,7 @@
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
                     <label for="categoria" class="fw-bold">Número Crédito Fiscal</label>
                     <input type="text" class="form-control" name="invoice_number"
-                           id="invoice_number" value="{{$ultimoingreso->invoice_number}}">
+                           id="invoice_number" value="{{ !isset($ultimoingreso->invoice_number) ? '' : $ultimoingreso->invoice_number }}">
                 </div>
             </div>
             <div class="row mb-3">
@@ -38,7 +38,7 @@
                     <div class="row">
                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
                             <label for="unidaddemedida" class="fw-bold">Fecha de Factura</label>
-                            <input type="date" class="form-control" name="invoice_date" id="invoice_date" value="{{$ultimoingreso->invoice_date}}">
+                            <input type="date" class="form-control" name="invoice_date" id="invoice_date" value="{{ !isset($ultimoingreso->invoice_date) ? '' : $ultimoingreso->invoice_date }}">
                         </div>
                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
                             <label for="categoria" class="fw-bold">Fecha de Ingreso</label>
