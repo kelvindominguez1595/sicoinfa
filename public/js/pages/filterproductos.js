@@ -42,14 +42,28 @@ $(document).ready(function () {
             cache: true
         }
     });
-    $(function() {
-        $('.imgzoom').popover({
-            html: true,
-            trigger: 'hover',
-            content: function () {
-                return '<img src="'+$(this).attr('src') + '" width="150" height="150" />';
-            }
+
+    // para obtener el registro buscado
+    let categoria = document.querySelector('#categoria').dataset.categoria;
+    let marca = document.querySelector('#marca').dataset.marca;
+
+    if(categoria !== ''){
+        $.get('categoriasid/'+categoria, function (res) {
+            $('#categoria').append('<option value="'+res.id+'" selected="selected">'+res.name+'</option>');
         });
+    }
+    if(marca !== ''){
+        $.get('marcasid/'+marca, function (res) {
+            $('#marca').append('<option value="'+res.id+'" selected="selected">'+res.name+'</option>');
+        });
+    }
+
+    $('.imgzoom').popover({
+        html: true,
+        trigger: 'hover',
+        content: function () {
+            return '<img src="'+$(this).attr('src') + '" width="150" height="150" />';
+        }
     });
 
     /// para modificar las cantidades en existencias
