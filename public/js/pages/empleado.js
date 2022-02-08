@@ -10,7 +10,7 @@ $(function () {
         placeholder: 'Seleccione...',
         allowClear: true,
         ajax: {
-            url: '/list_marcasempleado',
+            url: '/list_categoriasempleado',
             dataType: 'json',
             delay: 250,
             data: function (params) {
@@ -28,7 +28,7 @@ $(function () {
         placeholder: 'Seleccione...',
         allowClear: true,
         ajax: {
-            url: '/list_categoriasempleado',
+            url: '/list_marcasempleado',
             dataType: 'json',
             delay: 250,
             data: function (params) {
@@ -40,6 +40,21 @@ $(function () {
             cache: true
         }
     });
+    // para obtener el registro buscado
+    let categoria = document.querySelector('#categoria').dataset.categoria;
+    let marca = document.querySelector('#marca').dataset.marca;
+
+    if(categoria !== ''){
+        $.get('findcategoriesempl/'+categoria, function (res) {
+            $('#categoria').append('<option value="'+res.id+'" selected="selected">'+res.name+'</option>');
+        });
+    }
+    if(marca !== ''){
+        $.get('marcasidemp/'+marca, function (res) {
+            $('#marca').append('<option value="'+res.id+'" selected="selected">'+res.name+'</option>');
+        });
+    }
+
     var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
     var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
         return new bootstrap.Popover(popoverTriggerEl)
