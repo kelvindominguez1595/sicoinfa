@@ -11,9 +11,15 @@ class Precios extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $table = 'detalle_price';
+    protected $table = 'precios';
     protected $fillable = [
-        'quantity', 'cost_s_iva', 'cost_c_iva', 'earn_c_iva', 'earn_porcent', 'sale_price', 'state', 'detalle_stock_id'
+        'producto_id',
+        'costosiniva',
+        'costoconiva',
+        'ganancia',
+        'porcentaje',
+        'precioventa',
+        'cambio',
     ];
 
     protected $dates = ['deleted_at'];
