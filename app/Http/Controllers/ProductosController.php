@@ -264,29 +264,20 @@ class ProductosController extends Controller
             ->limit(1)
             ->orderBy('id','DESC')
             ->first();
-        $detalle_stock = Ingresos::where('stocks_id', $id)
-            ->limit(1)
-            ->orderBy('id','DESC')
-            ->first();
 
-        // para mostrar el ultimo registro y extraer fecha y numero de factura
-        $detalle_stock2 = Ingresos::select('invoice_date', 'invoice_number', 'created_at')
-            ->latest('created_at')
-            ->first();
-
-        if (isset($detalle_stock)) {
+    /*    if (isset($detalle_stock)) {
             $detalle_price = Precios::where('detalle_stock_id', $detalle_stock->id)
                 ->limit(1)
                 ->orderBy('id','DESC')
                 ->first();
         } else {
             $detalle_price = "";
-        }
+        }*/
 
         $detalle_pro = Almacenes::where('branch_offices_id', $sucursalid)->where('stocks_id', $id)->first();
         $almacenes = Sucursales::all();
         $promedio = Ingresos::where('stocks_id', '=', $id)->get();
-        return view('productos.actualizar', compact('stock', 'detalle_stock', 'detalle_stock2', 'id', 'detalle_price','detalle_pro', 'almacenes', 'promedio', 'ultimoingreso'));
+        return view('productos.actualizar', compact('stock',  'id','detalle_pro', 'almacenes', 'promedio', 'ultimoingreso'));
     }
 
     /**

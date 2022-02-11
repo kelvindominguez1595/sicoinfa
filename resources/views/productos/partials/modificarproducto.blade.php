@@ -91,56 +91,30 @@
             </div>
 
             <div class="row mb-3">
-                @php
-                    $can = 0;
-                    $pre = 0;
-                    $resul = 0;
-                    $precioconiva = 0;
-                    $preciosiniva = 0;
-                    $ganancia = 0;
-                    $porcentaje = 0;
-                    $preciofinal = 0;
-                    $veralerta = false;
-                    $ganancia = 0;
-                    $porcentaje = 0;
-                    $preciofinal = 0;
-
-
-                @endphp
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
                     <label for="categoria" class="fw-bold">Costo del producto (SIN IVA) </label>
                     <div class="input-group mb-3">
                         <span class="input-group-text fw-bold" id="basic-addon1">$</span>
-                        <input type="number" min="0" step="any" class="form-control" name="cost_s_iva" id="cost_s_iva" readonly value="{{number_format($resul, 4)}}">
+                        <input type="number" min="0" step="any" class="form-control" name="cost_s_iva" id="cost_s_iva" readonly value="">
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
                     <label for="categoria" class="fw-bold">Costo del Producto (IVA INCLUIDO)</label>
                     <div class="input-group mb-3">
                         <span class="input-group-text fw-bold" id="basic-addon1">$</span>
-                        <input type="number" min="0" step="any" class="form-control " name="cost_c_iva" id="cost_c_iva" readonly  value="{{number_format($precioconiva, 4)}}" data-iva="13">
+                        <input type="number" min="0" step="any" class="form-control " name="cost_c_iva" id="cost_c_iva" readonly  value="" data-iva="13">
                     </div>
                 </div>
             </div>
             <div class="row mb-3">
-                <div class="col-12">
-                    <div class="alert alert-danger d-none" role="alert" id="messagedanger">
-                        <i class="fas fa-info-circle"></i> El costo del producto ah cambiado por favor verificar el precio de venta al consumidor final.
-                    </div>
-                    @if($veralerta)
-                        <div class="alert alert-danger" role="alert">
-                            <i class="fas fa-info-circle"></i> El costo del producto ah cambiado por favor verificar el precio de venta al consumidor final.
-                        </div>
 
-                    @endif
-                </div>
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
                     <div class="row">
                         <div class="col">
                             <label for="categoria" class="fw-bold">Ganancia (IVA INCLUIDO)</label>
                             <div class="input-group mb-3">
                                 <span class="input-group-text fw-bold" id="basic-addon1">$</span>
-                                <input type="number" min="0" step="any" class="form-control " name="earn_c_iva" id="earn_c_iva" value="{{ number_format($ganancia, 4) }}">
+                                <input type="number" min="0" step="any" class="form-control " name="earn_c_iva" id="earn_c_iva" value="">
                             </div>
                         </div>
 
@@ -148,7 +122,7 @@
                             <label for="categoria" class="fw-bold">Porcentaje de Ganancia</label>
                             <div class="input-group mb-3">
                                 <span class="input-group-text fw-bold" id="basic-addon1">%</span>
-                                <input type="number" min="0" step="any" class="form-control " name="earn_porcent" id="earn_porcent" value="{{$porcentaje}}">
+                                <input type="number" min="0" step="any" class="form-control " name="earn_porcent" id="earn_porcent" value="">
                             </div>
                         </div>
                     </div>
@@ -157,7 +131,7 @@
                     <label for="categoria" class="fw-bold">Precio de Venta a Consumidor (IVA INCLUIDO)</label>
                     <div class="input-group mb-3">
                         <span class="input-group-text fw-bold" id="basic-addon1">$</span>
-                        <input type="number" min="0" step="any" class="form-control" name="sale_price" id="sale_price"  value="{{$preciofinal}}">
+                        <input type="number" min="0" step="any" class="form-control" name="sale_price" id="sale_price"  value="">
                     </div>
                 </div>
             </div>
