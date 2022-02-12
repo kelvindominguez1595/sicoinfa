@@ -6,6 +6,9 @@ $(function () {
     });
     showTime();
     var stockid = $('#stocks_id').val();
+
+    listarExistencia(stockid); // listamos las existencias
+
     // cargamos los select2
     $('#category_id').select2({
         theme: "bootstrap-5",
@@ -114,13 +117,11 @@ $(function () {
     let unidadmedida = document.querySelector('#measures_id').dataset.unidamedida;
     let proveedorid = document.querySelector('#suppliers_id').dataset.idproveedor;
     let branchoffice = document.querySelector('#branch_offices_id').dataset.branchoffice;
-
+    obtenerPrecios(stockid, branchoffice); // para obtener el precio
     // validamos que los data set tenga algun dato para cargar un item en el select2
     $.get('../../categoriasid/'+cateid, function (res) {
         $('#category_id').append('<option value="'+res.id+'" selected="selected">'+res.name+'</option>');
     });
-
-    listarExistencia(stockid); // listamos las existencias
 
     $.get('../../marcasid/'+marcaid, function (res) {
         $('#manufacturer_id').append('<option value="'+res.id+'" selected="selected">'+res.name+'</option>');
@@ -289,6 +290,7 @@ $(function () {
             $("#hasta").val(1)
         }
     });
+
     $("#hasta").change(function () {
         var desde = $(this).val();
         if(desde == 1) {
@@ -373,5 +375,12 @@ function showTime() {
     if (seconds < 10) seconds = "0" + seconds;
     $("#fechaingreso").val(day + "-" + month + "-" + year + " " + hora);
     setTimeout("showTime()", 1000);
+}
+
+function obtenerPrecios(producto, sucursal){
+    $.get('../../precioRealdelProducto/'+producto+'/'+sucursal, function (res) {
+        console.log(res);
+    });
+
 }
 

@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Precios extends Model
 {
     use HasFactory;
-    use SoftDeletes;
 
     protected $table = 'precios';
     protected $fillable = [
@@ -22,5 +21,5 @@ class Precios extends Model
         'cambio',
     ];
 
-    protected $dates = ['deleted_at'];
+
 }
