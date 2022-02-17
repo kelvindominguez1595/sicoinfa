@@ -92,17 +92,19 @@
 
             <div class="row mb-3">
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                    <input type="hidden" name="precioid" id="precioid">
                     <label for="categoria" class="fw-bold">Costo del producto (SIN IVA) </label>
                     <div class="input-group mb-3">
                         <span class="input-group-text fw-bold" id="basic-addon1">$</span>
-                        <input type="number" min="0" step="any" class="form-control" name="cost_s_iva" id="cost_s_iva" readonly value="">
+                        <input type="number" min="0" step="any" class="form-control" name="cost_s_iva" id="cost_s_iva" readonly value="0">
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
                     <label for="categoria" class="fw-bold">Costo del Producto (IVA INCLUIDO)</label>
+
                     <div class="input-group mb-3">
                         <span class="input-group-text fw-bold" id="basic-addon1">$</span>
-                        <input type="number" min="0" step="any" class="form-control " name="cost_c_iva" id="cost_c_iva" readonly  value="" data-iva="13">
+                        <input type="number" min="0" step="any" class="form-control " name="cost_c_iva" id="cost_c_iva" readonly  value="0" data-iva="13">
                     </div>
                 </div>
             </div>
@@ -114,7 +116,7 @@
                             <label for="categoria" class="fw-bold">Ganancia (IVA INCLUIDO)</label>
                             <div class="input-group mb-3">
                                 <span class="input-group-text fw-bold" id="basic-addon1">$</span>
-                                <input type="number" min="0" step="any" class="form-control " name="earn_c_iva" id="earn_c_iva" value="">
+                                <input type="number" min="0" step="any" class="form-control " name="earn_c_iva" id="earn_c_iva" value="0">
                             </div>
                         </div>
 
@@ -122,7 +124,7 @@
                             <label for="categoria" class="fw-bold">Porcentaje de Ganancia</label>
                             <div class="input-group mb-3">
                                 <span class="input-group-text fw-bold" id="basic-addon1">%</span>
-                                <input type="number" min="0" step="any" class="form-control " name="earn_porcent" id="earn_porcent" value="">
+                                <input type="number" min="0" step="any" class="form-control " name="earn_porcent" id="earn_porcent" value="0">
                             </div>
                         </div>
                     </div>
@@ -131,7 +133,7 @@
                     <label for="categoria" class="fw-bold">Precio de Venta a Consumidor (IVA INCLUIDO)</label>
                     <div class="input-group mb-3">
                         <span class="input-group-text fw-bold" id="basic-addon1">$</span>
-                        <input type="number" min="0" step="any" class="form-control" name="sale_price" id="sale_price"  value="">
+                        <input type="number" min="0" step="any" class="form-control" name="sale_price" id="sale_price"  value="0">
                     </div>
                 </div>
             </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Almacenes;
 use App\Models\Categorias;
+use App\Models\DetalleIngreso;
 use App\Models\Ingresos;
 use App\Models\Marcas;
 use App\Models\Precios;
@@ -265,15 +266,6 @@ class ProductosController extends Controller
             ->orderBy('id','DESC')
             ->first();
 
-    /*    if (isset($detalle_stock)) {
-            $detalle_price = Precios::where('detalle_stock_id', $detalle_stock->id)
-                ->limit(1)
-                ->orderBy('id','DESC')
-                ->first();
-        } else {
-            $detalle_price = "";
-        }*/
-
         $detalle_pro = Almacenes::where('branch_offices_id', $sucursalid)->where('stocks_id', $id)->first();
         $almacenes = Sucursales::all();
         $promedio = Ingresos::where('stocks_id', '=', $id)->get();
@@ -290,7 +282,6 @@ class ProductosController extends Controller
     public function update(Request $request, $id)
     {
         // esto para actualizar los datos de los productos
-        $message = "";
         $data = Productos::find($id);
         $data->category_id      = $request->category_id;
         $data->manufacturer_id  = $request->manufacturer_id;
@@ -314,75 +305,38 @@ class ProductosController extends Controller
         }
         $data->save();
 
-        // creamos un nuevo precio solo en caso que el precio haya cambiando
-        $ingreso = Ingresos::where('stocks_id', '=', $id)
-            ->limit(1)
-            ->orderBy('id', 'DESC')
-            ->first();
-        if( $ingreso ) {
-            $precioingreso = Precios::where('detalle_stock_id', '=', $ingreso->id)
-                ->where('sale_price', '=', $request->sale_price)
-                ->limit(1)
-                ->orderBy('detalle_stock_id', 'DESC')
-                ->exists();
-            //->first();
-            // si encuentro el mismo precio de venta no realizar nada
-            if (!$precioingreso) {
-                Precios::create([
-                    'unit_price' => $request->unit_price,
-                    'cost_s_iva' => $request->cost_s_iva,
-                    'cost_c_iva' => $request->cost_c_iva,
-                    'earn_c_iva' => $request->earn_c_iva,
-                    'earn_porcent' => $request->earn_porcent,
-                    'sale_price' => $request->sale_price,
-                    'state' => 1,
-                    'detalle_stock_id' => $ingreso->id,
-                ]);
-                $message = 'Producto y precio de venta actualizado correctamente';
-            } else {
-                $message = 'Producto actualizado correctamente';
-            }
+        $costosiniva = $request->cost_s_iva;
+        $costoconiva = $request->cost_c_iva;
+        $ganancia = $request->earn_c_iva;
+        $porcentaje = $request->earn_porcent;
+        $preciventa = $request->sale_price;
+        $precios = $this->validarPrecio($id);
+        if( $costosiniva == 0 || $costosiniva == '' ){
+            $resprice = Precios::create([
+                'producto_id'   => $id,
+                'costosiniva'   => $costosiniva,
+                'costoconiva'   => $costoconiva,
+                'ganancia'      => $ganancia,
+                'porcentaje'    => $porcentaje,
+                'precioventa'   => $preciventa,
+                'cambio'        => 'Solo precio venta',
+            ]);
         } else {
-            /**
-             * si no esta el ingreso le crearemos uno para que pueda mostrar el precio de venta,
-             * ya que estos productos solo son por encargos pero se puede ver el precio de venta.
-             */
+            if( $precios['ganancia'] != $ganancia && $precios['porcentaje'] != $porcentaje && $precios['precioventa'] != $preciventa)
+            {
+               $resprice =  Precios::create([
+                    'producto_id'   => $id,
+                    'costosiniva'   => $costosiniva,
+                    'costoconiva'   => $costoconiva,
+                    'ganancia'      => $ganancia,
+                    'porcentaje'    => $porcentaje,
+                    'precioventa'   => $preciventa,
+                    'cambio'        => 'actualizado',
+                ]);
+            }
 
-            // voy a registrar un cliente factrura que no es ninguna empresa
-            $noempresa = Proveedores::where('tipo_cliente', 3)
-                ->where('state', 3)->first();
-            // creamos el ingreso en la tabla detalle_stock
-            /**
-             * en el state pondremos 4 para que al sacar reporte estos registros no los tome en cuenta
-             * ya que es un producto sin costo solo tiene precio venta
-             */
-            $ingreso = Ingresos::create([
-                'invoice_number' => 0,
-                'invoice_date' => date('Y-m-d'),
-                'register_date' => date('Y-m-d'),
-                'quantity' => 0,
-                'unit_price' => 0,
-                'state' => 4,
-                'state_price' => '',
-                'stocks_id' => $request->stocks_id,
-                'clientefacturas_id' => $noempresa->id,
-            ]);
-            /**
-             * Ya creado el ingreso pondremos el precio de venta al producto
-             */
-            $precio = Precios::create([
-                'unit_price' => $request->unit_price,
-                'cost_s_iva' => $request->cost_s_iva,
-                'cost_c_iva' => $request->cost_c_iva,
-                'earn_c_iva' => $request->earn_c_iva,
-                'earn_porcent' => $request->earn_porcent,
-                'sale_price' => $request->sale_price,
-                'state' => 1,
-                'detalle_stock_id' => $ingreso->id,
-            ]);
-            $message = 'Precio de venta del producto actualizado correctamente';
         }
-        return response()->json(["message" =>  $message], 200);
+        return response()->json(["message" =>  "succes", "precio" => $precios, "data" => $data], 200);
     }
 
     /**
@@ -614,7 +568,6 @@ class ProductosController extends Controller
         /** message y codigo*/
         $message = "";
         $code = "";
-
         /**
          * ---------------------------------------------------------------
          * Debo verificar que la sucusarl este creado el producto caso contrario debo de crearlo
@@ -845,6 +798,83 @@ class ProductosController extends Controller
     // para ver el historial de compras realizadas recientemente
     public function historialcompras(Request $request){
         return view('productos.historicocompras');
+    }
+
+    // function para validar los precios
+    public function validarPrecio($id){
+        $buscarprecio = Precios::where('producto_id', '=', $id)->exists();
+        if($buscarprecio){
+            // si el precio nuevo existe tomaremos los datos de esta nueva tabla
+            $precio = Precios::where('producto_id', $id)
+                ->limit(1)
+                ->orderBy('id','DESC')
+                ->first();
+        } else {
+            // en caso que no exista tomaremos el precio ultimo registrado
+            $exisingreso = Ingresos::where('stocks_id', '=', $id)
+                ->limit(1)
+                ->orderBy('id','DESC')
+                ->exists();
+            if($exisingreso){
+                $precioviejoingreso = Ingresos::where('stocks_id', $id)
+                    ->limit(1)
+                    ->orderBy('id','DESC')
+                    ->first();
+                $exist = DetalleIngreso::where('detalle_stock_id', '=', $precioviejoingreso->id)->exists();
+                if($exist){
+                    $precioviejo = DetalleIngreso::where('detalle_stock_id', '=', $precioviejoingreso->id)->first();
+                } else {
+                    $precioviejo = "";
+                    $costosiniva    = 0;
+                    $costoconiva    = 0;
+                    $ganancia       = 0;
+                    $porcentaje     = 0;
+                    $precioventa    = 0;
+                }
+
+            }else{
+                $precioviejo = "";
+                $costosiniva    = 0;
+                $costoconiva    = 0;
+                $ganancia       = 0;
+                $porcentaje     = 0;
+                $precioventa    = 0;
+            }
+        }
+
+        if(!empty($precio)) {
+            // datos precio nuevo
+            $costosiniva    = $precio->costosiniva;
+            $costoconiva    = $precio->costoconiva;
+            $ganancia       = $precio->ganancia;
+            $porcentaje     = $precio->porcentaje;
+            $precioventa    = $precio->precioventa;
+        }
+        if(!empty($precioviejo)) {
+            // datos precio viejo
+            $costosiniva    = $precioviejo->cost_s_iva;
+            $costoconiva    = $precioviejo->cost_c_iva;
+            $ganancia       = $precioviejo->earn_c_iva;
+            $porcentaje     = $precioviejo->earn_porcent;
+            $precioventa    = $precioviejo->sale_price;
+        }
+        if(!empty($precioviejo) && !empty($precio)){
+            // si el producto es nuevo no existaran precios asi que es cero
+            $costosiniva    = 0;
+            $costoconiva    = 0;
+            $ganancia       = 0;
+            $porcentaje     = 0;
+            $precioventa    = 0;
+        }
+
+        $params = array(
+            "costosiniva"   => $costosiniva,
+            "costoconiva"   => $costoconiva,
+            "ganancia"      => $ganancia,
+            "porcentaje"    => $porcentaje,
+            "precioventa"   => $precioventa
+        );
+        return $params;
     }
 
 }
