@@ -129,6 +129,7 @@
                                             <td class="small">{{ $item->quantity }}</td>
                                             <td class="small"> {{ $item->medida_name }}</td>
                                             <td class="small">
+                                                <!-- precionuevo -->
                                                 @isset($item->description)
                                                     <a
                                                         href="#"
@@ -141,15 +142,24 @@
                                                         data-bs-html="true"
                                                         data-bs-content='<div><?php echo $item->description ?></div>'
                                                     >
-                                                        ${{number_format($item->precioventa,2)}}
+                                                        @isset($item->precionuevo)
+                                                            ${{number_format($item->precionuevo,2)}}
+                                                        @else
+                                                            ${{number_format($item->precioventa,2)}}
+                                                        @endisset
                                                     </a>
                                                 @else
-                                                    ${{number_format($item->precioventa,2)}}
+                                                    @isset($item->precionuevo)
+                                                        ${{number_format($item->precionuevo,2)}}
+                                                    @else
+                                                        ${{number_format($item->precioventa,2)}}
+                                                    @endisset
                                                 @endisset
 
                                             </td>
                                             <td class="text-center">
-                                                @isset($item->costosiniva)
+                                                @if(isset($item->costonuevo))
+                                                    @php $costo = number_format($item->costonuevo,4); @endphp
                                                     <a
                                                         href="#"
                                                         tabindex="0"
@@ -159,7 +169,22 @@
                                                         data-bs-trigger="hover focus"
                                                         title="Costo (IVA Incluido)"
                                                         data-bs-html="true"
-                                                        data-bs-content='<div> ${{ number_format($item->costosiniva,4) }}</div>'
+                                                        data-bs-content='<div> ${{ $costo }}</div>'
+                                                    >
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                @elseif(isset($item->costosiniva))
+                                                    @php $costo = number_format($item->costosiniva,4); @endphp
+                                                    <a
+                                                        href="#"
+                                                        tabindex="0"
+                                                        role="button"
+                                                        data-bs-placement="left"
+                                                        data-bs-toggle="popover"
+                                                        data-bs-trigger="hover focus"
+                                                        title="Costo (IVA Incluido)"
+                                                        data-bs-html="true"
+                                                        data-bs-content='<div> ${{ $costo }}</div>'
                                                     >
                                                         <i class="fas fa-eye"></i>
                                                     </a>

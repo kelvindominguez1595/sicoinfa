@@ -88,7 +88,7 @@
                     <div class="">
                         {{ $data->total() }} Resultados
                     </div>
-                    <!-- <a class="btn btn btn-light btn-sm" href="{{ route('productos.create') }}">Nuevo Producto&nbsp;<i class="fa fa-save"></i></a>-->
+                     <a class="btn btn btn-light btn-sm" href="{{ route('productos.create') }}">Nuevo Producto&nbsp;<i class="fa fa-save"></i></a>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -101,23 +101,7 @@
                             <th class="small">Nombre</th>
                             <th class="small">Cantidad</th>
                             <th class="small">Unidad</th>
-                            <th class="small">P/Venta
-                                <form action="{{ route('productos.index')}}" method="get">
-                                    @php
-                                        $res;
-                                        if($orderby == 'DESC'){
-                                            $res = "ASC";
-                                        } else {
-                                            $res = "DESC";
-                                        }
-                                    @endphp
-                                    <input type="hidden" name="orderby" id="orderby" value="{{$res}}">
-                                    <button type="submit">
-                                        <i class="fas fa-sort-down"></i>
-
-                                    </button>
-                                </form>
-                            </th>
+                            <th class="small">P/Venta</th>
                             <th class="small">Costo</th>
                             <th class="small">Imagen</th>
                             <th class="small">Ajuste</th>
@@ -142,6 +126,7 @@
                                             <td class="small"> {{ $item->cantidadnew }}</td>
                                             <td class="small"> {{ $item->medida_name }}</td>
                                             <td class="small">
+                                                <!-- precionuevo -->
                                                 @isset($item->description)
                                                     <a
                                                         href="#"
@@ -154,16 +139,24 @@
                                                         data-bs-html="true"
                                                         data-bs-content='<div><?php echo $item->description ?></div>'
                                                     >
-                                                        ${{number_format($item->precioventa,2)}}
+                                                        @isset($item->precionuevo)
+                                                            ${{number_format($item->precionuevo,2)}}
+                                                        @else
+                                                            ${{number_format($item->precioventa,2)}}
+                                                        @endisset
                                                     </a>
                                                 @else
-                                                    ${{number_format($item->precioventa,2)}}
+                                                    @isset($item->precionuevo)
+                                                        ${{number_format($item->precionuevo,2)}}
+                                                    @else
+                                                        ${{number_format($item->precioventa,2)}}
+                                                    @endisset
                                                 @endisset
 
                                             </td>
                                             <td class="text-center">
-                                                @isset($item->costosiniva)
-
+                                                @if(isset($item->costonuevo))
+                                                   @php $costo = number_format($item->costonuevo,4); @endphp
                                                     <a
                                                         href="#"
                                                         tabindex="0"
@@ -173,7 +166,22 @@
                                                         data-bs-trigger="hover focus"
                                                         title="Costo (IVA Incluido)"
                                                         data-bs-html="true"
-                                                        data-bs-content='<div> ${{ number_format($item->costosiniva,4) }}</div>'
+                                                        data-bs-content='<div> ${{ $costo }}</div>'
+                                                    >
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                @elseif(isset($item->costosiniva))
+                                                    @php $costo = number_format($item->costosiniva,4); @endphp
+                                                    <a
+                                                        href="#"
+                                                        tabindex="0"
+                                                        role="button"
+                                                        data-bs-placement="left"
+                                                        data-bs-toggle="popover"
+                                                        data-bs-trigger="hover focus"
+                                                        title="Costo (IVA Incluido)"
+                                                        data-bs-html="true"
+                                                        data-bs-content='<div> ${{ $costo }}</div>'
                                                     >
                                                         <i class="fas fa-eye"></i>
                                                     </a>
