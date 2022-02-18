@@ -10,8 +10,8 @@
                     <label for="categoria" class="fw-bold">Elige la Empresa Proveedora</label>
                     @php
                         $proveedor = 0;
-                        if(isset($detalle_stock->clientefacturas_id)){
-                            $proveedor = $detalle_stock->clientefacturas_id;
+                        if(isset($ultimoingreso->clientefacturas_id)){
+                            $proveedor = $ultimoingreso->clientefacturas_id;
                         } else {
                             $proveedor = 0;
                         }

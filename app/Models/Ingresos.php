@@ -23,6 +23,7 @@ class Ingresos extends Model
         'state_price',
         'stocks_id',
         'clientefacturas_id',
+        'datosingresos_id'
     ];
 
     protected $dates = ['deleted_at'];

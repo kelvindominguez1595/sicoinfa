@@ -61,7 +61,7 @@ class IngresosController extends Controller
          * ************** PASO 2 ****************
          * realizamos el ingreso a la tabla ingreso
          */
-        DatosIngresos::create([
+        $dataingre = DatosIngresos::create([
             'proveedor_id' => $proveedor,
             'numerofiscal' => $creditofiscal,
             'fechafactura' => $fechafactura,
@@ -77,6 +77,7 @@ class IngresosController extends Controller
             'stocks_id' => $stock_id,
             'state' => 1,
             'clientefacturas_id' => $proveedor,
+            'datosingresos_id' => $dataingre->id,
         ]);
         // respondemos
         return response()->json(["message" => "Nuevo ingreso guardado correctamente", "data" => $res],200);
@@ -201,8 +202,10 @@ class IngresosController extends Controller
             // multiplicamos el nuevo costo con iva
             $costoPromedio = $costo_ingreso;
             $precioconiva = $costoPromedio + ($costoPromedio * 0.13);
-            $ganancia = 0;
-            $porcentaje = 0;
+            $priceVenta = $this->preciofinalVenta($precio['precioventa'], $precioconiva);
+
+            $ganancia =  $priceVenta['ganancia'];;
+            $porcentaje = $priceVenta['porcentaje'];;
             $precioventa = $precio['precioventa'];
             $sumaCantidad = $cantidad_ingreso;
         } else {

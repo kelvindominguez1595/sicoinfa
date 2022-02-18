@@ -1,92 +1,76 @@
+let timeShow = 3000;
+function timeShowchange(time){
+    timeShow = time;
+}
 function AlerSuccess(){
-    setTimeout(function() {
         toastr.options = {
             closeButton: true,
             progressBar: true,
             showMethod: 'slideDown',
-            timeOut: 3000
+            timeOut: timeShow
         };
         toastr.success("Registro creado correctamente");
-
-    }, 10);
 }
 
 function AlerUpdate(){
-    setTimeout(function() {
         toastr.options = {
             closeButton: true,
             progressBar: true,
             showMethod: 'slideDown',
-            timeOut: 3000
+            timeOut: timeShow
         };
         toastr.success("Registro Actualizado correctamente");
-    }, 10);
 }
 
 function AlerBorrar(){
-    setTimeout(function() {
         toastr.options = {
             closeButton: true,
             progressBar: true,
             showMethod: 'slideDown',
-            timeOut: 3000
+            timeOut: timeShow
         };
         toastr.success("Registro borrado correctamente");
-
-    }, 10);
 }
 
 function AlertConfirmacin(datos){
-    setTimeout(function() {
         toastr.options = {
             closeButton: true,
             progressBar: true,
             showMethod: 'slideDown',
-            timeOut: 3000
+            timeOut: timeShow
         };
         toastr.success(datos);
-
-    }, 10);
 }
 
 
 function AlertInformacion(datos){
-    setTimeout(function() {
-        toastr.options = {
-            closeButton: true,
-            progressBar: true,
-            showMethod: 'slideDown',
-            timeOut: 3000
-        };
-        toastr.info(datos);
-
-    }, 10);
+    toastr.options = {
+        closeButton: true,
+        progressBar: true,
+        showMethod: 'slideDown',
+        timeOut: timeShow
+    };
+    toastr.info(datos);
 }
 
 function AlertAbvertencia(datos){
-    setTimeout(function() {
-        toastr.options = {
-            closeButton: true,
-            progressBar: true,
-            showMethod: 'slideDown',
-            timeOut: 3000
-        };
-        toastr.warning(datos);
-
-    }, 10);
+    toastr.options = {
+        closeButton: true,
+        progressBar: true,
+        showMethod: 'slideDown',
+        timeOut: timeShow
+    };
+    toastr.warning(datos);
 }
 
 function AlertError(datos){
-    setTimeout(function() {
-        toastr.options = {
-            closeButton: true,
-            progressBar: true,
-            showMethod: 'slideDown',
-            timeOut: 3000
-        };
-        toastr.error(datos);
-
-    }, 10);
+    toastr.options = {
+        closeButton: true,
+        progressBar: true,
+        showMethod: 'slideDown',
+        timeOut: timeShow
+    };
+    toastr.error(datos);
 }
 
 // toast para eliminar
