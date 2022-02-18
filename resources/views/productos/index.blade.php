@@ -33,12 +33,12 @@
                                 <input type="text" class="form-control" id="codbarra" name="codbarra" value="{{ $codbarra }}" placeholder="Código de Barra">
                             </div>
                             <div class="col-12  mb-2">
-                                <label for="categoria" class="form-label fw-bold">Categoria</label>
-                                <select name="categoria" id="categoria" data-categoria="{{ $categoria }}" class="form-control"></select>
+                                <label for="categoria" class="form-label fw-bold">Categoría</label>
+                                <input type="text" class="form-control" value="{{$categoria}}" placeholder="Categoría" name="categoria" id="categoria">
                             </div>
                             <div class="col-12  mb-2">
                                 <label for="marca" class="form-label fw-bold">Marca</label>
-                                <select name="marca" id="marca" class="form-control" data-marca="{{ $marca }}"></select>
+                                <input type="text" class="form-control" value="{{$marca}}" placeholder="Marca" name="marca" id="marca">
                             </div>
                             <div class="col-12  mb-2">
                                 <label for="nombre" class="form-label fw-bold">Nombre del producto</label>

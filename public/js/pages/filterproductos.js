@@ -7,7 +7,7 @@ $(document).ready(function () {
     });
 
     // esto me sirve para cargar los listado de select2 con paginacion de 10
-    $('#categoria').select2({
+   /* $('#categoria').select2({
         theme: "bootstrap-5",
         placeholder: 'Seleccione...',
         allowClear: true,
@@ -41,10 +41,10 @@ $(document).ready(function () {
             },
             cache: true
         }
-    });
+    }); */
 
     // para obtener el registro buscado
-    let categoria = document.querySelector('#categoria').dataset.categoria;
+   /* let categoria = document.querySelector('#categoria').dataset.categoria;
     let marca = document.querySelector('#marca').dataset.marca;
 
     if(categoria !== ''){
@@ -56,7 +56,7 @@ $(document).ready(function () {
         $.get('marcasid/'+marca, function (res) {
             $('#marca').append('<option value="'+res.id+'" selected="selected">'+res.name+'</option>');
         });
-    }
+    } */
 
     $('.imgzoom').popover({
         html: true,

@@ -82,6 +82,8 @@ class ProductosController extends Controller
                     DB::raw('(SELECT ds.id  FROM detalle_stock AS ds WHERE ds.stocks_id = sk.id  ORDER BY ds.created_at DESC LIMIT 1) as iddetalllestock'),
                     DB::raw('(SELECT dp.cost_c_iva  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as costosiniva'),
                     DB::raw('(SELECT dp.sale_price  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as precioventa'),
+                    DB::raw('(SELECT p.costoconiva  FROM precios AS p WHERE p.producto_id = sk.id ORDER BY dp.created_at DESC LIMIT 1) as costonuevo'),
+                    DB::raw('(SELECT p.precioventa  FROM precios AS p WHERE p.producto_id = sk.id ORDER BY dp.created_at DESC LIMIT 1) as precionuevo'),
                 );
             /** buscar por parametros especificos */
             // busqueda por codigo
@@ -94,11 +96,11 @@ class ProductosController extends Controller
             }
             // busqueda por categoria
             if(!empty($categoria)){
-                $query->where('sk.category_id', 'LIKE', '%'.$categoria.'%');
+                $query->where('c.name', 'LIKE', '%'.$categoria.'%');
             }
             // busqueda por marca
             if(!empty($marca)){
-                $query->where('sk.manufacturer_id', 'LIKE', '%'.$marca.'%');
+                $query->where('man.name', 'LIKE', '%'.$marca.'%');
             }
             // busqueda por codigo
             if(!empty($nombre)){
@@ -163,6 +165,8 @@ class ProductosController extends Controller
                     DB::raw('(SELECT ds.id  FROM detalle_stock AS ds WHERE ds.stocks_id = sk.id  ORDER BY ds.created_at DESC LIMIT 1) as iddetalllestock'),
                     DB::raw('(SELECT dp.cost_c_iva  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as costosiniva'),
                     DB::raw('(SELECT dp.sale_price  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as precioventa'),
+                    DB::raw('(SELECT p.costoconiva  FROM precios AS p WHERE p.producto_id = sk.id ORDER BY dp.created_at DESC LIMIT 1) as costonuevo'),
+                    DB::raw('(SELECT p.precioventa  FROM precios AS p WHERE p.producto_id = sk.id ORDER BY dp.created_at DESC LIMIT 1) as precionuevo'),
                 )
                 ->where('sk.state', '=', 1)
                 ->groupBy('sk.id')
@@ -675,6 +679,8 @@ class ProductosController extends Controller
                     DB::raw('(SELECT ds.id  FROM detalle_stock AS ds WHERE ds.stocks_id = sk.id  ORDER BY ds.created_at DESC LIMIT 1) as iddetalllestock'),
                     DB::raw('(SELECT dp.cost_c_iva  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as costosiniva'),
                     DB::raw('(SELECT dp.sale_price  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as precioventa'),
+                    DB::raw('(SELECT p.costoconiva  FROM precios AS p WHERE p.producto_id = sk.id ORDER BY dp.created_at DESC LIMIT 1) as costonuevo'),
+                    DB::raw('(SELECT p.precioventa  FROM precios AS p WHERE p.producto_id = sk.id ORDER BY dp.created_at DESC LIMIT 1) as precionuevo'),
                 );
             /** buscar por parametros especificos */
             // busqueda por codigo
@@ -687,11 +693,11 @@ class ProductosController extends Controller
             }
             // busqueda por categoria
             if(!empty($categoria)){
-                $query->where('sk.category_id', 'LIKE', '%'.$categoria.'%');
+                $query->where('c.name', 'LIKE', '%'.$categoria.'%');
             }
             // busqueda por marca
             if(!empty($marca)){
-                $query->where('sk.manufacturer_id', 'LIKE', '%'.$marca.'%');
+                $query->where('man.name', 'LIKE', '%'.$marca.'%');
             }
             // busqueda por codigo
             if(!empty($nombre)){
@@ -755,6 +761,8 @@ class ProductosController extends Controller
                     DB::raw('(SELECT ds.id  FROM detalle_stock AS ds WHERE ds.stocks_id = sk.id  ORDER BY ds.created_at DESC LIMIT 1) as iddetalllestock'),
                     DB::raw('(SELECT dp.cost_c_iva  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as costosiniva'),
                     DB::raw('(SELECT dp.sale_price  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as precioventa'),
+                    DB::raw('(SELECT p.costoconiva  FROM precios AS p WHERE p.producto_id = sk.id ORDER BY dp.created_at DESC LIMIT 1) as costonuevo'),
+                    DB::raw('(SELECT p.precioventa  FROM precios AS p WHERE p.producto_id = sk.id ORDER BY dp.created_at DESC LIMIT 1) as precionuevo'),
                 )
                 ->where('sk.state', '=', 1)
                 ->groupBy('sk.id', 'sk.image', 'sk.code',  'sk.barcode',
