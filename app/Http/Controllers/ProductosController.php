@@ -82,8 +82,8 @@ class ProductosController extends Controller
                     DB::raw('(SELECT ds.id  FROM detalle_stock AS ds WHERE ds.stocks_id = sk.id  ORDER BY ds.created_at DESC LIMIT 1) as iddetalllestock'),
                     DB::raw('(SELECT dp.cost_c_iva  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as costosiniva'),
                     DB::raw('(SELECT dp.sale_price  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as precioventa'),
-                    DB::raw('(SELECT p.costoconiva FROM precios AS p WHERE p.producto_id = sk.id ORDER BY p.created_at DESC LIMIT 1) as costonuevo'),
-                    DB::raw('(SELECT p.precioventa FROM precios AS p WHERE p.producto_id = sk.id ORDER BY p.created_at DESC LIMIT 1) as precionuevo'),
+                    DB::raw('(SELECT p.costoconiva  FROM precios AS p WHERE p.producto_id = sk.id ORDER BY p.created_at DESC LIMIT 1) as costonuevo'),
+                    DB::raw('(SELECT p.precioventa  FROM precios AS p WHERE p.producto_id = sk.id ORDER BY p.created_at DESC LIMIT 1) as precionuevo'),
                 );
             /** buscar por parametros especificos */
             // busqueda por codigo
@@ -118,7 +118,6 @@ class ProductosController extends Controller
             // busqueda por almacen
             if(empty($almacen)){ // esta vacio si lo esta debe agrupar todo
                 $query->groupBy('sk.id');
-
             } else {
                 if($almacen =="todos"){
                     // se mostraran todos los productos del almacen
@@ -713,18 +712,13 @@ class ProductosController extends Controller
                 }
             }
             // busqueda por almacen
-            if(!empty($almacen)){
-                if($almacen=="todos"){
+            if(empty($almacen)){ // esta vacio si lo esta debe agrupar todo
+                $query->groupBy('sk.id');
+            } else {
+                if($almacen =="todos"){
                     // se mostraran todos los productos del almacen
-                    $query->groupBy('sk.id', 'sk.image', 'sk.code',  'sk.barcode',
-                        'sk.name',
-                        'sk.exempt_iva',
-                        'sk.stock_min',
-                        'sk.description',
-                        'dp.quantity',
-                        'dp.branch_offices_id', 'c.name','man.name', 'me.name','sk.category_id', 'sk.manufacturer_id');
+                    $query->groupBy('sk.id');
                 } else {
-                    // se mostraran los productos por almacen
                     $query->where('dp.branch_offices_id', '=', $almacen);
                     $query->groupBy('sk.id', 'sk.image', 'sk.code',  'sk.barcode',
                         'sk.name',
@@ -736,7 +730,11 @@ class ProductosController extends Controller
                 }
             }
             // aqui pondria la logica para ordernar los productos
-            $query->orderBy('sk.code', 'ASC');
+            if(!empty($orderby)){
+                $query->orderBy('precioventa', $orderby);
+            } else {
+                $query->orderBy('sk.code', 'ASC');
+            }
             $data = $query->paginate($pages);
         } else {
             $data = DB::table('stocks as sk')
@@ -765,15 +763,11 @@ class ProductosController extends Controller
                     DB::raw('(SELECT p.precioventa  FROM precios AS p WHERE p.producto_id = sk.id ORDER BY p.created_at DESC LIMIT 1) as precionuevo'),
                 )
                 ->where('sk.state', '=', 1)
-                ->groupBy('sk.id', 'sk.image', 'sk.code',  'sk.barcode',
-                    'sk.name',
-                    'sk.exempt_iva',
-                    'sk.stock_min',
-                    'sk.description',
-                    'dp.quantity',
-                    'dp.branch_offices_id', 'c.name','man.name', 'me.name')
+                ->groupBy('sk.id')
                 ->orderBy('sk.code', 'ASC')
                 ->paginate($pages);
+
+
         }
         // para ver los ultimos registro  de ingresos
         $almaceneslist = Sucursales::all();
