@@ -398,7 +398,7 @@ function obtenerPrecios(producto, sucursal){
             porcentaje.val(res.porcentajeViejos);
             precioventa.val(res.precioventaViejos.toFixed(4));
             precioid.val(res.idviejo);
-            numeronegativo(res.gananciaViejos.toFixed(4), res.porcentajeViejos.toFixed(4), res.precioventaViejos.toFixed(4), res.costoconivaViejos.toFixed(4));
+            numeronegativo(res.costosinivaViejos.toFixed(4), res.gananciaViejos.toFixed(4), res.porcentajeViejos.toFixed(4), res.precioventaViejos.toFixed(4), res.costoconivaViejos.toFixed(4));
         } else if(res.cambio != 'no hay nuevo precio' && res.cambioViejos == 'no viejo') {
             costosiniva.val(res.costosiniva.toFixed(4));
             costoconiva.val(res.costoconiva.toFixed(4));
@@ -406,7 +406,7 @@ function obtenerPrecios(producto, sucursal){
             porcentaje.val(res.porcentaje);
             precioventa.val(res.precioventa.toFixed(4));
             precioid.val(res.idnuevo);
-            numeronegativo(res.ganancia.toFixed(4), res.porcentaje.toFixed(4), res.precioventa.toFixed(4), res.costoconiva.toFixed(4));
+            numeronegativo(res.costosiniva.toFixed(4), res.ganancia.toFixed(4), res.porcentaje.toFixed(4), res.precioventa.toFixed(4), res.costoconiva.toFixed(4));
         } else {
             costosiniva.val(res.costosiniva.toFixed(4));
             costoconiva.val(res.costoconiva.toFixed(4));
@@ -414,43 +414,45 @@ function obtenerPrecios(producto, sucursal){
             porcentaje.val(res.porcentaje);
             precioventa.val(res.precioventa.toFixed(4));
             precioid.val(res.idnuevo);
-            numeronegativo(res.ganancia.toFixed(4), res.porcentaje, res.precioventa.toFixed(4), res.costoconiva.toFixed(4));
+            numeronegativo(res.costosiniva.toFixed(4), res.ganancia.toFixed(4), res.porcentaje, res.precioventa.toFixed(4), res.costoconiva.toFixed(4));
         }
     });
 
 }
 
-function numeronegativo(ganancia, porcentaje, precioventa, costoconiva){
+function numeronegativo(costosiniva, ganancia, porcentaje, precioventa, costoconiva){
     let gananciamessage;
     let porcentamessage;
     let ventamessage;
     let showga, showpor, showvent;
-    if(ganancia > 0){
-        $("#earn_c_iva").removeClass("is-invalid");
-        showga = false;
-    } else {
-        showga = true;
-        gananciamessage = "\n * La ganancia esta en números negativos por favor corregir la GANANCIA";
-        $("#earn_c_iva").addClass("is-invalid");
-    }
-    if(porcentaje > 0){
-        showpor = false;
-        $("#earn_porcent").removeClass("is-invalid");
-    } else {
-        showpor = true;
-        $("#earn_porcent").addClass("is-invalid");
-        porcentamessage = "\n * El porcentaje está en números negativos por favor corregir el PORCENTAJE";
-    }
-    if(costoconiva > precioventa){
-        showvent = true;
-        $("#sale_price").addClass("is-invalid");
-        ventamessage = "\n * El PRECIO DE VENTA es menor que el COSTO MAS IVA";
-    } else {
-        showvent = false;
-        $("#sale_price").removeClass("is-invalid");
-    }
-    if(showga == true || showpor == true || showvent == true) {
-        timeShowchange(20000);
-        AlertError("POR FAVOR CORREGIR LOS DATOS SIGUIENTES Y QUE APARECEN MARCADOS EN ROJO \n"+gananciamessage + porcentamessage + ventamessage)
+    if(costosiniva != 0 && costoconiva != 0 ){
+        if(ganancia > 0){
+            $("#earn_c_iva").removeClass("is-invalid");
+            showga = false;
+        } else {
+            showga = true;
+            gananciamessage = "\n * La ganancia esta en números negativos por favor corregir la GANANCIA";
+            $("#earn_c_iva").addClass("is-invalid");
+        }
+        if(porcentaje > 0){
+            showpor = false;
+            $("#earn_porcent").removeClass("is-invalid");
+        } else {
+            showpor = true;
+            $("#earn_porcent").addClass("is-invalid");
+            porcentamessage = "\n * El porcentaje está en números negativos por favor corregir el PORCENTAJE";
+        }
+        if(costoconiva > precioventa){
+            showvent = true;
+            $("#sale_price").addClass("is-invalid");
+            ventamessage = "\n * El PRECIO DE VENTA es menor que el COSTO MAS IVA";
+        } else {
+            showvent = false;
+            $("#sale_price").removeClass("is-invalid");
+        }
+        if(showga == true || showpor == true || showvent == true) {
+            timeShowchange(20000);
+            AlertError("POR FAVOR CORREGIR LOS DATOS SIGUIENTES Y QUE APARECEN MARCADOS EN ROJO \n"+gananciamessage + porcentamessage + ventamessage)
+        }
     }
 }
