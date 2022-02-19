@@ -311,7 +311,7 @@ class ProductosController extends Controller
         $porcentaje = $request->earn_porcent;
         $preciventa = $request->sale_price;
         $precios = $this->validarPrecio($id);
-        if( $costosiniva == 0 || $costosiniva == '' ){
+        if( intval($costosiniva) == 0 || $costosiniva == '' ){
             $resprice = Precios::create([
                 'producto_id'   => $id,
                 'costosiniva'   => $costosiniva,
