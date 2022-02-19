@@ -879,9 +879,10 @@ class ProductosController extends Controller
         return $params;
     }
 
-    public function getItemProducts($id){
+    public function getItemProducts($id, $sucursalid){
+        $detalle_pro = Almacenes::where('branch_offices_id', $sucursalid)->where('stocks_id', $id)->first();
         $stock = Productos::where('id', $id)->first();
-        return response()->json([$stock],200);
+        return response()->json(["stock" => $stock, "almacen" => $detalle_pro],200);
     }
 
 }

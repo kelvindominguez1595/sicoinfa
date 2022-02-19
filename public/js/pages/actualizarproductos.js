@@ -120,8 +120,8 @@ $(function () {
     getSelectCategory(cateid);
     getSelectMarca(marcaid);
     getSelectUnidad(unidadmedida);
-    getSelectProveedor(proveedorid);
-    getSelectSucursal(proveedorid);
+    // getSelectProveedor(proveedorid);
+    // getSelectSucursal(proveedorid);
 
     if(proveedorid > 0){
         $.get('../../proveedoresid/'+proveedorid, function (res) {
@@ -171,7 +171,6 @@ $(function () {
         ganancia.val(resulGan.toFixed(4));
     });
 
-
     $('#unit_price').change(function() {
         let preciosiniva = $(this).val();
         let cantidad = $('#quantity').val();
@@ -203,6 +202,7 @@ $(function () {
                     $('#messagedanger').addClass("d-none");
                     timeShowchange(3000);
                     obtenerPrecios(stockid, branchoffice);
+                    obtenerDatosProducto(stockid, branchoffice);
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -252,6 +252,7 @@ $(function () {
                     $('#messagedanger').removeClass("d-none");
                     timeShowchange(3000);
                     obtenerPrecios(stockid, branchoffice);
+                    obtenerDatosProducto(stockid, branchoffice);
                     // setTimeout(function() {
                     //     location.reload();
                     // }, 3000);
@@ -454,31 +455,30 @@ function numeronegativo(costosiniva, ganancia, porcentaje, precioventa, costocon
     }
 }
 
-function obtenerDatosProducto(producto){
-    $.get('../../getItemProducts/'+producto, function (res) {
-        let costosiniva     = $("#cost_s_iva");
-        let costoconiva     = $("#cost_c_iva");
-        let ganancia        = $("#earn_c_iva");
-        let porcentaje      = $("#earn_porcent");
-        let precioventa     = $("#sale_price");
-        let precioid        = $("#precioid");
+function obtenerDatosProducto(producto, sucursal){
+    $.get('../../getItemProducts/'+producto+'/'+sucursal, function (res) {
+
+        $("#stock_min_pro").val(res.almacen.quantity);
+      /*  getSelectCategory();
+        getSelectMarca();
+        getSelectUnidad(); */
 
     });
 
 }
 
 function getSelectCategory(id){
-    $.get('../../categoriasid/'+cateid, function (res) {
+    $.get('../../categoriasid/'+id, function (res) {
         $('#category_id').append('<option value="'+res.id+'" selected="selected">'+res.name+'</option>');
     });
 }
 function getSelectMarca(id){
-    $.get('../../marcasid/'+marcaid, function (res) {
+    $.get('../../marcasid/'+id, function (res) {
         $('#manufacturer_id').append('<option value="'+res.id+'" selected="selected">'+res.name+'</option>');
     });
 }
 function getSelectUnidad(id){
-    $.get('../../unidadmedidaid/'+unidadmedida, function (res) {
+    $.get('../../unidadmedidaid/'+id, function (res) {
         $('.measures_id').append('<option value="'+res.id+'" selected="selected">'+res.name+'</option>');
     });
 

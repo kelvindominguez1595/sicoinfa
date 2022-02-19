@@ -52,7 +52,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/historialcompras', [ProductosController::class, 'historialcompras']);
     Route::get('/listarproductos', [ProductosController::class, 'listarproductos']);
     Route::get('/productoid/{id}', [ProductosController::class, 'productoid']);
-    Route::get('/getItemProducts/{id}', [ProductosController::class, 'getItemProducts']);
+    Route::get('/getItemProducts/{id}/{sucursalid}', [ProductosController::class, 'getItemProducts']);
     /** NUEVO INGRESO DE FACTURAS DE PRODUCTOS */
     Route::post('/ingresofactura',[IngresosController::class, 'ingresofactura']);
     Route::get('/precioRealdelProducto/{producto}/{sucursal}', [IngresosController::class, 'precioRealdelProducto']);
