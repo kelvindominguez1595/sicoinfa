@@ -397,8 +397,9 @@ function obtenerPrecios(producto, sucursal){
             ganancia.val(res.gananciaViejos.toFixed(4));
             porcentaje.val(res.porcentajeViejos);
             precioventa.val(res.precioventaViejos.toFixed(4));
+
             precioid.val(res.idviejo);
-            numeronegativo(res.costosinivaViejos.toFixed(4), res.gananciaViejos.toFixed(4), res.porcentajeViejos.toFixed(4), res.precioventaViejos.toFixed(4), res.costoconivaViejos.toFixed(4));
+            numeronegativo(res.costosinivaViejos.toFixed(4), res.gananciaViejos.toFixed(4), res.porcentajeViejos, res.precioventaViejos.toFixed(4), res.costoconivaViejos.toFixed(4));
         } else if(res.cambio != 'no hay nuevo precio' && res.cambioViejos == 'no viejo') {
             costosiniva.val(res.costosiniva.toFixed(4));
             costoconiva.val(res.costoconiva.toFixed(4));
@@ -406,7 +407,7 @@ function obtenerPrecios(producto, sucursal){
             porcentaje.val(res.porcentaje);
             precioventa.val(res.precioventa.toFixed(4));
             precioid.val(res.idnuevo);
-            numeronegativo(res.costosiniva.toFixed(4), res.ganancia.toFixed(4), res.porcentaje.toFixed(4), res.precioventa.toFixed(4), res.costoconiva.toFixed(4));
+            numeronegativo(res.costosiniva.toFixed(4), res.ganancia.toFixed(4), res.porcentaje, res.precioventa.toFixed(4), res.costoconiva.toFixed(4));
         } else {
             costosiniva.val(res.costosiniva.toFixed(4));
             costoconiva.val(res.costoconiva.toFixed(4));
