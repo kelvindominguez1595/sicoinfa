@@ -414,7 +414,7 @@ function obtenerPrecios(producto, sucursal){
             porcentaje.val(res.porcentaje);
             precioventa.val(res.precioventa.toFixed(4));
             precioid.val(res.idnuevo);
-            numeronegativo(res.ganancia.toFixed(4), res.porcentaje.toFixed(4), res.precioventa.toFixed(4), res.costoconiva.toFixed(4));
+            numeronegativo(res.ganancia.toFixed(4), res.porcentaje, res.precioventa.toFixed(4), res.costoconiva.toFixed(4));
         }
     });
 
