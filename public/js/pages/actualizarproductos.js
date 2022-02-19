@@ -117,17 +117,11 @@ $(function () {
     let branchoffice = document.querySelector('#branch_offices_id').dataset.branchoffice;
     obtenerPrecios(stockid, branchoffice); // para obtener el precio
     // validamos que los data set tenga algun dato para cargar un item en el select2
-    $.get('../../categoriasid/'+cateid, function (res) {
-        $('#category_id').append('<option value="'+res.id+'" selected="selected">'+res.name+'</option>');
-    });
-
-    $.get('../../marcasid/'+marcaid, function (res) {
-        $('#manufacturer_id').append('<option value="'+res.id+'" selected="selected">'+res.name+'</option>');
-    });
-
-    $.get('../../unidadmedidaid/'+unidadmedida, function (res) {
-        $('.measures_id').append('<option value="'+res.id+'" selected="selected">'+res.name+'</option>');
-    });
+    getSelectCategory(cateid);
+    getSelectMarca(marcaid);
+    getSelectUnidad(unidadmedida);
+    getSelectProveedor(proveedorid);
+    getSelectSucursal(proveedorid);
 
     if(proveedorid > 0){
         $.get('../../proveedoresid/'+proveedorid, function (res) {
@@ -205,11 +199,10 @@ $(function () {
             processData: false,
             success: function (response) {
                 if (response.message) {
-                    AlertConfirmacin(response.message);
+                    AlertConfirmacin("Datos del Producto Actualizado Correctamente");
                     $('#messagedanger').addClass("d-none");
-                    setTimeout(function() {
-                        location.reload();
-                    }, 3000);
+                    timeShowchange(3000);
+                    obtenerPrecios(stockid, branchoffice);
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -257,9 +250,11 @@ $(function () {
                     $('#unit_price').val(0);
                     $('#costototal').val(0);
                     $('#messagedanger').removeClass("d-none");
-                    setTimeout(function() {
-                        location.reload();
-                    }, 3000);
+                    timeShowchange(3000);
+                    obtenerPrecios(stockid, branchoffice);
+                    // setTimeout(function() {
+                    //     location.reload();
+                    // }, 3000);
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -421,6 +416,7 @@ function obtenerPrecios(producto, sucursal){
 
 }
 
+
 function numeronegativo(costosiniva, ganancia, porcentaje, precioventa, costoconiva){
     let gananciamessage;
     let porcentamessage;
@@ -457,3 +453,40 @@ function numeronegativo(costosiniva, ganancia, porcentaje, precioventa, costocon
         }
     }
 }
+
+function obtenerDatosProducto(producto){
+    $.get('../../getItemProducts/'+producto, function (res) {
+        let costosiniva     = $("#cost_s_iva");
+        let costoconiva     = $("#cost_c_iva");
+        let ganancia        = $("#earn_c_iva");
+        let porcentaje      = $("#earn_porcent");
+        let precioventa     = $("#sale_price");
+        let precioid        = $("#precioid");
+
+    });
+
+}
+
+function getSelectCategory(id){
+    $.get('../../categoriasid/'+cateid, function (res) {
+        $('#category_id').append('<option value="'+res.id+'" selected="selected">'+res.name+'</option>');
+    });
+}
+function getSelectMarca(id){
+    $.get('../../marcasid/'+marcaid, function (res) {
+        $('#manufacturer_id').append('<option value="'+res.id+'" selected="selected">'+res.name+'</option>');
+    });
+}
+function getSelectUnidad(id){
+    $.get('../../unidadmedidaid/'+unidadmedida, function (res) {
+        $('.measures_id').append('<option value="'+res.id+'" selected="selected">'+res.name+'</option>');
+    });
+
+}
+// datos de ingreso
+function getSelectProveedor(id){}
+function getSelectSucursal(id){}
+
+
+
+

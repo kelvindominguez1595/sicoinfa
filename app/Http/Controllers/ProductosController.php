@@ -879,4 +879,9 @@ class ProductosController extends Controller
         return $params;
     }
 
+    public function getItemProducts($id){
+        $stock = Productos::where('id', $id)->first();
+        return response()->json([$stock],200);
+    }
+
 }
