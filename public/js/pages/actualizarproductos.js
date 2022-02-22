@@ -139,38 +139,66 @@ $(function () {
         var porcenaje = $('#earn_porcent');
         var preciofinal = $('#sale_price');
         var costoconiva = $('#cost_c_iva');
-        let resultpreciofinal = Number($(this).val()) + Number(costoconiva.val()); // precio final
-        let resulporcentaje = (((resultpreciofinal / costoconiva.val()) - 1)  * 100); //  porcentaje final
+
+        var costosiniva = $('#cost_s_iva');
+        let precioConCosto = 0;
+        if(costoconiva.val() == 0 && costosiniva.val() != 0){
+            precioConCosto = Number(costosiniva.val()) + (Number(costosiniva.val()) * 0.13);
+            $('#cost_c_iva').val(precioConCosto.toFixed(4));
+        } else {
+            precioConCosto = costoconiva.val();
+        }
+
+        let resultpreciofinal = Number($(this).val()) + Number(precioConCosto); // precio final
+        let resulporcentaje = (((resultpreciofinal / precioConCosto) - 1)  * 100); //  porcentaje final
         porcenaje.val(resulporcentaje.toFixed(2));
         preciofinal.val(resultpreciofinal.toFixed(4))
     });
+
     // por porcentaje
     $( "#earn_porcent" ).change(function() {
         var preciofinal = $('#sale_price');
         var ganancia = $('#earn_c_iva');
         var costoconiva = $('#cost_c_iva');
+
+        var costosiniva = $('#cost_s_iva');
+        let precioConCosto = 0;
+        if(costoconiva.val() == 0 && costosiniva.val() != 0){
+            precioConCosto = Number(costosiniva.val()) + (Number(costosiniva.val()) * 0.13);
+            $('#cost_c_iva').val(precioConCosto.toFixed(4));
+        } else {
+            precioConCosto = costoconiva.val();
+        }
         // mostramos el porcentaje de ganancia que tendra
-        let resultadoporcentaje = Number(costoconiva.val() * ($(this).val() / 100))
+        let resultadoporcentaje = Number(precioConCosto * ($(this).val() / 100))
         ganancia.val(resultadoporcentaje.toFixed(4));
         // sumamos costo con iva mas la ganancia para mostrar la venta final del consumidor3.25
-        let precioventa =Number(resultadoporcentaje) + Number(costoconiva.val());
+        let precioventa =Number(resultadoporcentaje) + Number(precioConCosto);
         preciofinal.val(precioventa.toFixed(4));
     });
     // precio venta final
     $( "#sale_price" ).change(function() {
         var preciofinal = $(this).val();
         var costoconiva = $('#cost_c_iva');
-        var porcenaje = $('#earn_porcent');
-        var ganancia = $('#earn_c_iva');
+        var costosiniva = $('#cost_s_iva');
+        var porcenaje   = $('#earn_porcent');
+        var ganancia    = $('#earn_c_iva');
+        let precioConCosto = 0;
+        if(costoconiva.val() == 0 && costosiniva.val() != 0){
+            precioConCosto = Number(costosiniva.val()) + (Number(costosiniva.val()) * 0.13);
+            $('#cost_c_iva').val(precioConCosto.toFixed(4));
+        } else {
+            precioConCosto = costoconiva.val();
+        }
         // mostramos el porcentaje de ganancia que tendra
-        let resultadoporcentaje = (((preciofinal / costoconiva.val()) - 1)  * 100)
-        let resulporce = costoconiva.val() == 0 ? 0 : resultadoporcentaje;
+        let resultadoporcentaje = (((preciofinal / precioConCosto) - 1)  * 100)
+        let resulporce = precioConCosto == 0 ? 0 : resultadoporcentaje;
         porcenaje.val(resulporce.toFixed(2))
-        let resultadoganancia = Number(preciofinal - costoconiva.val()) ;
-        let resulGan = costoconiva.val() == 0 ? 0 : resultadoganancia;
+        let resultadoganancia = Number(preciofinal - precioConCosto) ;
+        let resulGan = precioConCosto == 0 ? 0 : resultadoganancia;
         ganancia.val(resulGan.toFixed(4));
     });
-
+    /// PARA INGRESO DATOS
     $('#unit_price').change(function() {
         let preciosiniva = $(this).val();
         let cantidad = $('#quantity').val();
