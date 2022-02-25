@@ -7,6 +7,7 @@ use App\Http\Controllers\MarcasController;
 use App\Http\Controllers\CategoriasController;
 use App\Http\Controllers\MedidasController;
 use App\Http\Controllers\ProveedoresController;
+use App\Http\Controllers\ClientesController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -65,7 +66,8 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     /** PROVEEDORES */
     Route::resource('/proveedores', ProveedoresController::class);
     Route::get('/desactivarproveedores/{id}', [ProveedoresController::class, 'desactivarproveedores']);
-
+    /** CLIENTES */
+    Route::resource('/clientes', ClientesController::class);
 });
 
 
