@@ -11,16 +11,9 @@ class ClientesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        if(empty($request->pages)){
-            $paginate = 25;
-        } else {
-            $paginate = $request->pages;
-        }
-        $clientes = Clientes::where('tipo_cliente', '=', 1)->paginate($paginate);
-        $contribu = Clientes::where('tipo_cliente', '=', 2)->paginate($paginate);
-        return view('clientes.index', compact('clientes', 'contribu'));
+        return view('clientes.index');
     }
 
     /**
@@ -41,7 +34,21 @@ class ClientesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nombres' => 'required',
+            'apellidos' => 'required'
+        ]);
+        Clientes::create([
+            'nombres' => $request->nombres,
+            'apellidos' => $request->apellidos,
+            'dui' => $request->dui,
+            'nit' => $request->nit,
+            'telefono' => $request->telefono,
+            'direccion' => $request->direccion,
+            'tipo_cliente' => $request->tipocliente,
+            'state' => $request->state,
+        ]);
+        return response()->json(["message" => "success"],200);
     }
 
     /**
@@ -87,5 +94,59 @@ class ClientesController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function clientesList(Request $request){
+        $nombres    = $request->nombressearch;
+        $apellidos  = $request->apellidossearch;
+        $dui        = $request->duisearch;
+        $telefono   = $request->telefonosearch;
+        $query = Clientes::where('tipo_cliente', '=', 1);
+        if(!empty($request->nombressearch)){
+            $query->where('nombres', 'LIKE', '%'.$request->nombressearch.'%');
+        }
+        if(!empty($request->apellidossearch)){
+            $query->where('apellidos', 'LIKE', '%'.$request->apellidossearch.'%');
+        }
+        if(!empty($request->duisearch)){
+            $query->where('dui', 'LIKE', '%'.$request->duisearch.'%');
+        }
+        if(!empty($request->telefonosearch)){
+            $query->where('telefono', 'LIKE', '%'.$request->telefonosearch.'%');
+        }
+        $clientes = $query->paginate(2);
+        if($request->ajax()){
+            return response()->json(view('clientes.partials.clientetbl', compact('clientes', 'nombres', 'apellidos', 'dui', 'telefono'))->render());
+        }
+        return view('clientes.index', compact('clientes', 'nombres', 'apellidos', 'dui', 'telefono'));
+    }
+
+    public function contribuyentesList(Request $request){
+        $nombres    = $request->nombressearch;
+        $apellidos  = $request->apellidossearch;
+        $dui        = $request->duisearch;
+        $nit        = $request->nitsearch;
+        $telefono   = $request->telefonosearch;
+        $query = Clientes::where('tipo_cliente', '=', 2);
+        if(!empty($request->nombressearch)){
+            $query->where('nombres', 'LIKE', '%'.$request->nombressearch.'%');
+        }
+        if(!empty($request->apellidossearch)){
+            $query->where('apellidos', 'LIKE', '%'.$request->apellidossearch.'%');
+        }
+        if(!empty($request->duisearch)){
+            $query->where('dui', 'LIKE', '%'.$request->duisearch.'%');
+        }
+        if(!empty($request->nitsearch)){
+            $query->where('nit', 'LIKE', '%'.$request->nitsearch.'%');
+        }
+        if(!empty($request->telefonosearch)){
+            $query->where('telefono', 'LIKE', '%'.$request->telefonosearch.'%');
+        }
+        $contribu = $query->paginate(2);
+        if($request->ajax()){
+            return response()->json(view('clientes.partials.contribuyentetbl', compact('contribu', 'nombres', 'apellidos', 'dui', 'nit', 'telefono'))->render());
+        }
+        return view('clientes.index', compact('contribu', 'nombres', 'apellidos', 'dui', 'nit', 'telefono'));
     }
 }

@@ -68,6 +68,8 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/desactivarproveedores/{id}', [ProveedoresController::class, 'desactivarproveedores']);
     /** CLIENTES */
     Route::resource('/clientes', ClientesController::class);
+    Route::get('/clientesList', [ClientesController::class, 'clientesList']);
+    Route::get('/contribuyentesList', [ClientesController::class, 'contribuyentesList']);
 });
 
 
