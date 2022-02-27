@@ -48,7 +48,7 @@ class ClientesController extends Controller
             'tipo_cliente' => $request->tipocliente,
             'state' => $request->state,
         ]);
-        return response()->json(["message" => "success"],200);
+        return response()->json(["message" => "Nuevo cliente registrado"],200);
     }
 
     /**
@@ -70,7 +70,8 @@ class ClientesController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = Clientes::find($id);
+        return response()->json($data);
     }
 
     /**
@@ -82,7 +83,17 @@ class ClientesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = Clientes::find($id);
+        $data->nombres      = $request->nombres;
+        $data->apellidos    = $request->apellidos;
+        $data->dui          = $request->dui;
+        $data->nit          = $request->nit;
+        $data->telefono     = $request->telefono;
+        $data->direccion    = $request->direccion;
+        $data->tipo_cliente = $request->tipocliente;
+        $data->state        = $request->state;
+        $data->save();
+        return response()->json(["message" => "Datos Actualizados"],200);
     }
 
     /**
@@ -93,7 +104,9 @@ class ClientesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $data = Clientes::find($id);
+        $data->delete();
+        return response()->json(["message" => "Datos borrados"],200);
     }
 
     public function clientesList(Request $request){
@@ -114,7 +127,7 @@ class ClientesController extends Controller
         if(!empty($request->telefonosearch)){
             $query->where('telefono', 'LIKE', '%'.$request->telefonosearch.'%');
         }
-        $clientes = $query->paginate(2);
+        $clientes = $query->paginate(25);
         if($request->ajax()){
             return response()->json(view('clientes.partials.clientetbl', compact('clientes', 'nombres', 'apellidos', 'dui', 'telefono'))->render());
         }
@@ -143,7 +156,7 @@ class ClientesController extends Controller
         if(!empty($request->telefonosearch)){
             $query->where('telefono', 'LIKE', '%'.$request->telefonosearch.'%');
         }
-        $contribu = $query->paginate(2);
+        $contribu = $query->paginate(25);
         if($request->ajax()){
             return response()->json(view('clientes.partials.contribuyentetbl', compact('contribu', 'nombres', 'apellidos', 'dui', 'nit', 'telefono'))->render());
         }

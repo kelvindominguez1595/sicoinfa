@@ -23,7 +23,14 @@
                     <td>{{ $item->nit }}</td>
                     <td>{{ $item->telefono }}</td>
                     <td>{{ $item->direccion }}</td>
-                    <td></td>
+                    <td>
+                        <button class="btn btn-primary" type="button" value="{{ $item->id }}" id="btnupdatecontribu">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger" type="button" value="{{ $item->id }}" id="deletecontribu">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
                 </tr>
             @endforeach
         @endif

@@ -21,7 +21,14 @@
                     <td>{{ $item->dui }}</td>
                     <td>{{ $item->telefono }}</td>
                     <td>{{ $item->direccion }}</td>
-                    <td></td>
+                    <td>
+                        <button class="btn btn-primary" type="button" value="{{ $item->id }}" id="btnupdaclie">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger" type="button" value="{{ $item->id }}" id="deleteclie">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
                 </tr>
             @endforeach
         @endif

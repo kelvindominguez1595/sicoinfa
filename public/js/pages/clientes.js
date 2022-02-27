@@ -27,10 +27,11 @@ $(document).ready(function () {
     // guardamos los clientes
     $("#fmrdata").submit(function (e) {
         let frm = $(this).serialize() ;
-        let btnname = $("#titlemodal").text();
+        let id = $("#id").val();
         let tipocliente = $("#tipocliente").val();
         let route, typ;
-        if(btnname == "Actualizar Cliente") {
+        let btnname = $("#btnnamebutton").text();
+        if(btnname == "Actualizar") {
             route = '/clientes/'+id;
             typ = "PUT";
         } else {
@@ -131,7 +132,121 @@ $(document).on('click', '#contribuyente .pagination a', function (e){
         }
     })
 })
+/**
+ *  delete and update clientes
+ **/
+$(document).on('click', '#btnupdaclie', function (){
+    let id = $(this).val();
+    $("#btnnamebutton").text("Actualizar");
+    $.get('/clientes/'+ id + '/edit', function (res){
+        $("#exampleModal").modal('show');
+        $("#titlemodal").text("Editar Cliente");
+        $("#tipocliente").val(1); // cliente normal
+        $("#connit").addClass("d-none");
+        inputMaskDuiNIT();
+        $('#nombres').val(res.nombres);
+        $('#apellidos').val(res.apellidos);
+        $('#dui').val(res.dui);
+        $('#telefono').val(res.telefono);
+        $('#direccion').val(res.direccion);
+        let state = $('#state');
+        if(res.state == 0 || res.state == "" || res.state == null ){
+            state.prop('checked', false);
+        }else{
+            state.prop('checked', true);
+        }
+        $('#id').val(id);
+    });
+});
 
+$(document).on('click', '#deleteclie', function (){
+    let id = $(this).val();
+     Swal.fire({
+        title: '¿Esta seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '¡Sí, bórralo!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                data: {
+                    "_token": $("meta[name='csrf-token']").attr("content")
+                },
+                url: "clientes/" + id,
+                type: "DELETE",
+                dataType: "JSON",
+                success: function (res) {
+                    AlertConfirmacin(res.message);
+                   listclientes();
+                },
+                error: function (err) {
+                    erroSwal("¡Algo salió mal!");
+                }
+            });
+        }
+    });
+});
+/**
+ *  delete and update Contribuyentes
+ **/
+$(document).on('click', '#btnupdatecontribu', function (){
+    let id = $(this).val();
+    $("#btnnamebutton").text("Actualizar");
+    $.get('/clientes/'+ id + '/edit', function (res){
+        $("#exampleModal").modal('show');
+        $("#titlemodal").text("Editar Contribuyente");
+        $("#tipocliente").val(2); // contribuyente
+        $("#connit").removeClass("d-none");
+        inputMaskDuiNIT();
+        $('#nombres').val(res.nombres);
+        $('#apellidos').val(res.apellidos);
+        $('#dui').val(res.dui);
+        $('#nit').val(res.nit);
+        $('#telefono').val(res.telefono);
+        $('#direccion').val(res.direccion);
+        let state = $('#state');
+        if(res.state == 0 || res.state == "" || res.state == null ){
+            state.prop('checked', false);
+        }else{
+            state.prop('checked', true);
+        }
+        $('#id').val(id);
+
+    });
+});
+$(document).on('click', '#deletecontribu', function (){
+    let id = $(this).val();
+    Swal.fire({
+        title: '¿Esta seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '¡Sí, bórralo!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                data: {
+                    "_token": $("meta[name='csrf-token']").attr("content")
+                },
+                url: "clientes/" + id,
+                type: "DELETE",
+                dataType: "JSON",
+                success: function (res) {
+                    AlertConfirmacin(res.message);
+                    listcontribuyem();
+                },
+                error: function (err) {
+                    erroSwal("¡Algo salió mal!");
+                }
+            });
+        }
+    });
+});
 function listclientes(){
     $.get("/clientesList", function (res){
         $("#tblclientes").html(res);
