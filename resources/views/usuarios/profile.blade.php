@@ -43,14 +43,7 @@
                             <input type="text" class="form-control" id="email" name="email" value="{{$data->email}}">
                         </div>
 
-                        <div class="col-12 col-sm-12 col-md-12 col-lg-12">
-                            @foreach($rol as $item)
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="rol" id="rol{{$item->id}}" value="{{$item->id}}" @if($item->id == $rolselect->role_id) checked @endif>
-                                    <label class="form-check-label" for="rol">{{$item->name}}</label>
-                                </div>
-                            @endforeach
-                        </div>
+
 
                         <input type="hidden" id="id" name="id" value="{{$data->id}}">
                         <div class="col-12  d-flex justify-content-center mb-2">

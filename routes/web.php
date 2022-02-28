@@ -31,6 +31,7 @@ Route::get('/', function () {
 });
 
 Auth::routes();
+Route::post('/customLogin', [UsuariosController::class, 'customLogin'])->name('customLogin');
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::group(['middleware' => ['auth', 'admin']], function () {
     /** TODO ESTO ES PARA HACER UN INGRESO Y FILTRO DE PRODUCTOS */
@@ -78,6 +79,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::resource('/empleados', EmpleadosController::class);
     Route::resource('/usuarios', UsuariosController::class);
     Route::get('/profile', [UsuariosController::class, 'profile']);
+
 });
 
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
+use App\Models\RoleUser;
 use App\Models\Sucursales;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -71,17 +72,28 @@ class UsuariosController extends Controller
             $data = new User();
             $data->name                 = $request->name;
             $data->email                = $request->email;
-            $data->password             = Hash::make($request->password);
+            $data->password             = Hash::make($request['password']);
             $data->branch_offices_id    = $request->branch_offices_id;
             $data->state                = $request->state;
-
-            $data->roles()->attach(Role::where('id', $request->rol)->first());
+            if($request->hasFile("picture")){
+                $imagen         = $request->file("picture");
+                $nombreimagen   = time().".".$imagen->guessExtension();
+                $ruta           = public_path()."/images/usuarios/";
+                $imagen->move($ruta, $nombreimagen);
+                $data->picture          = $nombreimagen;
+            }
+            $data->save();
+            $r = Role::find($request->rol);
+            RoleUser::create([
+                'role_id' => $r->id,
+                'user_id' => $data->id
+            ]);
             $message = "Nuevo Usuario registrado";
         } else {
             $data = User::find($request->id);
             $data->name                 = $request->name;
             $data->email                = $request->email;
-            if(!isset($request->password)){
+            if(!empty($request->password)){
                 $data->password             = Hash::make($request->password);
             }
             $data->branch_offices_id    = $request->branch_offices_id;
@@ -91,18 +103,19 @@ class UsuariosController extends Controller
                 $sta = 1;
             }
             $data->state  = $sta;
-            $data->roles()->attach(Role::where('id', $request->rol)->first());
+//            $data->roles()->attach(Role::where('id', $request->rol)->first());
+            if($request->hasFile("picture")){
+                $imagen         = $request->file("picture");
+                $nombreimagen   = time().".".$imagen->guessExtension();
+                $ruta           = public_path()."/images/usuarios/";
+                $imagen->move($ruta, $nombreimagen);
+                $data->picture          = $nombreimagen;
+            }
+            $data->save();
             $message = "Datos actualizados correctamente";
         }
 
-        if($request->hasFile("picture")){
-            $imagen         = $request->file("picture");
-            $nombreimagen   = time().".".$imagen->guessExtension();
-            $ruta           = public_path()."/images/usuarios/";
-            $imagen->move($ruta, $nombreimagen);
-            $data->picture          = $nombreimagen;
-        }
-        $data->save();
+
 
         return response()->json(["message" => $message],200);
     }
@@ -166,5 +179,22 @@ class UsuariosController extends Controller
             ->where('user_id', Auth::user()->id)
             ->first();
         return view('usuarios.profile', compact('data', 'sucursal', 'rol', 'rolselect'));
+    }
+
+    public function customLogin(Request $request)
+    {
+
+        $request->validate([
+            'email' => 'required',
+            'password' => 'required',
+        ]);
+
+        $credentials = $request->only('email', 'password');
+        if (Auth::attempt($credentials)) {
+            return redirect()->intended('/')
+                ->withSuccess('Signed in');
+        }
+        return redirect("login")->withSuccess('Login details are not valid');
+
     }
 }
