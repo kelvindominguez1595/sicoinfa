@@ -43,7 +43,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link " aria-current="page" href="">
+            <a class="nav-link " aria-current="page" href="{{ url('empleados') }}">
                 <i class="fas fa-user-tie"></i> Empleados
             </a>
         </li>

@@ -8,6 +8,8 @@ use App\Http\Controllers\CategoriasController;
 use App\Http\Controllers\MedidasController;
 use App\Http\Controllers\ProveedoresController;
 use App\Http\Controllers\ClientesController;
+use App\Http\Controllers\EmpleadosController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -70,6 +72,8 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::resource('/clientes', ClientesController::class);
     Route::get('/clientesList', [ClientesController::class, 'clientesList']);
     Route::get('/contribuyentesList', [ClientesController::class, 'contribuyentesList']);
+    /** EMPLEADOS */
+    Route::resource('/empleados', EmpleadosController::class);
 });
 
 

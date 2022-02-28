@@ -6,7 +6,7 @@
 @endsection
 @section('js')
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
-    <script src="{{ asset('js/pages/empleado.js') }}"></script>
+    <script src="{{ asset('js/pages/empleados.js') }}"></script>
 
 @endsection
 
