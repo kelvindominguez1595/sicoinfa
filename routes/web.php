@@ -10,6 +10,7 @@ use App\Http\Controllers\ProveedoresController;
 use App\Http\Controllers\ClientesController;
 use App\Http\Controllers\EmpleadosController;
 use App\Http\Controllers\UsuariosController;
+use App\Http\Controllers\SucursalesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,8 +78,14 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 
     /** EMPLEADOS */
     Route::resource('/empleados', EmpleadosController::class);
+    Route::get('/listdateemp', [EmpleadosController::class, 'listdateemp']);
+    /** USUARIOS */
     Route::resource('/usuarios', UsuariosController::class);
     Route::get('/profile', [UsuariosController::class, 'profile']);
+    Route::get('/listuserdata', [UsuariosController::class, 'listuserdata']);
+    /** SUCRUSALES */
+    Route::resource('/sucursales', SucursalesController::class);
+    Route::get('/listsubcursal', [SucursalesController::class, 'listsubcursal']);
 
 });
 

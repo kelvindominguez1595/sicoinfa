@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sucursales;
-use App\Http\Requests\StoreSucursalesRequest;
-use App\Http\Requests\UpdateSucursalesRequest;
+use Illuminate\Http\Request;
 
 class SucursalesController extends Controller
 {
@@ -13,9 +12,9 @@ class SucursalesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        return view('sucursales.index');
     }
 
     /**
@@ -34,9 +33,10 @@ class SucursalesController extends Controller
      * @param  \App\Http\Requests\StoreSucursalesRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreSucursalesRequest $request)
+    public function store(Request $request)
     {
-        //
+        Sucursales::create($request->all());
+        return response()->json(["message" => "Nueva sucursal registrada"]);
     }
 
     /**
@@ -56,9 +56,10 @@ class SucursalesController extends Controller
      * @param  \App\Models\Sucursales  $sucursales
      * @return \Illuminate\Http\Response
      */
-    public function edit(Sucursales $sucursales)
+    public function edit($id)
     {
-        //
+        $data = Sucursales::find($id);
+        return response()->json($data);
     }
 
     /**
@@ -68,9 +69,15 @@ class SucursalesController extends Controller
      * @param  \App\Models\Sucursales  $sucursales
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateSucursalesRequest $request, Sucursales $sucursales)
+    public function update(Request $request, $id)
     {
-        //
+        $data = Sucursales::find($id);
+        $data->name     = $request->name;
+        $data->phone    = $request->phone;
+        $data->address  = $request->address;
+        $data->state    = $request->state;
+        $data->save();
+        return response()->json(["message" => "Sucursal Actualizada correctamente!"]);
     }
 
     /**
@@ -79,8 +86,34 @@ class SucursalesController extends Controller
      * @param  \App\Models\Sucursales  $sucursales
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Sucursales $sucursales)
+    public function destroy($id)
     {
-        //
+        $data = Sucursales::find($id);
+        $data->delete();
+        return response()->json(["message" => "Sucursal borrada correctamente!"]);
+    }
+
+    function listsubcursal(Request $request){
+        $nombre    = $request->namesearch;
+        $phone     = $request->phonesearch;
+        if(empty($request->statesearch)){
+            $state = 1;
+        }else{
+            $state  = $request->statesearch;
+        }
+        $query = Sucursales::where('state', $state);
+        if(!empty($request->namesearch)){
+            $query->where('name', 'LIKE', '%'.$request->namesearch.'%');
+        }
+        if(!empty($request->phonesearch)){
+            $query->where('phone', 'LIKE', '%'.$request->phonesearch.'%');
+        }
+
+        $data = $query->paginate(25);
+        if($request->ajax()){
+            return response()->json(view('sucursales.partials.table', compact('data', 'nombre', 'phone', 'state' ))->render());
+        }
+        return view('sucursales.index', compact('data', 'nombre', 'phone', 'state'));
+
     }
 }

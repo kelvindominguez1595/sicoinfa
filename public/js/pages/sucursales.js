@@ -8,26 +8,28 @@ $(document).ready(function () {
     $("#btnnuevo").click(function () {
         removeClassInvalidate();
         $("#exampleModal").modal('show');
-        $("#titlemodal").text("Nuevo Usuario");
+        $("#titlemodal").text("Nueva Sucursal");
         $("#btnnamebutton").text('Guardar');
     });
 
     // guardamos los empleados
     $("#fmrdata").submit(function (e) {
-        let frm =  new FormData($(this)[0]);
-        // let frm = $(this).serialize()
+        let frm = $(this).serialize() ;
         let id = $("#id").val();
         let route, typ;
         let btnname = $("#btnnamebutton").text();
-            route = '/usuarios';
+        if(btnname == "Actualizar") {
+            route = '/sucursales/'+id;
+            typ = "PUT";
+        } else {
+            route = '/sucursales';
             typ = "POST";
+        }
         $.ajax({
             url: route,
             type: typ,
             dataType: "JSON",
             data: frm,
-            contentType: false,
-            processData: false,
             success: function (res){
                 AlertConfirmacin(res.message);
                 inputClear();
@@ -48,11 +50,12 @@ $(document).ready(function () {
         });
         e.preventDefault();
     })
+
     // para buscar
     $("#frmsearch").submit(function (e){
         e.preventDefault();
         let frm = $(this).serialize();
-        let url = "/usuarios";
+        let url = "/sucursales";
         $.ajax({
             url: url,
             data: frm,
@@ -64,47 +67,14 @@ $(document).ready(function () {
         })
     })
     listdata(); // obtener los datos de tabla cliente
-    // update profile
-    $("#fmrdataprofile").submit(function (e) {
-        let frm =  new FormData($(this)[0]);
-        // let frm = $(this).serialize()
-        let id = $("#id").val();
-        let route, typ;
-        let btnname = $("#btnnamebutton").text();
-        route = '/usuarios';
-        typ = "POST";
-        $.ajax({
-            url: route,
-            type: typ,
-            dataType: "JSON",
-            data: frm,
-            contentType: false,
-            processData: false,
-            success: function (res){
-                AlertConfirmacin(res.message);
-                location.reload();
-            },
-            error: function (err) {
-                if (err.responseJSON.errors.dui) {
-                    $("#dui").addClass("is-invalid");
-                    AlertError("El campo DUI es obligatorio");
-                }
-                if (err.responseJSON.errors.nit) {
-                    $("#nit").addClass("is-invalid");
-                    AlertError("El campo NIT es obligatorio");
 
-                }
-            }
-        });
-        e.preventDefault();
-    })
 });
 // pagination cliente
 $(document).on('click', '#cliente .pagination a', function (e){
     e.preventDefault()
     let page = $(this).attr('href').split('page=')[1];
     $.ajax({
-        url: '/usuarios',
+        url: '/sucursales',
         data: {page: page},
         type: 'GET',
         dataType: 'JSON',
@@ -120,19 +90,16 @@ $(document).on('click', '#cliente .pagination a', function (e){
 $(document).on('click', '#btnupdaclie', function (){
     let id = $(this).val();
     $("#btnnamebutton").text("Actualizar");
-    $.get('/usuarios/'+ id + '/edit', function (res){
-
+    $.get('/sucursales/'+ id + '/edit', function (res){
         $("#exampleModal").modal('show');
-        $("#titlemodal").text("Editar Usuarios");
-        inputMaskDuiNIT();
-        $('#id').val(res.data.id);
-        $('#name').val(res.data.name);
-        $('#email').val(res.data.email);
-       // $('#picture').val(res.data.picture);
+        $("#titlemodal").text("Editar Sucursal");
+        $('#id').val(res.id);
+        $('#name').val(res.name);
+        $('#phone').val(res.phone);
+        $('#address').val(res.address);
 
-        $('#rol'+res.rol.role_id).prop('checked', true);
         let state = $('#state');
-        if(res.data.state == 2 || res.data.state == "" || res.data.state == null ){
+        if(res.state == 2 || res.state == "" || res.state == null ){
             state.prop('checked', false);
         }else{
             state.prop('checked', true);
@@ -156,7 +123,7 @@ $(document).on('click', '#deleteclie', function (){
                 data: {
                     "_token": $("meta[name='csrf-token']").attr("content")
                 },
-                url: "usuarios/" + id,
+                url: "sucursales/" + id,
                 type: "DELETE",
                 dataType: "JSON",
                 success: function (res) {
@@ -177,28 +144,18 @@ $(document).on('click', '#btnclose', function (){
 });
 
 function listdata(){
-    $.get("/listuserdata", function (res){
+    $.get("/listsubcursal", function (res){
         $("#tblclientes").html(res);
     })
 }
 
 function inputClear(){
     $('#name').val('');
-    $('#email').val('');
-    $('#password').val('');
-    $('#picture').val('');
-    $('#id').val('');
-    $('#branch_offices_id').val(1);
+    $('#phone').val('');
+    $('#address').val('');
 }
 
 function removeClassInvalidate(){
     $("#nombres").removeClass("is-invalid");
     $("#apellidos").removeClass("is-invalid");
-}
-
-function inputMaskDuiNIT(){
-    $('#dui').inputmask("99999999-9");
-    $('#nit').inputmask("9999-999999-999-9");
-    $('#nup').inputmask("999999999999");
-    $('#isss').inputmask("999999999");
 }

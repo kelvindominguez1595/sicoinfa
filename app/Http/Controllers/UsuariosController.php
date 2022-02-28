@@ -20,33 +20,9 @@ class UsuariosController extends Controller
      */
     public function index(Request $request)
     {
-        $nombre     = $request->namesearch;
-        $email     = $request->emailsearch;
-        $almacen   = $request->almacensearch;
-
-        if(empty($request->statesearch)){
-            $state = 1;
-        }else{
-            $state  = $request->statesearch;
-        }
-        $query = User::where('state', '=', $state);
-        if(!empty($request->namesearch)){
-            $query->where('name', 'LIKE', '%'.$request->namesearch.'%');
-        }
-        if(!empty($request->emailsearch)){
-            $query->where('email', 'LIKE', '%'.$request->emailsearch.'%');
-        }
-        if(!empty($request->almacensearch)){
-            $query->where('branch_offices_id', '=', $request->almacensearch);
-        }
-
-        $data = $query->paginate(25);
         $sucursal = Sucursales::all();
         $rol = Role::all();
-        if($request->ajax()){
-            return response()->json(view('usuarios.partials.table', compact('data', 'nombre', 'email', 'almacen', 'state', 'sucursal', 'rol'))->render());
-        }
-        return view('usuarios.index', compact('data', 'nombre', 'email', 'almacen', 'state', 'sucursal', 'rol'));
+        return view('usuarios.index', compact('sucursal', 'rol'));
     }
 
     /**
@@ -195,6 +171,34 @@ class UsuariosController extends Controller
                 ->withSuccess('Signed in');
         }
         return redirect("login")->withSuccess('Login details are not valid');
+    }
 
+    function listuserdata(Request $request){
+        $nombre     = $request->namesearch;
+        $email     = $request->emailsearch;
+        $almacen   = $request->almacensearch;
+
+        if(empty($request->statesearch)){
+            $state = 1;
+        }else{
+            $state  = $request->statesearch;
+        }
+        $query = User::where('state', '=', $state);
+        if(!empty($request->namesearch)){
+            $query->where('name', 'LIKE', '%'.$request->namesearch.'%');
+        }
+        if(!empty($request->emailsearch)){
+            $query->where('email', 'LIKE', '%'.$request->emailsearch.'%');
+        }
+        if(!empty($request->almacensearch)){
+            $query->where('branch_offices_id', '=', $request->almacensearch);
+        }
+
+        $data = $query->paginate(25);
+
+        if($request->ajax()){
+            return response()->json(view('usuarios.partials.table', compact('data', 'nombre', 'email', 'almacen', 'state'))->render());
+        }
+        return view('usuarios.index', compact('data', 'nombre', 'email', 'almacen', 'state'));
     }
 }

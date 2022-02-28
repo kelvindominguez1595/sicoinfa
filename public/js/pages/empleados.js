@@ -151,7 +151,7 @@ $(document).on('click', '#deleteclie', function (){
 });
 
 function listdata(){
-    $.get("/empleados", function (res){
+    $.get("/listdateemp", function (res){
         $("#tblclientes").html(res);
     })
 }

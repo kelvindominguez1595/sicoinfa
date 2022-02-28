@@ -14,59 +14,7 @@ class EmpleadosController extends Controller
      */
     public function index(Request $request)
     {
-        $codigo     = $request->codigosearch;
-        $nombre     = $request->first_namesearch;
-        $apellido   = $request->last_namesearch;
-        $email      = $request->emailsearch;
-        $dui        = $request->duisearch;
-        $nit        = $request->nitsearch;
-        $nup        = $request->nupsearch;
-        $iss        = $request->issssearch;
-        $phone      = $request->phonesearch;
-        if(empty($request->statesearch)){
-            $state = 1;
-        }else{
-            $state  = $request->statesearch;
-        }
-        $query = Empleados::where('state', '=', $state);
-        if(!empty($request->codigosearch)){
-            $query->where('codigo', 'LIKE', '%'.$request->codigosearch.'%');
-        }
-        if(!empty($request->first_namesearch)){
-            $query->where('first_name', 'LIKE', '%'.$request->first_namesearch.'%');
-        }
-        if(!empty($request->last_namesearch)){
-            $query->where('last_name', 'LIKE', '%'.$request->last_namesearch.'%');
-        }
-        if(!empty($request->emailsearch)){
-            $query->where('email', 'LIKE', '%'.$request->emailsearch.'%');
-        }
-
-        if(!empty($request->duisearch)){
-            $query->where('dui', 'LIKE', '%'.$request->duisearch.'%');
-        }
-
-        if(!empty($request->nitsearch)){
-            $query->where('nit', 'LIKE', '%'.$request->nitsearch.'%');
-        }
-
-        if(!empty($request->nupsearch)){
-            $query->where('nup', 'LIKE', '%'.$request->nupsearch.'%');
-        }
-
-        if(!empty($request->issssearch)){
-            $query->where('isss', 'LIKE', '%'.$request->issssearch.'%');
-        }
-
-        if(!empty($request->phonesearch)){
-            $query->where('phone', 'LIKE', '%'.$request->phonesearch.'%');
-        }
-
-        $data = $query->paginate(25);
-        if($request->ajax()){
-            return response()->json(view('empleados.partials.table', compact('data', 'codigo', 'nombre', 'apellido', 'email', 'dui', 'nit', 'nup', 'iss', 'phone', 'state' ))->render());
-        }
-        return view('empleados.index', compact('data', 'codigo', 'nombre', 'apellido', 'email', 'dui', 'nit', 'nup', 'iss', 'phone', 'state'));
+        return view('empleados.index');
     }
 
     /**
@@ -159,5 +107,60 @@ class EmpleadosController extends Controller
         $data = Empleados::find($id);
         $data->delete();
         return response()->json(["message" => "Datos borrados"],200);
+    }
+    public function listdateemp(Request $request){
+        $codigo     = $request->codigosearch;
+        $nombre     = $request->first_namesearch;
+        $apellido   = $request->last_namesearch;
+        $email      = $request->emailsearch;
+        $dui        = $request->duisearch;
+        $nit        = $request->nitsearch;
+        $nup        = $request->nupsearch;
+        $iss        = $request->issssearch;
+        $phone      = $request->phonesearch;
+        if(empty($request->statesearch)){
+            $state = 1;
+        }else{
+            $state  = $request->statesearch;
+        }
+        $query = Empleados::where('state', '=', $state);
+        if(!empty($request->codigosearch)){
+            $query->where('codigo', 'LIKE', '%'.$request->codigosearch.'%');
+        }
+        if(!empty($request->first_namesearch)){
+            $query->where('first_name', 'LIKE', '%'.$request->first_namesearch.'%');
+        }
+        if(!empty($request->last_namesearch)){
+            $query->where('last_name', 'LIKE', '%'.$request->last_namesearch.'%');
+        }
+        if(!empty($request->emailsearch)){
+            $query->where('email', 'LIKE', '%'.$request->emailsearch.'%');
+        }
+
+        if(!empty($request->duisearch)){
+            $query->where('dui', 'LIKE', '%'.$request->duisearch.'%');
+        }
+
+        if(!empty($request->nitsearch)){
+            $query->where('nit', 'LIKE', '%'.$request->nitsearch.'%');
+        }
+
+        if(!empty($request->nupsearch)){
+            $query->where('nup', 'LIKE', '%'.$request->nupsearch.'%');
+        }
+
+        if(!empty($request->issssearch)){
+            $query->where('isss', 'LIKE', '%'.$request->issssearch.'%');
+        }
+
+        if(!empty($request->phonesearch)){
+            $query->where('phone', 'LIKE', '%'.$request->phonesearch.'%');
+        }
+
+        $data = $query->paginate(25);
+        if($request->ajax()){
+            return response()->json(view('empleados.partials.table', compact('data', 'codigo', 'nombre', 'apellido', 'email', 'dui', 'nit', 'nup', 'iss', 'phone', 'state' ))->render());
+        }
+        return view('empleados.index', compact('data', 'codigo', 'nombre', 'apellido', 'email', 'dui', 'nit', 'nup', 'iss', 'phone', 'state'));
     }
 }

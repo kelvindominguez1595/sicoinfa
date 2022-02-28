@@ -33,7 +33,7 @@
                 Sucursal
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-                <li><a class="dropdown-item" href=""><i class="fas fa-industry"></i> Sucursales</a></li>
+                <li><a class="dropdown-item" href="{{ url('sucursales') }}"><i class="fas fa-industry"></i> Sucursales</a></li>
                 <li><a class="dropdown-item" href="#"><i class="fas fa-shipping-fast"></i> Abastecer sucursal</a></li>
             </ul>
         </li>
