@@ -92,7 +92,7 @@ class EmpleadosController extends Controller
             'nit' => 'required'
         ]);
         Empleados::create($request->all());
-        return response()->json(["message" => "Nuevo cliente registrado"],200);
+        return response()->json(["message" => "Nuevo Empleado registrado"],200);
     }
 
     /**

@@ -11,13 +11,9 @@ use App\Models\Precios;
 use App\Models\Productos;
 use App\Models\Proveedores;
 use App\Models\Unidaddemedidas;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use App\Models\Sucursales;
-use App\Http\Requests\StoreProductosRequest;
-use App\Http\Requests\UpdateProductosRequest;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 
 
 class ProductosController extends Controller

@@ -45,8 +45,8 @@
                     </div>
 
                     <div class="col-12 col-sm-12 col-md-6 col-lg-6">
-                        <label for="telefono" class="form-label">Teléfono</label>
-                        <input type="text" class="form-control" id="telefono" name="telefono">
+                        <label for="phone" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="phone" name="phone">
                     </div>
 
                     <div class="col-12 col-sm-12 col-md-6 col-lg-6">

@@ -48,7 +48,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link " aria-current="page" href="">
+            <a class="nav-link " aria-current="page" href="{{ url('usuarios') }}">
                 <i class="fas fa-users"></i> Usuarios
             </a>
         </li>
