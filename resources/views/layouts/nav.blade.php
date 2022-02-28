@@ -71,17 +71,28 @@
     @endif
     <li class="nav-item dropdown dropdown-pull-right">
         <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <img
-                src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
-                class="rounded-circle"
-                height="25"
-                alt="Black and White Portrait of a Man"
-                loading="lazy"
-            />
+            @isset(Auth::user()->picture)
+                <img
+                    src="{{ asset('/images/usuarios/'.Auth::user()->picture) }}"
+                    class="rounded-circle"
+                    height="25"
+                    alt="Black and White Portrait of a Man"
+                    loading="lazy"
+                />
+            @else
+                <img
+                    src="/images/logoFerreteria.png"
+                    class="rounded-circle"
+                    height="25"
+                    alt="Black and White Portrait of a Man"
+                    loading="lazy"
+                />
+            @endisset
+
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
             <li class="border-bottom"><label class="ms-4 mb-2">{{ Auth::user()->name }}</label></li>
-            <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Configuración</a></li>
+            <li><a class="dropdown-item" href="{{ url('/profile') }}"><i class="fas fa-cog"></i> Configuración</a></li>
             <li>
                 <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     <i class="fas fa-sign-out-alt"></i>

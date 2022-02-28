@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class UsuariosController extends Controller
 {
@@ -154,5 +155,16 @@ class UsuariosController extends Controller
         $data = User::find($id);
         $data->delete();
         return response()->json(["message" => "Datos borrados"],200);
+    }
+
+    public function profile()
+    {
+        $data = User::find(Auth::user()->id);
+        $sucursal = Sucursales::all();
+        $rol = Role::all();
+        $rolselect = DB::table('role_user')
+            ->where('user_id', Auth::user()->id)
+            ->first();
+        return view('usuarios.profile', compact('data', 'sucursal', 'rol', 'rolselect'));
     }
 }

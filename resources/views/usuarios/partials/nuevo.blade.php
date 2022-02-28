@@ -7,7 +7,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
                 <form id="fmrdata"  method="post" enctype="multipart/form-data">
-            <div class="modal-body row g-3">
+                <div class="modal-body row g-3">
                     @csrf
                     <div class="col-12 col-sm-12 col-md-12 col-lg-12">
                         <label for="name" class="form-label">Nombres</label>

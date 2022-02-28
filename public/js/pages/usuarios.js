@@ -19,13 +19,8 @@ $(document).ready(function () {
         let id = $("#id").val();
         let route, typ;
         let btnname = $("#btnnamebutton").text();
-        // if(btnname == "Actualizar") {
-        //     route = '/usuarios/'+id;
-        //     typ = "PUT";
-        // } else {
             route = '/usuarios';
             typ = "POST";
-        // }
         $.ajax({
             url: route,
             type: typ,
@@ -33,7 +28,6 @@ $(document).ready(function () {
             data: frm,
             contentType: false,
             processData: false,
-
             success: function (res){
                 AlertConfirmacin(res.message);
                 inputClear();
@@ -70,6 +64,40 @@ $(document).ready(function () {
         })
     })
     listdata(); // obtener los datos de tabla cliente
+    // update profile
+    $("#fmrdataprofile").submit(function (e) {
+        let frm =  new FormData($(this)[0]);
+        // let frm = $(this).serialize()
+        let id = $("#id").val();
+        let route, typ;
+        let btnname = $("#btnnamebutton").text();
+        route = '/usuarios';
+        typ = "POST";
+        $.ajax({
+            url: route,
+            type: typ,
+            dataType: "JSON",
+            data: frm,
+            contentType: false,
+            processData: false,
+            success: function (res){
+                AlertConfirmacin(res.message);
+                location.reload();
+            },
+            error: function (err) {
+                if (err.responseJSON.errors.dui) {
+                    $("#dui").addClass("is-invalid");
+                    AlertError("El campo DUI es obligatorio");
+                }
+                if (err.responseJSON.errors.nit) {
+                    $("#nit").addClass("is-invalid");
+                    AlertError("El campo NIT es obligatorio");
+
+                }
+            }
+        });
+        e.preventDefault();
+    })
 });
 // pagination cliente
 $(document).on('click', '#cliente .pagination a', function (e){

@@ -73,9 +73,11 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::resource('/clientes', ClientesController::class);
     Route::get('/clientesList', [ClientesController::class, 'clientesList']);
     Route::get('/contribuyentesList', [ClientesController::class, 'contribuyentesList']);
+
     /** EMPLEADOS */
     Route::resource('/empleados', EmpleadosController::class);
     Route::resource('/usuarios', UsuariosController::class);
+    Route::get('/profile', [UsuariosController::class, 'profile']);
 });
 
 
