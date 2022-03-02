@@ -71,20 +71,31 @@
     @endif
     <li class="nav-item dropdown dropdown-pull-right">
         <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+
             @isset(Auth::user()->picture)
-                <img
-                    src="{{ asset('/images/usuarios/'.Auth::user()->picture) }}"
-                    class="rounded-circle"
-                    height="25"
-                    alt="Black and White Portrait of a Man"
-                    loading="lazy"
-                />
+                @if (file_exists(asset('/images/usuarios/'.Auth::user()->picture)))
+                    <img
+                        src="/images/logoFerreteria.png"
+                        class="rounded-circle"
+                        height="25"
+                        alt="Avatar"
+                        loading="lazy"
+                    />
+                    @else
+                    <img
+                        src="{{ asset('/images/usuarios/'.Auth::user()->picture) }}"
+                        class="rounded-circle"
+                        height="25"
+                        alt="Avatar"
+                        loading="lazy"
+                    />
+                @endif
             @else
                 <img
                     src="/images/logoFerreteria.png"
                     class="rounded-circle"
                     height="25"
-                    alt="Black and White Portrait of a Man"
+                    alt="Avatar"
                     loading="lazy"
                 />
             @endisset

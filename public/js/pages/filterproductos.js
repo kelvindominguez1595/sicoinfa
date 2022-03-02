@@ -66,6 +66,7 @@ $(document).ready(function () {
         }
     });
 
+
     /// para modificar las cantidades en existencias
     $(document).on('keyup', '.cantidad', function (event) {
         if (event.keyCode === 13) {

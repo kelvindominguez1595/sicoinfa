@@ -54,27 +54,36 @@
                                 <th>FECHA FACTURA</th>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
+                                @foreach($data as $item)
+                                    <tr>
+                                        <td>{{ $item->code }}</td>
+                                        <td>{{ $item->category_name }}</td>
+                                        <td>{{ $item->marca_name }}</td>
+                                        <td>{{ $item->name }}</td>
+                                        <td>{{ $item->cliente }}</td>
+                                        <td>{{ $item->cantidadnew }}</td>
+                                        <td>{{ $item->medida_name }}</td>
+                                        @if (isset($item->costosiniva))
+                                            <td>${{ number_format($item->costosiniva, 4) }}</td>
+                                            <td>${{ number_format($item->costoconiva, 4) }}</td>
+                                            @else
+                                            <td>${{ number_format($item->cost_s_iva, 4) }}</td>
+                                            <td>${{ number_format($item->cost_c_iva, 4) }}</td>
+                                        @endif
+
+                                        <td>{{ $item->sucursal }}</td>
+                                        <td>{{ $item->fechaingreso }}</td>
+                                        <td>{{ $item->nit }}</td>
+                                        <td>{{ $item->fechafactura }}</td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
-{{--                        <div class="d-flex justify-content-between">--}}
-{{--                            <div>Mostrando {{ $data->firstItem() }}  a  {{ $data->lastItem() }} de {{ $data->total() }} registros.</div>--}}
-{{--                            <div>--}}
+                        <div class="d-flex justify-content-between">
+                            <div>Mostrando {{ $data->firstItem() }}  a  {{ $data->lastItem() }} de {{ $data->total() }} registros.</div>
+                            <div>
+                                {{ $data->links() }}
 {{--                                {!!--}}
 {{--                                 $data->appends([--}}
 {{--                                    'estado'=> $estado,--}}
@@ -88,8 +97,8 @@
 {{--                                 ])--}}
 
 {{--                                 !!}--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
+                            </div>
+                        </div>
 
                     </div>
                 </div>

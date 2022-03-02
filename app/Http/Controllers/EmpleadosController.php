@@ -36,8 +36,10 @@ class EmpleadosController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'dui' => 'required',
-            'nit' => 'required'
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'codigo' => 'required',
+            'address' => 'required',
         ]);
         Empleados::create($request->all());
         return response()->json(["message" => "Nuevo Empleado registrado"],200);

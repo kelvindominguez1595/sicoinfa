@@ -795,7 +795,76 @@ class ProductosController extends Controller
 
     // para ver el historial de compras realizadas recientemente
     public function historialcompras(Request $request){
-        return view('productos.historicocompras');
+
+
+        $subds = DB::table('detalle_stock')
+            ->select('stocks_id','id as iddstock', 'invoice_number', 'invoice_date', 'register_date',  'clientefacturas_id',   DB::raw('MAX(created_at) as created_at'), 'updated_at')
+            ->groupBy('stocks_id');
+
+        $precionew = DB::table('precios')
+            ->select('id as idprice', 'producto_id', 'costosiniva', 'costoconiva', 'ganancia', 'porcentaje', 'precioventa', 'cambio', 'updated_at', DB::raw('MAX(created_at) as created_at'))
+            ->groupBy('producto_id');
+
+        $cansum = DB::table('detalle_products')
+            ->select('id as idsupro', 'branch_offices_id', 'stocks_id', DB::raw('SUM(quantity) as cantidadnew'))
+            ->groupBy('stocks_id');
+
+        $data = DB::table('stocks as sk')
+            ->join('categories as c', 'sk.category_id', 'c.id')
+            ->join('manufacturers as man', 'sk.manufacturer_id', 'man.id')
+            ->join('measures as me', 'sk.measures_id', 'me.id')
+            ->leftJoinSub($subds, 'detallestock', function($join){
+                $join->on('sk.id', '=', 'detallestock.stocks_id');
+            })
+            ->leftJoin('detalle_price as dp', 'detallestock.iddstock', 'dp.id')
+            ->leftJoinSub($precionew, 'precio', function($join){
+                $join->on('sk.id', '=', 'precio.producto_id');
+            })
+            ->leftJoinSub($cansum, 'canprodu', function($join){
+                $join->on('sk.id', '=', 'canprodu.stocks_id');
+            })
+            ->join('branch_offices as sucur', 'canprodu.branch_offices_id', 'sucur.id')
+            ->leftJoin('clientefacturas as pro', 'pro.id', '=', 'detallestock.clientefacturas_id')
+            ->select(
+                'sk.id',
+                'sk.image',
+                'sk.code',
+                'sk.barcode',
+                'sk.name',
+                'sk.exempt_iva',
+                'sk.stock_min',
+                'sk.description',
+                'c.name as category_name',
+                'man.name as marca_name',
+                'me.name as medida_name',
+                'sk.category_id',
+                'sk.manufacturer_id',
+                'detallestock.created_at as dtellastock',
+                'detallestock.iddstock',
+                'detallestock.stocks_id as idsproducto',
+                'detallestock.invoice_number as numfactura',
+                'detallestock.invoice_date as fechafactura',
+                'detallestock.created_at as fechaingreso',
+                'dp.cost_s_iva',
+                'dp.cost_c_iva',
+                'dp.sale_price',
+                'dp.state as estateoldprice',
+                'precio.costosiniva',
+                'precio.costoconiva',
+                'precio.ganancia',
+                'precio.porcentaje',
+                'precio.precioventa',
+                'precio.cambio',
+                'canprodu.cantidadnew',
+                'sucur.name as sucursal',
+                'pro.cliente',
+                'pro.nit',
+            )
+            ->where('sk.state', '=', 1)
+            ->orderBy('sk.code', 'ASC')
+            ->paginate(10);
+
+        return view('productos.historicocompras',  compact('data'));
     }
 
     // function para validar los precios

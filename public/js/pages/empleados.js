@@ -42,14 +42,29 @@ $(document).ready(function () {
                 listdata()
             },
             error: function (err) {
-                if (err.responseJSON.errors.dui) {
-                    $("#dui").addClass("is-invalid");
-                    AlertError("El campo DUI es obligatorio");
+                if (err.responseJSON.errors.first_name) {
+                    $("#first_name").addClass("is-invalid");
+                    AlertError("El campo Nombre es obligatorio");
+                } else {
+                    $("#first_name").removeClass("is-invalid");
                 }
-                if (err.responseJSON.errors.nit) {
-                    $("#nit").addClass("is-invalid");
-                    AlertError("El campo NIT es obligatorio");
-
+                if (err.responseJSON.errors.last_name) {
+                    $("#last_name").addClass("is-invalid");
+                    AlertError("El campo Apellido es obligatorio");
+                } else {
+                    $("#last_name").removeClass("is-invalid");
+                }
+                if (err.responseJSON.errors.codigo) {
+                    $("#codigo").addClass("is-invalid");
+                    AlertError("El campo Código es obligatorio");
+                } else {
+                    $("#codigo").removeClass("is-invalid");
+                }
+                if (err.responseJSON.errors.address) {
+                    $("#address").addClass("is-invalid");
+                    AlertError("El campo Dirección es obligatorio");
+                } else {
+                    $("#address").removeClass("is-invalid");
                 }
             }
         });

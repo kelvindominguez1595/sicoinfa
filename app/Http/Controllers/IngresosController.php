@@ -195,8 +195,22 @@ class IngresosController extends Controller
     public function costoPromedio($stock_id, $sucursal_id, $cantidad_ingreso, $costo_ingreso){
         $precio = $this->validarPrecio($stock_id);
         // creamos una formula para multiplicar los precios actuales
-        $almacenmain = Almacenes::where('branch_offices_id', '=', $sucursal_id)->where('stocks_id', '=', $stock_id)
+        $valid = Almacenes::where('branch_offices_id', '=', $sucursal_id)
+            ->where('stocks_id', '=', $stock_id)
             ->first();
+
+        if($valid){
+            $almacenmain = Almacenes::where('branch_offices_id', '=', $sucursal_id)
+                ->where('stocks_id', '=', $stock_id)
+                ->first();
+        } else{
+            $almacenmain = Almacenes::create([
+                'stock_min' => 2,
+                'quantity' => 0,
+                'branch_offices_id' => $sucursal_id,
+                'stocks_id' => $stock_id,
+            ]);
+        }
         if($precio['costosiniva'] == 0){
             $cambio = "nuevo";
             // multiplicamos el nuevo costo con iva
@@ -221,7 +235,6 @@ class IngresosController extends Controller
             $costoPromedio = $sumoSubtotales / $sumaCantidad;
             $costoPromedioFormat = floatval(number_format($costoPromedio, 5));
             // para ver si ha subrido un cambio el precio
-
                 if($costoPromedioFormat > $precio['costosiniva']){
                     $cambio = "subio";
                     // multiplicamos el nuevo costo con iva
@@ -288,13 +301,21 @@ class IngresosController extends Controller
                  *  el costo promedio no se podia sacar y por eso se tomo una decision de crear una tabla aparte que
                  *  apunte almacen.
                  */
+
                 $upingreso = Ingresos::find($precioviejoingreso->id);
                 $upingreso->state = 10;
                 $upingreso->save();
-
-                $upprecioviejo = DetalleIngreso::find($precioviejo->id);
-                $upprecioviejo->state = 10;
-                $upprecioviejo->save();
+                if($precioviejo){
+                    $upprecioviejo = DetalleIngreso::find($precioviejo->id);
+                    $upprecioviejo->state = 10;
+                    $upprecioviejo->save();
+                } else {
+                    $costosiniva    = 0;
+                    $costoconiva    = 0;
+                    $ganancia       = 0;
+                    $porcentaje     = 0;
+                    $precioventa    = 0;
+                }
             } else {
                 $costosiniva    = 0;
                 $costoconiva    = 0;
@@ -420,15 +441,27 @@ class IngresosController extends Controller
                 $precioviejo = DetalleIngreso::where('detalle_stock_id', '=', $pinviejo->id)
                     ->where('state', '=', 10)
                     ->first();
-                // Precio Anterior
-                $idviejo              = "no id viejo antiguo";
-                $costosinivaViejos    = $precioviejo->cost_s_iva;
-                $costoconivaViejos    = $precioviejo->cost_c_iva;
-                $gananciaViejos       = $precioviejo->earn_c_iva;
-                $porcentajeViejos     = $precioviejo->earn_porcent;
-                $precioventaViejos    = $precioviejo->sale_price;
-                $cambioViejos         = "no viejo";
-                // Precio Anterior
+                if($precioviejo){
+                    // Precio Anterior
+                    $idviejo              = "no id viejo antiguo";
+                    $costosinivaViejos    = $precioviejo->cost_s_iva;
+                    $costoconivaViejos    = $precioviejo->cost_c_iva;
+                    $gananciaViejos       = $precioviejo->earn_c_iva;
+                    $porcentajeViejos     = $precioviejo->earn_porcent;
+                    $precioventaViejos    = $precioviejo->sale_price;
+                    $cambioViejos         = "no viejo";
+                    // Precio Anterior
+                } else {
+                    // Precio Anterior
+                    $idviejo              = "no id viejo antiguo";
+                    $costosinivaViejos    = 0;
+                    $costoconivaViejos    = 0;
+                    $gananciaViejos       = 0;
+                    $porcentajeViejos     = 0;
+                    $precioventaViejos    = 0;
+                    $cambioViejos         = "no viejo";
+                    // Precio Anterior
+                }
 
             } else {
                 $idviejo              = "no id viejo antiguo";
