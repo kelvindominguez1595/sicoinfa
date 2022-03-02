@@ -158,7 +158,7 @@ class EmpleadosController extends Controller
         if(!empty($request->phonesearch)){
             $query->where('phone', 'LIKE', '%'.$request->phonesearch.'%');
         }
-
+        $query->orderBy('codigo', 'ASC' );
         $data = $query->paginate(25);
         if($request->ajax()){
             return response()->json(view('empleados.partials.table', compact('data', 'codigo', 'nombre', 'apellido', 'email', 'dui', 'nit', 'nup', 'iss', 'phone', 'state' ))->render());
