@@ -18,11 +18,7 @@
                     Filtros de búsqueda
                 </div>
                 <div class="card-body">
-                            @if(Auth::user()->hasRole('Admin'))
                                 <form action="{{ url('productosold')}}" method="get">
-                            @else
-                                <form action="{{ url('inventarios')}}" method="get">
-                            @endif
                                     @csrf
                                     <div class="mb-3 d-flex justify-content-center">
                                         @if(Auth::user()->hasRole('Admin'))
@@ -114,7 +110,17 @@
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover">
                             <thead>
-                            @include('productos.partials.tabletitle')
+                            <th class="small">Código</th>
+                            <th class="small">Código de Barra</th>
+                            <th class="small">Categoria</th>
+                            <th class="small">Marca</th>
+                            <th class="small">Nombre</th>
+                            <th class="small">Cantidad</th>
+                            <th class="small">Unidad</th>
+                            <th class="small">P/Venta</th>
+                            <th class="small">Costo</th>
+                            <th class="small">Imagen</th>
+                            <th class="small">Ajuste</th>
                             </thead>
                             <tbody>
                             @if (count($data)<=0) <tr>
@@ -154,24 +160,24 @@
                                                         data-bs-html="true"
                                                         data-bs-content='<div><?php echo $item->description ?></div>'
                                                     >
-                                                        @isset($item->precioventa)
-                                                            ${{number_format($item->precioventa,2)}}
+                                                        @isset($item->precionuevo)
+                                                            ${{number_format($item->precionuevo,2)}}
                                                         @else
-                                                            ${{number_format($item->sale_price,2)}}
+                                                            ${{number_format($item->precioventa,2)}}
                                                         @endisset
                                                     </a>
                                                 @else
-                                                    @isset($item->precioventa)
-                                                        ${{number_format($item->precioventa,2)}}
+                                                    @isset($item->precionuevo)
+                                                        ${{number_format($item->precionuevo,2)}}
                                                     @else
-                                                        ${{number_format($item->sale_price,2)}}
+                                                        ${{number_format($item->precioventa,2)}}
                                                     @endisset
                                                 @endisset
 
                                             </td>
                                             <td class="text-center">
-                                                @if(isset($item->costoconiva))
-                                                    @php $costo = number_format($item->costoconiva,4); @endphp
+                                                @if(isset($item->costonuevo))
+                                                    @php $costo = number_format($item->costonuevo,4); @endphp
                                                     <a
                                                         href="#"
                                                         tabindex="0"
@@ -185,8 +191,8 @@
                                                     >
                                                         <i class="fas fa-eye"></i>
                                                     </a>
-                                                @elseif(isset($item->cost_c_iva))
-                                                    @php $costo = number_format($item->cost_c_iva,4); @endphp
+                                                @elseif(isset($item->costosiniva))
+                                                    @php $costo = number_format($item->costosiniva,4); @endphp
                                                     <a
                                                         href="#"
                                                         tabindex="0"
@@ -261,9 +267,7 @@
         <div class="row mb-3">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
                 <div class="card mb-4 border-primary">
-                    <div class="card-header bg-primary text-white">
-                        Últimos ingresos
-                    </div>
+                    <div class="card-header bg-primary text-white"> Últimos ingresos     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered" id="table-utlimo-registro">
@@ -281,8 +285,8 @@
                                     <tr>
                                         <td>{{ $item->invoice_number }}</td>
                                         <td>{{ $item->name }}</td>
-                                        <td>{{ $item->cantidadnew }}</td>
-                                        <td>${{ number_format($item->costosiniva, 5) }}</td>
+                                        <td>{{ $item->quantity }}</td>
+                                        <td>${{ number_format($item->unit_price, 5) }}</td>
                                         <td>{{ $item->updated_at}}</td>
                                     </tr>
                                 @endforeach

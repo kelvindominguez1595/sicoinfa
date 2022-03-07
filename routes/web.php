@@ -38,6 +38,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::group(['middleware' => ['auth', 'admin']], function () {
     /** TODO ESTO ES PARA HACER UN INGRESO Y FILTRO DE PRODUCTOS */
     Route::resource('/productos', ProductosController::class);
+    Route::get('/productosold', [ProductosController::class, 'productosold']);
     Route::resource('/ingresos', IngresosController::class);
 
     Route::get('/actualizaringresos/{id}/{sucursalid}', [ProductosController::class, 'edit']);

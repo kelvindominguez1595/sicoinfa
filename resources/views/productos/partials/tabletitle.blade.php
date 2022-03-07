@@ -3,7 +3,7 @@
     $params = '&codigo='.$codigo.'&codbarra='.$codbarra.'&categoria='.$categoria.'&marca='.$marca.'&nombre='.$nombre.'&almacen='.$almacen.'&pages='.$pages.'&estado='.$estado;
 @endphp
 @if(Auth::user()->hasRole('Admin'))
-    @php $urlroute = 'productos'; @endphp
+    @php $urlroute = 'productosold'; @endphp
 @else
     @php $urlroute = 'inventarios'; @endphp
 @endif
