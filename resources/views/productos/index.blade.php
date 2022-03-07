@@ -18,10 +18,28 @@
                     Filtros de búsqueda
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('productos.index')}}" method="get">
+                    @if(Auth::user()->hasRole('Admin'))
+                     <form action="{{ route('productos.index')}}" method="get">
+                    @else
+                        <form action="{{ url('inventarios')}}" method="get">
+                    @endif
                         @csrf
                         <div class="mb-3 d-flex justify-content-center">
-                            <button class="btn btn-primary btn-sm" type="button" id="btnresetall" onclick="$(location).attr('href','productos?estado=activos&pages=25&page=1');">Mostrar Todo</button>
+                            @if(Auth::user()->hasRole('Admin'))
+                            <button
+                                    class="btn btn-primary btn-sm"
+                                    type="button"
+                                    id="btnresetall"
+                                    onclick="$(location).attr('href','productos?estado=activos&pages=25&page=1');">
+                                Mostrar Todo</button>
+                            @else
+                            <button
+                                class="btn btn-primary btn-sm"
+                                type="button"
+                                id="btnresetall"
+                                    onclick="$(location).attr('href','inventarios?estado=activos&pages=25&page=1');">
+                                Mostrar Todo</button>
+                            @endif
                         </div>
                         <div class="row">
                             <div class="col-12  mb-2">
@@ -88,25 +106,16 @@
                     <div class="">
                         {{ $data->total() }} Resultados
                     </div>
-                     <a class="btn btn btn-light btn-sm" href="{{ route('productos.create') }}">Nuevo Producto&nbsp;<i class="fa fa-save"></i></a>
+                    @if(Auth::user()->hasRole('Admin'))
+                        <a class="btn btn btn-light btn-sm" href="{{ route('productos.create') }}">Nuevo Producto&nbsp;<i class="fa fa-save"></i></a>
+                    @endif
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover">
                             <thead>
-                            <th class="small">Código</th>
-                            <th class="small">Código de Barra</th>
-                            <th class="small">Categoria</th>
-                            <th class="small">Marca</th>
-                            <th class="small">Nombre</th>
-                            <th class="small">Cantidad</th>
-                            <th class="small">Unidad</th>
-                            <th class="small">P/Venta</th>
-                            <th class="small">Costo</th>
-                            <th class="small">Imagen</th>
-                            <th class="small">Ajuste</th>
+                                @include('productos.partials.tabletitle')
                             </thead>
-
                             <tbody>
                             @if (count($data)<=0) <tr>
                                 <td colspan="11">No hay resultados</td>
@@ -121,7 +130,13 @@
                                             <td class="small">{{ $item->category_name }}</td>
                                             <td class="small">{{ $item->marca_name }}</td>
                                             <td class="small">
-                                                <a href="{{ url("actualizaringresos",[$item->id, !isset($item->branch_offices_id) ? 1 : $item->branch_offices_id])}}">{!! $item->name !!}</a>
+                                                @if(Auth::user()->hasRole('Admin'))
+                                                        <a href="{{ url("actualizaringresos",[$item->id, !isset($item->branch_offices_id) ? 1 : $item->branch_offices_id])}}">
+                                                            {!! $item->name !!}
+                                                        </a>
+                                                    @else
+                                                    {!! $item->name !!}
+                                                @endif
                                             </td>
                                             <td class="small"> {{ $item->cantidadnew }}</td>
                                             <td class="small"> {{ $item->medida_name }}</td>
@@ -139,24 +154,24 @@
                                                         data-bs-html="true"
                                                         data-bs-content='<div><?php echo $item->description ?></div>'
                                                     >
-                                                        @isset($item->precionuevo)
-                                                            ${{number_format($item->precionuevo,2)}}
-                                                        @else
+                                                        @isset($item->precioventa)
                                                             ${{number_format($item->precioventa,2)}}
+                                                        @else
+                                                            ${{number_format($item->sale_price,2)}}
                                                         @endisset
                                                     </a>
                                                 @else
-                                                    @isset($item->precionuevo)
-                                                        ${{number_format($item->precionuevo,2)}}
-                                                    @else
+                                                    @isset($item->precioventa)
                                                         ${{number_format($item->precioventa,2)}}
+                                                    @else
+                                                        ${{number_format($item->sale_price,2)}}
                                                     @endisset
                                                 @endisset
 
                                             </td>
                                             <td class="text-center">
-                                                @if(isset($item->costonuevo))
-                                                   @php $costo = number_format($item->costonuevo,4); @endphp
+                                                @if(isset($item->costoconiva))
+                                                   @php $costo = number_format($item->costoconiva,4); @endphp
                                                     <a
                                                         href="#"
                                                         tabindex="0"
@@ -170,8 +185,8 @@
                                                     >
                                                         <i class="fas fa-eye"></i>
                                                     </a>
-                                                @elseif(isset($item->costosiniva))
-                                                    @php $costo = number_format($item->costosiniva,4); @endphp
+                                                @elseif(isset($item->cost_c_iva))
+                                                    @php $costo = number_format($item->cost_c_iva,4); @endphp
                                                     <a
                                                         href="#"
                                                         tabindex="0"
@@ -203,12 +218,13 @@
                                                 {!! $imagen !!}
 
                                             </td>
-
+                                            @if(Auth::user()->hasRole('Admin'))
                                             <td>
                                                 <input type="hidden" name="idProducto[]" value="{{ $item->id }}"><input
                                                     type="number" name="update_quantity[]" id="update_quantity"
                                                     class="cantidad" style="width: 70px">
                                             </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                     <button type="button" id="Updated_canti" class="d-none"></button>
@@ -242,40 +258,41 @@
         </div>
     </div>
 
-
-    <div class="row mb-3">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-            <div class="card mb-4 border-primary">
-                <div class="card-header bg-primary text-white">
-                    Últimos ingresos
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered" id="table-utlimo-registro">
-                            <thead>
-                            <tr>
-                                <th>N° Factura</th>
-                                <th>Producto</th>
-                                <th>Cantidad</th>
-                                <th>Precio Unitario</th>
-                                <th>Fecha</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach ($ultimoPro as $item)
+    @if(Auth::user()->hasRole('Admin'))
+        <div class="row mb-3">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                <div class="card mb-4 border-primary">
+                    <div class="card-header bg-primary text-white">
+                        Últimos ingresos
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered" id="table-utlimo-registro">
+                                <thead>
                                 <tr>
-                                    <td>{{ $item->invoice_number }}</td>
-                                    <td>{{ $item->name }}</td>
-                                    <td>{{ $item->quantity }}</td>
-                                    <td>${{ number_format($item->unit_price, 5) }}</td>
-                                    <td>{{ $item->updated_at}}</td>
+                                    <th>N° Factura</th>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Fecha</th>
                                 </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                @foreach ($ultimoPro as $item)
+                                    <tr>
+                                        <td>{{ $item->invoice_number }}</td>
+                                        <td>{{ $item->name }}</td>
+                                        <td>{{ $item->cantidadnew }}</td>
+                                        <td>${{ number_format($item->costosiniva, 5) }}</td>
+                                        <td>{{ $item->updated_at}}</td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 @endsection

@@ -11275,3 +11275,13 @@ textarea.form-control-lg {
   right: 0;
   left: auto;
 }
+
+.titletableorder{
+    text-decoration: none;
+    color: #030303;
+}
+
+a .titletableorder {
+    pointer-events: none;
+    cursor: default;
+}

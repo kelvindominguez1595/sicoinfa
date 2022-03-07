@@ -11,6 +11,7 @@ use App\Http\Controllers\ClientesController;
 use App\Http\Controllers\EmpleadosController;
 use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\SucursalesController;
+use App\Http\Controllers\ReporteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -86,12 +87,16 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     /** SUCRUSALES */
     Route::resource('/sucursales', SucursalesController::class);
     Route::get('/listsubcursal', [SucursalesController::class, 'listsubcursal']);
-
+    /** REPORTES */
+    Route::get('/porcentaje', [ReporteController::class, 'porcentaje']);
+    Route::get('/promedio', [ReporteController::class, 'promedio']);
+    Route::get('/rendimiento', [ReporteController::class, 'rendimiento']);
 });
 
 
 Route::group(['middleware' => ['auth', 'user']], function () {
-    Route::get('/inventarios', [ProductosController::class, 'inventarios']); // listado para el area de ventas
+    Route::get('/inventarios', [ProductosController::class, 'index']);
+//    Route::get('/inventarios', [ProductosController::class, 'inventarios']); // listado para el area de ventas
     Route::get('/list_marcasempleado', [ProductosController::class, 'marcas']);
     Route::get('/list_categoriasempleado', [ProductosController::class, 'categorias']);
     Route::get('/marcasidemp/{id}', [ProductosController::class, 'marcasid']);

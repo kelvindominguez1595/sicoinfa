@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="{{ asset('css/toastr.css') }}">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-lg p-3 mb-5 bg-body">
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light shadow-lg  bg-body mb-5">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
                 <img src="{{asset('images/logoFerreteria.png')}}" class="img-fluid" width="30px" height="30px" id="">
@@ -34,9 +34,11 @@
             </div>
         </div>
     </nav>
-    <div class="container-fluid">
+    <p></p>
+    <main class="container-fluid mt-5 pt-5">
         @yield('content')
-    </div>
+    </main>
+
     <!-- Scripts -->
     <!-- Optional JavaScript; choose one of the two! -->
     <script src="{{ asset('js/jquery-3.5.1.js') }}"></script>

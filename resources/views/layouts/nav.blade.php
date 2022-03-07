@@ -22,7 +22,7 @@
                 <li><a class="dropdown-item" href="{{ url('medidas') }}"><i class="fas fa-ruler"></i> Medidas</a></li>
                 <li><a class="dropdown-item" href="{{ url('proveedores') }}"><i class="fas fa-user-tag"></i> Proveedores</a></li>
                 <li><a class="dropdown-item" href="{{ route('productos.create') }}"><i class="fas fa-plus"></i> Nuevo producto</a></li>
-                <li><a class="dropdown-item" href="{{ url('productos?estado=activos&pages=25&page=1') }}"><i class="fas fa-store-alt"></i> Productos</a></li>
+                <li><a class="dropdown-item" href="{{ url('productos') }}"><i class="fas fa-store-alt"></i> Productos</a></li>
                 <li><a class="dropdown-item" href="{{ url('historialcompras') }}"><i class="fas fa-list"></i> Históricos de Compra</a></li>
 
             </ul>
@@ -59,7 +59,9 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
                 <li><a class="dropdown-item" href=""><i class="fas fa-file-csv"></i> Reporte DET</a></li>
-
+                <li><a class="dropdown-item" href="{{ url('/porcentaje') }}"><i class="fas fa-file-csv"></i> Porcentaje</a></li>
+                <li><a class="dropdown-item" href="{{ url('/rendimiento') }}"><i class="fas fa-file-csv"></i> Rendimiento de Venta Por Producto</a></li>
+                <li><a class="dropdown-item" href="{{ url('/promedio') }}"><i class="fas fa-file-csv"></i> Promedios</a></li>
             </ul>
         </li>
     @else
