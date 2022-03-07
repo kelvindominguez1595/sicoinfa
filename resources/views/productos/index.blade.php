@@ -18,84 +18,84 @@
                     Filtros de búsqueda
                 </div>
                 <div class="card-body">
-                    @if(Auth::user()->hasRole('Admin'))
-                     <form action="{{ route('productos.index')}}" method="get">
-                    @else
-                        <form action="{{ url('inventarios')}}" method="get">
-                    @endif
-                        @csrf
-                        <div class="mb-3 d-flex justify-content-center">
                             @if(Auth::user()->hasRole('Admin'))
-                            <button
-                                    class="btn btn-primary btn-sm"
-                                    type="button"
-                                    id="btnresetall"
-                                    onclick="$(location).attr('href','productos?estado=activos&pages=25&page=1');">
-                                Mostrar Todo</button>
+                                <form action="{{ route('productos.index')}}" method="get">
                             @else
-                            <button
-                                class="btn btn-primary btn-sm"
-                                type="button"
-                                id="btnresetall"
-                                    onclick="$(location).attr('href','inventarios?estado=activos&pages=25&page=1');">
-                                Mostrar Todo</button>
+                                <form action="{{ url('inventarios')}}" method="get">
                             @endif
-                        </div>
-                        <div class="row">
-                            <div class="col-12  mb-2">
-                                <label for="codigo" class="form-label fw-bold">Código</label>
-                                <input type="text" class="form-control" id="codigo" name="codigo" value="{{ $codigo }}" placeholder="Código">
-                            </div>
-                            <div class="col-12  mb-2">
-                                <label for="codbarra" class="form-label fw-bold">Código de Barra</label>
-                                <input type="text" class="form-control" id="codbarra" name="codbarra" value="{{ $codbarra }}" placeholder="Código de Barra">
-                            </div>
-                            <div class="col-12  mb-2">
-                                <label for="categoria" class="form-label fw-bold">Categoría</label>
-                                <input type="text" class="form-control" value="{{$categoria}}" placeholder="Categoría" name="categoria" id="categoria">
-                            </div>
-                            <div class="col-12  mb-2">
-                                <label for="marca" class="form-label fw-bold">Marca</label>
-                                <input type="text" class="form-control" value="{{$marca}}" placeholder="Marca" name="marca" id="marca">
-                            </div>
-                            <div class="col-12  mb-2">
-                                <label for="nombre" class="form-label fw-bold">Nombre del producto</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{ $nombre }}" placeholder="Nombre del producto">
-                            </div>
-                        </div>
+                                    @csrf
+                                    <div class="mb-3 d-flex justify-content-center">
+                                        @if(Auth::user()->hasRole('Admin'))
+                                            <button
+                                                class="btn btn-primary btn-sm"
+                                                type="button"
+                                                id="btnresetall"
+                                                onclick="$(location).attr('href','productos?estado=activos&pages=25&page=1');">
+                                                Mostrar Todo</button>
+                                        @else
+                                            <button
+                                                class="btn btn-primary btn-sm"
+                                                type="button"
+                                                id="btnresetall"
+                                                onclick="$(location).attr('href','inventarios?estado=activos&pages=25&page=1');">
+                                                Mostrar Todo</button>
+                                        @endif
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12  mb-2">
+                                            <label for="codigo" class="form-label fw-bold">Código</label>
+                                            <input type="text" class="form-control" id="codigo" name="codigo" value="{{ $codigo }}" placeholder="Código">
+                                        </div>
+                                        <div class="col-12  mb-2">
+                                            <label for="codbarra" class="form-label fw-bold">Código de Barra</label>
+                                            <input type="text" class="form-control" id="codbarra" name="codbarra" value="{{ $codbarra }}" placeholder="Código de Barra">
+                                        </div>
+                                        <div class="col-12  mb-2">
+                                            <label for="categoria" class="form-label fw-bold">Categoría</label>
+                                            <input type="text" class="form-control" value="{{$categoria}}" placeholder="Categoría" name="categoria" id="categoria">
+                                        </div>
+                                        <div class="col-12  mb-2">
+                                            <label for="marca" class="form-label fw-bold">Marca</label>
+                                            <input type="text" class="form-control" value="{{$marca}}" placeholder="Marca" name="marca" id="marca">
+                                        </div>
+                                        <div class="col-12  mb-2">
+                                            <label for="nombre" class="form-label fw-bold">Nombre del producto</label>
+                                            <input type="text" class="form-control" id="nombre" name="nombre" value="{{ $nombre }}" placeholder="Nombre del producto">
+                                        </div>
+                                    </div>
 
-                        <div class="row">
-                            <div class="col-12  mb-2">
-                                <label for="almacen" class="form-label fw-bold">Almacen</label>
-                                <select class="form-select"  id="almacen" name="almacen" data-almacen="{{$almacen}}">
-                                    <option value="todos" @if($almacen=="todos") selected @endif>Todos</option>
-                                    @foreach ($almaceneslist as $item)
-                                        <option value="{{ $item->id }}" @if($almacen==$item->id) selected @endif>{{ $item->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                                    <div class="row">
+                                        <div class="col-12  mb-2">
+                                            <label for="almacen" class="form-label fw-bold">Almacen</label>
+                                            <select class="form-select"  id="almacen" name="almacen" data-almacen="{{$almacen}}">
+                                                <option value="todos" @if($almacen=="todos") selected @endif>Todos</option>
+                                                @foreach ($almaceneslist as $item)
+                                                    <option value="{{ $item->id }}" @if($almacen==$item->id) selected @endif>{{ $item->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
 
-                            <div class="col-12  mb-2">
-                                <label for="countpagination" class="form-label fw-bold">Cantidad por página</label>
-                                <select class="form-select"  id="pages" name="pages">
-                                    <option value="25"  @if ($pages == 25) selected @endif>25</option>
-                                    <option value="50"  @if ($pages == 50) selected @endif>50</option>
-                                    <option value="100"  @if ($pages == 100) selected @endif>100</option>
-                                </select>
-                            </div>
-                            <div class="col-12  mb-2">
-                                <label for="estado" class="form-label fw-bold">Estado</label>
-                                <select class="form-select"  id="estado" name="estado">
-                                    <option value="activos" @if ($estado == 'activos') selected @endif>Activos</option>
-                                    <option value="inactivos" @if ($estado == 'inactivos') selected @endif>Inactivos</option>
-                                </select>
-                            </div>
-                        </div>
+                                        <div class="col-12  mb-2">
+                                            <label for="countpagination" class="form-label fw-bold">Cantidad por página</label>
+                                            <select class="form-select"  id="pages" name="pages">
+                                                <option value="25"  @if ($pages == 25) selected @endif>25</option>
+                                                <option value="50"  @if ($pages == 50) selected @endif>50</option>
+                                                <option value="100"  @if ($pages == 100) selected @endif>100</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12  mb-2">
+                                            <label for="estado" class="form-label fw-bold">Estado</label>
+                                            <select class="form-select"  id="estado" name="estado">
+                                                <option value="activos" @if ($estado == 'activos') selected @endif>Activos</option>
+                                                <option value="inactivos" @if ($estado == 'inactivos') selected @endif>Inactivos</option>
+                                            </select>
+                                        </div>
+                                    </div>
 
-                        <div class="mb-3 d-flex justify-content-center">
-                            <button class="btn btn-success" type="submit"><i class="fa fa-search"></i> Filtrar</button>
-                        </div>
-                    </form>
+                                    <div class="mb-3 d-flex justify-content-center">
+                                        <button class="btn btn-success" type="submit"><i class="fa fa-search"></i> Filtrar</button>
+                                    </div>
+                                </form>
                 </div>
             </div>
         </div>
@@ -114,7 +114,7 @@
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover">
                             <thead>
-                                @include('productos.partials.tabletitle')
+                            @include('productos.partials.tabletitle')
                             </thead>
                             <tbody>
                             @if (count($data)<=0) <tr>
@@ -131,10 +131,10 @@
                                             <td class="small">{{ $item->marca_name }}</td>
                                             <td class="small">
                                                 @if(Auth::user()->hasRole('Admin'))
-                                                        <a href="{{ url("actualizaringresos",[$item->id, !isset($item->branch_offices_id) ? 1 : $item->branch_offices_id])}}">
-                                                            {!! $item->name !!}
-                                                        </a>
-                                                    @else
+                                                    <a href="{{ url("actualizaringresos",[$item->id, !isset($item->branch_offices_id) ? 1 : $item->branch_offices_id])}}">
+                                                        {!! $item->name !!}
+                                                    </a>
+                                                @else
                                                     {!! $item->name !!}
                                                 @endif
                                             </td>
@@ -171,7 +171,7 @@
                                             </td>
                                             <td class="text-center">
                                                 @if(isset($item->costoconiva))
-                                                   @php $costo = number_format($item->costoconiva,4); @endphp
+                                                    @php $costo = number_format($item->costoconiva,4); @endphp
                                                     <a
                                                         href="#"
                                                         tabindex="0"
@@ -219,11 +219,11 @@
 
                                             </td>
                                             @if(Auth::user()->hasRole('Admin'))
-                                            <td>
-                                                <input type="hidden" name="idProducto[]" value="{{ $item->id }}"><input
-                                                    type="number" name="update_quantity[]" id="update_quantity"
-                                                    class="cantidad" style="width: 70px">
-                                            </td>
+                                                <td>
+                                                    <input type="hidden" name="idProducto[]" value="{{ $item->id }}"><input
+                                                        type="number" name="update_quantity[]" id="update_quantity"
+                                                        class="cantidad" style="width: 70px">
+                                                </td>
                                             @endif
                                         </tr>
                                     @endforeach
@@ -247,7 +247,6 @@
                                     'almacen'=> $almacen,
                                     'pages'=> $pages,
                                  ])
-
                                  !!}
                             </div>
                         </div>
