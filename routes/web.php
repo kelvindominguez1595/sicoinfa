@@ -95,7 +95,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 
 
 Route::group(['middleware' => ['auth', 'user']], function () {
-    Route::get('/inventarios', [ProductosController::class, 'index']);
+    Route::get('/inventarios', [ProductosController::class, 'inventariosold']);
     Route::get('/list_marcasempleado', [ProductosController::class, 'marcas']);
     Route::get('/list_categoriasempleado', [ProductosController::class, 'categorias']);
     Route::get('/marcasidemp/{id}', [ProductosController::class, 'marcasid']);
