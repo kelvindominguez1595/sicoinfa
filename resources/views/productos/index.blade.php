@@ -19,7 +19,7 @@
                 </div>
                 <div class="card-body">
                             @if(Auth::user()->hasRole('Admin'))
-                                <form action="{{ url('productosold')}}" method="get">
+                                <form action="{{ url('productos')}}" method="get">
                             @else
                                 <form action="{{ url('inventarios')}}" method="get">
                             @endif
@@ -30,7 +30,7 @@
                                                 class="btn btn-primary btn-sm"
                                                 type="button"
                                                 id="btnresetall"
-                                                onclick="$(location).attr('href','productosold?estado=activos&pages=25&page=1');">
+                                                onclick="$(location).attr('href','productos?estado=activos&pages=25&page=1');">
                                                 Mostrar Todo</button>
                                         @else
                                             <button

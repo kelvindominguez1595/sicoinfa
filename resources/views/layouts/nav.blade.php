@@ -22,7 +22,7 @@
                 <li><a class="dropdown-item" href="{{ url('medidas') }}"><i class="fas fa-ruler"></i> Medidas</a></li>
                 <li><a class="dropdown-item" href="{{ url('proveedores') }}"><i class="fas fa-user-tag"></i> Proveedores</a></li>
                 <li><a class="dropdown-item" href="{{ route('productos.create') }}"><i class="fas fa-plus"></i> Nuevo producto</a></li>
-                <li><a class="dropdown-item" href="{{ url('productosold') }}"><i class="fas fa-store-alt"></i> Productos</a></li>
+                <li><a class="dropdown-item" href="{{ url('productos') }}"><i class="fas fa-store-alt"></i> Productos</a></li>
                 <li><a class="dropdown-item" href="{{ url('historialcompras') }}"><i class="fas fa-list"></i> Históricos de Compra</a></li>
 
             </ul>
@@ -73,7 +73,6 @@
     @endif
     <li class="nav-item dropdown dropdown-pull-right">
         <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-
             @isset(Auth::user()->picture)
                 @if (file_exists(asset('/images/usuarios/'.Auth::user()->picture)))
                     <img
@@ -101,7 +100,6 @@
                     loading="lazy"
                 />
             @endisset
-
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
             <li class="border-bottom"><label class="ms-4 mb-2">{{ Auth::user()->name }}</label></li>

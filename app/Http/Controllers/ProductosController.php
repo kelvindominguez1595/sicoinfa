@@ -26,7 +26,7 @@ class ProductosController extends Controller
      */
     public function index(Request $request)
     {
-        $subds = DB::table('detalle_stock')
+        $oldprice = DB::table('detalle_stock')
             ->select(
                 DB::raw('MAX(id) as iddstock'),
                 'stocks_id',
@@ -34,7 +34,10 @@ class ProductosController extends Controller
             ->groupBy('stocks_id');
 
         $precionew = DB::table('precios')
-            ->select('id as idprice', 'producto_id', 'costosiniva', 'costoconiva', 'ganancia', 'porcentaje', 'precioventa', 'cambio', 'updated_at', DB::raw('MAX(created_at) as created_at'))
+            ->select(
+                DB::raw('MAX(id) as idprice'),
+                'producto_id',
+                DB::raw('MAX(created_at) as created_at'))
             ->groupBy('producto_id');
 
         $cansum = DB::table('detalle_products')
@@ -104,14 +107,15 @@ class ProductosController extends Controller
               ->join('categories as c', 'sk.category_id', 'c.id')
               ->join('manufacturers as man', 'sk.manufacturer_id', 'man.id')
               ->join('measures as me', 'sk.measures_id', 'me.id')
-              ->leftJoinSub($subds, 'detallestock', function($join){
+              ->leftJoinSub($oldprice, 'detallestock', function($join){
                   $join->on('sk.id', '=', 'detallestock.stocks_id');
               })
               ->leftJoin('detalle_stock as detsto', 'detallestock.iddstock', 'detsto.id')
-              ->leftJoin('detalle_price as dp', 'detallestock.iddstock', 'dp.id')
+              ->leftJoin('detalle_price as dp', 'detallestock.iddstock', 'dp.detalle_stock_id')
               ->leftJoinSub($precionew, 'precio', function($join){
                   $join->on('sk.id', '=', 'precio.producto_id');
               })
+              ->leftJoin('precios as price', 'precio.idprice', 'price.id')
               ->leftJoinSub($cansum, 'canprodu', function($join){
                   $join->on('sk.id', '=', 'canprodu.stocks_id');
               })
@@ -139,12 +143,12 @@ class ProductosController extends Controller
                   'dp.cost_c_iva',
                   'dp.sale_price',
                   'dp.state as estateoldprice',
-                  'precio.costosiniva',
-                  'precio.costoconiva',
-                  'precio.ganancia',
-                  'precio.porcentaje',
-                  'precio.precioventa',
-                  'precio.cambio',
+                  'price.costosiniva',
+                  'price.costoconiva',
+                  'price.ganancia',
+                  'price.porcentaje',
+                  'price.precioventa',
+                  'price.cambio',
                   'canprodu.cantidadnew',
               );
 
@@ -196,27 +200,21 @@ class ProductosController extends Controller
                   'sk.category_id',
                   'sk.manufacturer_id');
           }
-
-          // aqui pondria la logica para ordernar los productos
-//          if(!empty($orderby)){
-//              $query->orderBy($nameorder, $ordervali);
-//          } else {
-//              $query->orderBy('sk.code', 'ASC');
-//          }
           $query->orderBy($nameorder, $ordervali);
       } else {
           $query = DB::table('stocks as sk')
               ->join('categories as c', 'sk.category_id', 'c.id')
               ->join('manufacturers as man', 'sk.manufacturer_id', 'man.id')
               ->join('measures as me', 'sk.measures_id', 'me.id')
-              ->leftJoinSub($subds, 'detallestock', function($join){
+              ->leftJoinSub($oldprice, 'detallestock', function($join){
                   $join->on('sk.id', '=', 'detallestock.stocks_id');
               })
               ->leftJoin('detalle_stock as detsto', 'detallestock.iddstock', 'detsto.id')
-              ->leftJoin('detalle_price as dp', 'detallestock.iddstock', 'dp.id')
+              ->leftJoin('detalle_price as dp', 'detallestock.iddstock', 'dp.detalle_stock_id')
               ->leftJoinSub($precionew, 'precio', function($join){
                   $join->on('sk.id', '=', 'precio.producto_id');
               })
+              ->leftJoin('precios as price', 'precio.idprice', 'price.id')
               ->leftJoinSub($cansum, 'canprodu', function($join){
                   $join->on('sk.id', '=', 'canprodu.stocks_id');
               })
@@ -244,12 +242,12 @@ class ProductosController extends Controller
                   'dp.cost_c_iva',
                   'dp.sale_price',
                   'dp.state as estateoldprice',
-                  'precio.costosiniva',
-                  'precio.costoconiva',
-                  'precio.ganancia',
-                  'precio.porcentaje',
-                  'precio.precioventa',
-                  'precio.cambio',
+                  'price.costosiniva',
+                  'price.costoconiva',
+                  'price.ganancia',
+                  'price.porcentaje',
+                  'price.precioventa',
+                  'price.cambio',
                   'canprodu.cantidadnew',
               );
           $query->where('sk.state', '=', 1);
@@ -260,13 +258,14 @@ class ProductosController extends Controller
 
         // obtenemos los ultiumos 5 productos registrados
         $ultimoPro = DB::table('stocks as sk')
-        ->leftJoinSub($subds, 'detallestock', function($join){
+        ->leftJoinSub($oldprice, 'detallestock', function($join){
             $join->on('sk.id', '=', 'detallestock.stocks_id');
         })
         ->leftJoin('detalle_stock as detsto', 'detallestock.iddstock', 'detsto.id')
         ->leftJoinSub($precionew, 'precio', function($join){
             $join->on('sk.id', '=', 'precio.producto_id');
         })
+        ->leftJoin('precios as price', 'precio.idprice', 'price.id')
         ->leftJoinSub($cansum, 'canprodu', function($join){
             $join->on('sk.id', '=', 'canprodu.stocks_id');
         })
@@ -277,7 +276,7 @@ class ProductosController extends Controller
             'sk.manufacturer_id',
             'detsto.invoice_number',
             'detsto.updated_at',
-            'precio.costosiniva',
+            'price.costosiniva',
             'canprodu.cantidadnew',)
         ->where('sk.state','=', 1)
         ->orderBy('sk.updated_at', 'DESC')
