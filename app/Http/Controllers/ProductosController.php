@@ -304,7 +304,6 @@ class ProductosController extends Controller
     }
 
     public function orderByvalidate($order){
-
         if(empty($order)){
             $res = 'ASC';
         } else {
@@ -452,6 +451,7 @@ class ProductosController extends Controller
         $ganancia = $request->earn_c_iva;
         $porcentaje = $request->earn_porcent;
         $preciventa = $request->sale_price;
+
         $precios = $this->validarPrecio($id);
         if( $costosiniva == 0 || $costosiniva == '' ){
             $resprice = Precios::create([
@@ -464,8 +464,6 @@ class ProductosController extends Controller
                 'cambio'        => 'Solo precio venta',
             ]);
         } else {
-            if( $precios['ganancia'] != $ganancia && $precios['porcentaje'] != $porcentaje && $precios['precioventa'] != $preciventa)
-            {
                $resprice =  Precios::create([
                     'producto_id'   => $id,
                     'costosiniva'   => $costosiniva,
@@ -475,10 +473,8 @@ class ProductosController extends Controller
                     'precioventa'   => $preciventa,
                     'cambio'        => 'actualizado',
                 ]);
-            }
-
         }
-        return response()->json(["message" =>  "succes", "precio" => $precios, "data" => $data], 200);
+        return response()->json(["message" =>  "succes", "precio" => $precios, "data" => $data, "price" => $resprice], 200);
     }
 
     /**
