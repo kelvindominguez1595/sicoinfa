@@ -110,9 +110,9 @@ $(function () {
             data: form,
             success: function (res){
                 AlertConfirmacin("Guardado correctamente el ingreso");
-                /*setTimeout(function (){
+                setTimeout(function (){
                     location.reload();
-                }, 3000); */
+                }, 3000);
 
             },
             error: function (err){
