@@ -102,7 +102,7 @@ $(document).ready(function () {
             $("#frmsearchtype").val(1);
         }
 
-    })
+    });
 });
 // pagination cliente
 $(document).on('click', '#cliente .pagination a', function (e){
@@ -117,7 +117,7 @@ $(document).on('click', '#cliente .pagination a', function (e){
             $("#tblclientes").html(data);
         }
     })
-})
+});
 // pagination contribuyente
 $(document).on('click', '#contribuyente .pagination a', function (e){
     e.preventDefault()
@@ -131,7 +131,7 @@ $(document).on('click', '#contribuyente .pagination a', function (e){
             $("#tblcontribuyente").html(data);
         }
     })
-})
+});
 /**
  *  delete and update clientes
  **/

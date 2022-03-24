@@ -1350,4 +1350,67 @@ class ProductosController extends Controller
         $stock = Productos::where('id', $id)->first();
         return response()->json(["stock" => $stock, "almacen" => $detalle_pro],200);
     }
+
+    // buscar productos ingreso de factura
+    public function buscarProductosIngreso(Request $request)
+    {
+        if($request->ajax()) {
+            $codigo     = $request->codigo;
+            $categoria  = $request->categoria;
+            $marca      = $request->marca;
+            $producto   = $request->producto;
+
+            $query = DB::table('stocks as sk')
+                ->join('categories as c', 'sk.category_id', 'c.id')
+                ->join('manufacturers as man', 'sk.manufacturer_id', 'man.id')
+                ->join('measures as me', 'sk.measures_id', 'me.id')
+                ->join('detalle_products as dp', 'sk.id', 'dp.stocks_id')
+                ->join('branch_offices as bo', 'dp.branch_offices_id', 'bo.id')
+
+                ->select(
+                    'sk.id',
+                    'sk.image',
+                    'sk.code',
+                    'sk.barcode',
+                    'sk.name',
+                    'sk.exempt_iva',
+                    'sk.stock_min',
+                    'sk.description',
+                    'c.name as category_name',
+                    'man.name as marca_name',
+                    'me.name as medida_name',
+                    'sk.category_id',
+                    'sk.manufacturer_id',
+                    'bo.name as sucursal'
+                );
+
+            // busqueda por codigo
+            if(!empty($codigo)){
+                $query->where('sk.code', 'LIKE', '%' . $codigo . '%');
+            }
+
+            // busqueda por categoria
+            if(!empty($categoria)){
+                $query->where('c.name', 'LIKE', '%'.$categoria.'%');
+            }
+            // busqueda por marca
+            if(!empty($marca)){
+                $query->where('man.name', 'LIKE', '%'.$marca.'%');
+            }
+            // busqueda por producto
+            if(!empty($producto)){
+                $query->where('sk.name', 'LIKE', '%'.$producto.'%');
+            }
+            $query->where('sk.state', '=', 1);
+            // por estados de productos
+            $query->groupBy('sk.id');
+            // busqueda por almacen
+
+            $data = $query->paginate(15);
+
+            //return $data;
+            return response()->json(view('ingresos.partials.searchTable', compact('data', 'codigo', 'categoria', 'marca', 'producto',
+            ))->render());
+        }
+    }
 }

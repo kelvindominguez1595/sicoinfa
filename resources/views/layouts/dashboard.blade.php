@@ -48,6 +48,7 @@
     <script src="{{ asset('js/alertas.js') }}" ></script>
     <script src="{{ asset('js/toastr_notifications.js') }}" ></script>
     <script src="{{ asset('js/sweetalert/sweetalert.js') }}"></script>
+    <script src="{{ asset('js/loadingoverlay.min.js') }}"></script>
     <script>
         var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
         var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
@@ -58,6 +59,8 @@
             return new bootstrap.Tooltip(tooltipTriggerEl)
         })
     </script>
+
+
     @yield('js')
 </body>
 </html>
