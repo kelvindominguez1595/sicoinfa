@@ -9,6 +9,8 @@
             @csrf
             @method('PUT')
             <input type="hidden" name="stocks_id" id="stocks_id" value="{{$id}}">
+
+            <input type="hidden" name="alidsucursal" id="alidsucursal" value="{{ !isset($detalle_pro->branch_offices_id) ? 1 : $detalle_pro->branch_offices_id }}">
             <div class="row mb-3">
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
                     <label for="categoria" class="fw-bold">Categoria Producto</label>

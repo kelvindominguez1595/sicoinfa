@@ -41,7 +41,8 @@ class ProductosController extends Controller
             ->groupBy('producto_id');
 
         $cansum = DB::table('detalle_products')
-            ->select('id as idsupro', 'branch_offices_id', 'stocks_id', DB::raw('SUM(quantity) as cantidadnew'))
+            ->select('id as idsupro', 'branch_offices_id',
+                'stocks_id', DB::raw('SUM(quantity) as cantidadnew'))
             ->groupBy('stocks_id');
 
         $codigo     = $request->codigo;
@@ -445,7 +446,15 @@ class ProductosController extends Controller
             $data->image =  $nombreimagen;
         }
         $data->save();
+        $updatedate = date('Y-m-d H:m:s');
+        DB::table('detalle_products')
+            ->where('branch_offices_id',  $request->alidsucursal)
+            ->where('stocks_id', $id)
+            ->update([
 
+                'quantity' => $request->stock_min_pro,
+                'updated_at' => $updatedate
+            ]);
         $costosiniva = $request->cost_s_iva;
         $costoconiva = $request->cost_c_iva;
         $ganancia = $request->earn_c_iva;
