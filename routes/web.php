@@ -12,6 +12,7 @@ use App\Http\Controllers\EmpleadosController;
 use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\SucursalesController;
 use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\DeudasController;
 
 /*
 |--------------------------------------------------------------------------
@@ -93,6 +94,14 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/porcentaje', [ReporteController::class, 'porcentaje']);
     Route::get('/promedio', [ReporteController::class, 'promedio']);
     Route::get('/rendimiento', [ReporteController::class, 'rendimiento']);
+
+    /** RUTAS PARA DEUDAS */
+    Route::get('/deudas', [DeudasController::class, 'index']);
+    Route::get('/ingresardeudas', [DeudasController::class, 'create']);
+    Route::post('/guardar',[DeudasController::class, 'guardar']);
+    Route::get('/editar/{id}',[DeudasController::class, 'editar']);
+    Route::put('/actualizar',[DeudasController::class, 'actualizar']);
+
 });
 
 

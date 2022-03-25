@@ -52,6 +52,11 @@
                 <i class="fas fa-users"></i> Usuarios
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link " aria-current="page" href="{{ url('deudas') }}">
+                <i class="fas fa-hand-holding-usd"></i> Deudas
+            </a>
+        </li>
         <li class="nav-item dropdown dropdown-pull-right">
             <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-print"></i>
