@@ -98,9 +98,9 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     /** RUTAS PARA DEUDAS */
     Route::get('/deudas', [DeudasController::class, 'index']);
     Route::get('/ingresardeudas', [DeudasController::class, 'create']);
-    Route::post('/guardar',[DeudasController::class, 'guardar']);
-    Route::get('/editar/{id}',[DeudasController::class, 'editar']);
-    Route::put('/actualizar',[DeudasController::class, 'actualizar']);
+    Route::post('/guardar_deudas',[DeudasController::class, 'guardar']);
+    Route::get('/editar_deudas/{id}',[DeudasController::class, 'editar']);
+    Route::put('/actualizar_deudas',[DeudasController::class, 'actualizar']);
 
 });
 

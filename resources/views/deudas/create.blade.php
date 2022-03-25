@@ -20,7 +20,7 @@
                     <div class="">CUENTAS POR PAGAR </div>
                 </div>
                 <div class="card-body">
-                    <form id="frmcuentas" class="row g-3 mt-1">
+
                         <div class="row mb-3">
 
                             @include('deudas.partials.datofactura')
@@ -32,7 +32,8 @@
                                 <button type="button" id="btnadd" class="btn btn-primary">Agregar</button>
                             </div>
                         </div>
-                        <div class="row table-responsive">
+                    <form id="frmcuentas" class="row g-3 mt-1">
+                        <div class="row table-responsive mb-3">
                             <table id="rowstable" class="table table-hover table-striped table-bordered">
                                 <thead>
                                     <th class="text-uppercase">Fecha Factura</th>
@@ -52,6 +53,12 @@
                                 </thead>
                                 <tbody></tbody>
                             </table>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-12 text-center">
+                                <button type="submit"  class="btn btn-primary">Guardar cuentas</button>
+                            </div>
                         </div>
                     </form>
 

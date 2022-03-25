@@ -10,6 +10,17 @@ class DetalleDeudas extends Model
     use HasFactory;
     protected $table = 'detalle_deudas';
     protected $fillable = [
-        'deudas_id', 'total_compra', 'forma_pago', 'fecha_abonopago', 'num_documento', 'num_recibo', 'abono', 'saldo', 'estado', 'pagototal',
+        'deudas_id',
+        'total_compra',
+        'forma_pago',
+        'fecha_abonopago',
+        'num_documento',
+        'num_recibo',
+        'abono',
+        'saldo',
+        'nota_credito',
+        'valor_nota',
+        'estado',
+        'pagototal',
     ];
 }

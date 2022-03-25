@@ -75,18 +75,17 @@ $(function () {
     });
     // para hacer la resta del pago de total de la compra
     $("#abonoadd").keyup(function (){
-
       let totalcompra =  $("#totalcompraadd").val();
       let pagototal =  $("#pagototaladd");
       let saldopendienteadd =  $("#saldopendienteadd");
       let abono = $(this).val();
-      if(abono <= totalcompra){
-            let cal =  Number(totalcompra) - Number(abono);
-          pagototal.val(cal);
-          saldopendienteadd.val(cal);
 
+      if(Number(abono) <= Number(totalcompra)){
+        let cal =  Number(totalcompra) - Number(abono);
+        pagototal.val('0');
+        saldopendienteadd.val(cal);
       }else{
-
+          console.log("se paso el valor del abono "+abono +" al total de la compra "+totalcompra)
       }
     });
     // para quitar el readonly
@@ -151,7 +150,7 @@ $(function () {
                 html += fechafacformated;
                 html += "<input type='hidden' name='proveedor_id[]' value='"+proveedoradd+"'>";
                 html += "<input type='hidden' name='fecha_factura[]' value='"+fechafacturaadd+"'>";
-                html += "<input type='hidden' name='numero_factura []' value='"+numfacturaadd+"'>";
+                html += "<input type='hidden' name='numero_factura[]' value='"+numfacturaadd+"'>";
                 html += "<input type='hidden' name='tipo_factura[]' value='"+tipofacturadd+"'>";
                 html += "<input type='hidden' name='estado[]' value='"+estadoadd+"'>";
 
@@ -183,9 +182,29 @@ $(function () {
             html += "<td class='text-center'>"+estadoadd+"</td>";
             html += "</tr>";
             rowTable.append(html);
+            // limpiamos los query
+            clearInpust();
         }else{
             AlertError("Los campos marcados en rojo son OBLIGATORIOS");
         }
+    });
+
+    /** GUARDAR LAS FACTURAS */
+    $("#frmcuentas").submit(function (e) {
+        e.preventDefault();
+        let frm = $(this).serialize();
+        $.ajax({
+            url: '/guardar_deudas',
+            type: 'POST',
+            dataType: 'JSON',
+            data: frm,
+            success: function (res) {
+                console.log(res);
+            },
+            error: function (err){
+                console.log(err)
+            }
+        })
     });
 
     });
@@ -302,4 +321,32 @@ function validateInput(){
     } else {
         return false;
     }
+}
+
+function clearInpust(){
+    $('#fechafacturaadd').val('');
+    $('#fechaabonoadd').val('');
+    $('#numfacturaadd').val('');
+    $("#proveedoradd").empty();
+    $('#tocomp').val('');
+    $('input[name="tipofacturadd"]').prop('checked', false);
+    $('input[name="aplicarcredito"]').prop('checked', false);
+    if($('input:radio[name=estadoadd]:checked').val() == 'ABONADO'){
+        $('input:radio[name=estadoadd]').filter('[value="PAGADO"]').prop('checked', true)
+    }
+    $('#totalcompraadd').val('');
+    $('#abonoadd').val('0');
+    $('#saldopendienteadd').val('0');
+    $('#notacreditoadd').val('0');
+    $('#valornotacreditoadd').val('0')
+
+    $('#abonoadd').prop('readonly', true);
+    $('#saldopendienteadd').prop('readonly', true);
+    $('#notacreditoadd').prop('readonly', true);
+    $('#valornotacreditoadd').prop('readonly', true)
+
+    $('#pagototaladd').val('');
+    $('#numreciboadd').val('');
+    $('#numchequeremesa').val('');
+    $('input[name="formapagoadd"]').prop('checked', false);
 }

@@ -21,9 +21,7 @@
     <div class="row mt-1 mb-2">
         <div class="col-9">
             <label for="proveedoradd" class="form-label fw-bold text-uppercase">Proveedor</label>
-
             <select class="form-control" id="proveedoradd" name="proveedoradd"></select>
-
         </div>
         <div class="col-1 d-flex align-items-end">
             <button type="button" id="btnaddproveedor" class="btn btn-success">Crear</button>
