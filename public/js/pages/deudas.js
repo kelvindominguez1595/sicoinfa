@@ -200,9 +200,13 @@ $(function () {
             data: frm,
             success: function (res) {
                 console.log(res);
+                AlertConfirmacin("Se ha guardado correctamente");
+                setTimeout(function (){
+                    location.reload();
+                }, 3000);
             },
             error: function (err){
-                console.log(err)
+                AlertError("No se pudo realizar esta acción");
             }
         })
     });
