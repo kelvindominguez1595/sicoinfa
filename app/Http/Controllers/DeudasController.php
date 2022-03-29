@@ -5,12 +5,59 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Deudas;
 use App\Models\DetalleDeudas;
-use phpDocumentor\Reflection\Utils;
+use App\Models\Clientes;
+use Illuminate\Support\Facades\DB;
 
 class DeudasController extends Controller
 {
     public function index(Request $request){
-        return view('deudas.index');
+        $ddeuda = DB::table('detalle_deudas as dd')
+        ->select(
+            'dd.deudas_id',
+            'dd.total_compra',
+            'dd.forma_pago',
+            'dd.fecha_abonopago',
+            'dd.num_documento',
+            'dd.num_recibo',
+            DB::raw('SUM(dd.abono) as abono'),
+            'dd.saldo',
+            'dd.nota_credito',
+            'dd.valor_nota',
+            'dd.estado',
+            'dd.pagototal',
+        )->groupBy('dd.deudas_id');
+        $data = DB::table('deudas as d')
+            ->joinSub($ddeuda, 'dd', function($join){
+                $join->on('d.id', '=', 'dd.deudas_id');
+            })
+            ->select(
+                'd.id',
+                'd.proveedor_id',
+                'd.fecha_factura',
+                'd.numero_factura',
+                'd.tipo_factura',
+                'd.estado as destado',
+                'd.created_at',
+                'd.updated_at',
+                'dd.deudas_id',
+                'dd.total_compra',
+                'dd.forma_pago',
+                'dd.fecha_abonopago',
+                'dd.num_documento',
+                'dd.num_recibo',
+                'dd.abono',
+                'dd.saldo',
+                'dd.nota_credito',
+                'dd.valor_nota',
+                'dd.estado',
+                'dd.pagototal',
+            )
+            ->orderBy('d.fecha_factura', 'DESC')
+            ->paginate(10);
+        $formapago = [
+            "CHEQUE", "REMESA", "EFECTIVO", "DEPOSITO"
+        ];
+        return view('deudas.index', compact('data', 'formapago'));
     }
     public function create(){
         $tipofactura  = [
@@ -47,6 +94,23 @@ class DeudasController extends Controller
         }
         return response()->json(["message", "success"], 200);
     }
-    public function editar(Request $request){}
+
+    public function editar($id){
+        $deudas = Deudas::find($id);
+        $proveedor = Clientes::find($deudas->proveedor_id);
+        $ddeudas = DetalleDeudas::where('deudas_id', $id)->get();
+        $lastrow = DetalleDeudas::where('deudas_id', $id)
+            ->take(1)
+            ->get();
+        $countrow = $ddeudas->count();
+        return response()->json([
+            "deudas"    => $deudas,
+            "ddeudas"   => $ddeudas,
+            "dlast"      => $lastrow,
+            "countdeudas" => $countrow,
+            "proveedor" => $proveedor
+        ],200);
+    }
+
     public function actualizar(Request $request){}
 }

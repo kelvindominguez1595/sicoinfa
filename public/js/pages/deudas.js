@@ -354,3 +354,59 @@ function clearInpust(){
     $('#numchequeremesa').val('');
     $('input[name="formapagoadd"]').prop('checked', false);
 }
+
+function formatDate(date){
+    return moment(date).format('L');
+}
+$(document).on('click', '#btnupdate', function (){
+    let id = $(this).val();
+    $("#tblabono > tbody").empty();
+    $.get('/editar_deudas/'+ id, function (res){
+        $("#exampleModal").modal('show');
+
+        // show deudas
+        $('#totalcompraadd').prop('readonly', true);
+        $('#abonoadd').prop('readonly', false);
+        $('#saldopendienteadd').prop('readonly', false);
+        $('#notacreditoadd').prop('readonly', false);
+        $('#valornotacreditoadd').prop('readonly', false);
+        $('#totalcompraadd').val(res.dlast[0].total_compra.toFixed(2));
+
+        $('#ff').text(formatDate(res.deudas.fecha_factura));
+        $('#nf').text(res.deudas.numero_factura);
+        $('#tc').text("$"+res.dlast[0].total_compra.toFixed(2));
+        $('#tp').text(res.deudas.tipo_factura);
+        $('#pp').text(res.proveedor.nombre_comercial);
+        // show detalle de deudas
+        res.ddeudas.map((item) => {
+            let row = "<tr>";
+            row += "<td class='text-center'>";
+                row += item.forma_pago;
+            row += "</td>";
+            row += "<td class='text-center'>";
+                row += formatDate(item.fecha_abonopago);
+            row += "</td>";
+            row += "<td class='text-center'>";
+                row += item.num_documento == null ? "-" : item.num_documento;
+            row += "</td>";
+            row += "<td class='text-center'>";
+                row += "$"+item.abono.toFixed(2);
+            row += "</td>";
+            row += "<td class='text-center'>";
+                row += "$"+item.saldo.toFixed(2);
+            row += "</td>";
+            row += "<td class='text-center'>";
+                row += item.nota_credito;
+            row += "</td>";
+            row += "<td class='text-center'>";
+                row += "$"+item.valor_nota;
+            row += "</td>";
+
+            row += "</tr>";
+            $("#tblabono").append(row);
+        })
+        // res.ddeudas.each(function (item, index){
+        //     console.log(index);
+        // })
+    });
+});

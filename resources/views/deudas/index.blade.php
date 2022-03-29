@@ -4,12 +4,14 @@
 
 @endsection
 @section('js')
+    <script src="{{ asset('js/moment.min.js') }}"></script>
     <script src="{{ asset('js/jquery.inputmask.js') }}"></script>
     <script src="{{ asset('js/pages/deudas.js') }}"></script>
 @endsection
 
 @section('content')
     <div class="row mb-2">
+        @include('deudas.partials.modal')
         {{-- columna 1  --}}
         <div class="col-xs-12 co-sm-12 col-md-3 col-lg-3 col-xl-3">
             <div class="card mb-4 border-primary">
@@ -17,35 +19,7 @@
                     Filtros de búsqueda
                 </div>
                 <div class="card-body">
-                    <form action="" method="get" id="frmsearch">
-                        <div class="mb-3 d-flex justify-content-center">
-                            <button class="btn btn-primary btn-sm" type="button" id="btnresetall" onclick="$(location).attr('href','deudas');">Mostrar Todo</button>
-                        </div>
-                        <div class="col-12  mb-2">
-                            <label for="nombressearch" class="form-label fw-bold">Nombres</label>
-                            <input type="text" class="form-control" id="nombressearch" name="nombressearch" value="" placeholder="Nombres">
-                        </div>
-                        <div class="col-12  mb-2">
-                            <label for="apellidossearch" class="form-label fw-bold">Apellidos</label>
-                            <input type="text" class="form-control" id="apellidossearch" name="apellidossearch" value="" placeholder="Apellidos">
-                        </div>
-                        <div class="col-12  mb-2">
-                            <label for="duisearch" class="form-label fw-bold">DUI</label>
-                            <input type="text" class="form-control" id="duisearch" name="duisearch" value="" placeholder="DUI">
-                        </div>
-                        <div class="col-12 mb-2 " id="searchnit">
-                            <label for="nitsearch" class="form-label fw-bold">NIT</label>
-                            <input type="text" class="form-control" id="nitsearch" name="nitsearch" value="" placeholder="NIT">
-                        </div>
-                        <div class="col-12  mb-2">
-                            <label for="telefonosearch" class="form-label fw-bold">Teléfono</label>
-                            <input type="text" class="form-control" id="telefonosearch" name="telefonosearch" value="" placeholder="Teléfono">
-                        </div>
-                            <input type="hidden" id="frmsearchtype" name="frmsearchtype" value="1">
-                        <div class="col-12  d-flex justify-content-center mb-2">
-                            <button type="submit" class="btn btn-primary">Buscar <i class="fa fa-search"></i></button>
-                        </div>
-                    </form>
+                    @include('deudas.partials.frmSearch')
                 </div>
             </div>
         </div>
@@ -58,9 +32,46 @@
 
                 </div>
                 <div class="card-body">
-
-
-                    <div id="tblclientes"></div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                                <th>Fecha Factura</th>
+                                <th>N. Factura</th>
+                                <th>Tipo Factura</th>
+                                <th>Total Compra</th>
+                                <th>Forma de Pago</th>
+                                <th>Fecha Abono</th>
+                                <th>Abono</th>
+                                <th>Saldo</th>
+                                <th>Número de Nota</th>
+                                <th>Valor de Nota</th>
+                                <th>Estado</th>
+                                <th>Opción</th>
+                            </thead>
+                            <tbody>
+                                @foreach($data as $item)
+                                    <tr>
+                                        <td>{{ date('d-m-Y', strtotime($item->fecha_factura)) }}</td>
+                                        <td>{{ $item->numero_factura }}</td>
+                                        <td>{{ $item->tipo_factura }}</td>
+                                        <td>${{ number_format($item->total_compra,2) }}</td>
+                                        <td>{{ $item->forma_pago }}</td>
+                                        <td>{{ date('d-m-Y', strtotime($item->fecha_abonopago)) }}</td>
+                                        <td>${{ number_format($item->abono, 2) }}</td>
+                                        <td>${{ number_format($item->saldo, 2) }}</td>
+                                        <td>{{ $item->nota_credito }}</td>
+                                        <td>${{ number_format($item->valor_nota,2) }}</td>
+                                        <td class="fw-bold @if($item->destado == 'PAGADO') bg-success @else  bg-primary  @endif bg-gradient text-white">{{ $item->destado }}</td>
+                                        <td>
+                                            @if($item->destado == 'ABONADO')
+                                                <button class="btn btn-primary" id="btnupdate" value="{{ $item->id }}"><i class="fas fa-hand-holding-usd"></i></button>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
 
                 </div>
             </div>

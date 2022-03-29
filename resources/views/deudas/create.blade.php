@@ -24,7 +24,10 @@
                         <div class="row mb-3">
 
                             @include('deudas.partials.datofactura')
-                            @include('deudas.partials.preciosfactura')
+
+                            <div class="col-5 border border-dark">
+                                @include('deudas.partials.preciosfactura')
+                            </div>
 
                         </div>
                         <div class="row mb-3">

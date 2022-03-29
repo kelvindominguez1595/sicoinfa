@@ -1,5 +1,3 @@
-<div class="col-5 border border-dark">
-
     <div class="row mb-2 mt-2">
         <div class="col-6">
             <label class="form-label fw-bold" for="totalcompraadd">TOTAL COMPRA $</label>
@@ -83,5 +81,3 @@
             @php $count++; @endphp
         @endforeach
     </div>
-
-</div>
