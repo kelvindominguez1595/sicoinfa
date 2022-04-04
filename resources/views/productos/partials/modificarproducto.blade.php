@@ -141,7 +141,7 @@
             </div>
 
             <div class="row mb-3">
-                <button class="btn btn-primary" type="submit"><i class="fas fa-edit"></i> Modificar Producto</button>
+                <button class="btn btn-primary" id="btnupdates" type="submit"><i class="fas fa-edit"></i> Modificar Producto</button>
             </div>
         </form>
     </div>

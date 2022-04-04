@@ -135,7 +135,7 @@ $(function () {
 
     // aqui estan la formulas para hacer los calulos de los precios
     // ganancia del producto
-    $( "#earn_c_iva" ).change(function() {
+    $( "#earn_c_iva" ).keyup(function() {
         var porcenaje = $('#earn_porcent');
         var preciofinal = $('#sale_price');
         var costoconiva = $('#cost_c_iva');
@@ -148,15 +148,13 @@ $(function () {
         } else {
             precioConCosto = costoconiva.val();
         }
-
         let resultpreciofinal = Number($(this).val()) + Number(precioConCosto); // precio final
         let resulporcentaje = (((resultpreciofinal / precioConCosto) - 1)  * 100); //  porcentaje final
         porcenaje.val(resulporcentaje.toFixed(2));
         preciofinal.val(resultpreciofinal.toFixed(4))
     });
-
     // por porcentaje
-    $( "#earn_porcent" ).change(function() {
+    $( "#earn_porcent" ).keyup(function() {
         var preciofinal = $('#sale_price');
         var ganancia = $('#earn_c_iva');
         var costoconiva = $('#cost_c_iva');
@@ -177,7 +175,7 @@ $(function () {
         preciofinal.val(precioventa.toFixed(4));
     });
     // precio venta final
-    $( "#sale_price" ).change(function() {
+    $( "#sale_price" ).keyup(function() {
         var preciofinal = $(this).val();
         var costoconiva = $('#cost_c_iva');
         var costosiniva = $('#cost_s_iva');
@@ -198,15 +196,17 @@ $(function () {
         let resulGan = precioConCosto == 0 ? 0 : resultadoganancia;
         ganancia.val(resulGan.toFixed(4));
     });
+
+
     /// PARA INGRESO DATOS
-    $('#unit_price').change(function() {
+    $('#unit_price').keyup(function() {
         let preciosiniva = $(this).val();
         let cantidad = $('#quantity').val();
         let costoTotal = Number(cantidad) * Number(preciosiniva);
         $('#costototal').val(costoTotal.toFixed(4));
     });
 
-    $('#quantity').change(function() {
+    $('#quantity').keyup(function() {
         let preciosiniva  = $('#unit_price').val();
         let cantidad  = $(this).val();
         let costoTotal = Number(cantidad) * Number(preciosiniva);
@@ -217,6 +217,9 @@ $(function () {
     $( "#frmupdate" ).submit(function( event ) {
         var form = new FormData($("#frmupdate")[0]);
         var id = $('#stocks_id').val();
+        let btndisable = $("#btnupdates");
+        btndisable.prop('disabled', true);
+        $("#frmupdate").LoadingOverlay("show");
         $.ajax({
             url: "/productos/"+ id,
             type: "POST",
@@ -231,12 +234,16 @@ $(function () {
                     timeShowchange(3000);
                     obtenerPrecios(stockid, branchoffice);
                     obtenerDatosProducto(stockid, branchoffice);
+                    $("#frmupdate").LoadingOverlay("hide");
+                    btndisable.prop('disabled', false);
                 } else {
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
                         text: '¡Error algo salio mal!'
                     });
+                    $("#frmupdate").LoadingOverlay("hide");
+                    btndisable.prop('disabled', false);
                 }
             },
             error: function (response) {
@@ -256,6 +263,9 @@ $(function () {
     // creamos un nuevo ingresos de productos
     $( "#frmentradaproductos" ).submit(function( event ) {
         var form = new FormData($("#frmentradaproductos")[0]);
+        let btndisable = $("#btningresar");
+        btndisable.prop('disabled', true);
+        $("#frmentradaproductos").LoadingOverlay("show");
         $.ajax({
             url: "/ingresos",
             type: "POST",
@@ -266,7 +276,8 @@ $(function () {
             success: function (response) {
                 // console.log(data);
                 if (response.message) {
-                    //  confirm("Producto actualizado correctamente");
+                    $("#frmentradaproductos").LoadingOverlay("hide");
+                    btndisable.prop('disabled', false);
                     listarExistencia(stockid);
                     AlertConfirmacin('Nuevo ingreso de producto correctamente');
                     $('#cost_s_iva').val(response.sinva);
@@ -290,11 +301,12 @@ $(function () {
                         title: 'Oops...',
                         text: '¡Error algo salio mal!'
                     });
+                    $("#frmentradaproductos").LoadingOverlay("hide");
+                    btndisable.prop('disabled', false);
                     // AlertError('¡Error algo salio mal!');
                 }
             },
             error: function (response) {
-                //4
                 if (response.responseJSON.errors.name) {
                     $("#suppliers_id").addClass("is-invalid");
                     $("#txt_name").text('El campo nombre es obligatorio.');
@@ -445,7 +457,6 @@ function obtenerPrecios(producto, sucursal){
 
 }
 
-
 function numeronegativo(costosiniva, ganancia, porcentaje, precioventa, costoconiva){
     let gananciamessage;
     let porcentamessage;
@@ -468,7 +479,7 @@ function numeronegativo(costosiniva, ganancia, porcentaje, precioventa, costocon
             $("#earn_porcent").addClass("is-invalid");
             porcentamessage = "\n * El porcentaje está en números negativos por favor corregir el PORCENTAJE";
         }
-        if(costoconiva > precioventa){
+        if(Number(costoconiva) > Number(precioventa)){
             showvent = true;
             $("#sale_price").addClass("is-invalid");
             ventamessage = "\n * El PRECIO DE VENTA es menor que el COSTO MAS IVA";
@@ -485,14 +496,8 @@ function numeronegativo(costosiniva, ganancia, porcentaje, precioventa, costocon
 
 function obtenerDatosProducto(producto, sucursal){
     $.get('../../getItemProducts/'+producto+'/'+sucursal, function (res) {
-
         $("#stock_min_pro").val(res.almacen.quantity);
-      /*  getSelectCategory();
-        getSelectMarca();
-        getSelectUnidad(); */
-
     });
-
 }
 
 function getSelectCategory(id){

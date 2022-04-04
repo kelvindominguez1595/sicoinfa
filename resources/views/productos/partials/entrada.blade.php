@@ -84,7 +84,7 @@
             </div>
 
             <div class="row mb-3">
-                <button class="btn btn-primary" type="submit"><i class="fas fa-plus"></i> Ingresar producto</button>
+                <button class="btn btn-primary" type="submit" id="btningresar"><i class="fas fa-plus"></i> Ingresar producto</button>
             </div>
         </form>
     </div>

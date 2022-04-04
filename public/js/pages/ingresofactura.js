@@ -105,15 +105,15 @@ $(function () {
         let form = $("#frmdataingresofactura").serialize();
         $.ajax({
             url: '/ingresofactura',
-            type: 'POST',
+            type: 'GET',
             dataType: 'JSON',
             data: form,
             success: function (res){
                 AlertConfirmacin("Guardado correctamente el ingreso");
                 setTimeout(function (){
-                    location.reload();
+                  //  location.reload();
+                    location.href = "/modificarPrecioVenta/"+res.factura;
                 }, 3000);
-
             },
             error: function (err){
                 Swal.fire({
@@ -154,44 +154,33 @@ $(function () {
             }
         });
     });
-    // seleccionar tr modal
-    var pickedup;
 
-    // esto es para cuando haga una modificacion en el costo sin iva
-    $(document).on( "click","#tbldataselected tbody tr", function( event ) {
-        let productoid = $(this).find('.proid');
-        let marca = $(this).find('.marca');
-        let categoria = $(this).find('.categoria');
-        let nproducto = $(this).find('.nombreproducto');
-        let rowTable = $('#rowstable');
+    $("#frmseachproducto").submit(function (e) {
+        e.preventDefault();
+        let frm = $(this).serialize();
+        $("#tblcontent").html("")
+        $("#tblcontent").LoadingOverlay("show");
 
-        $(this).closest('tr').remove(); // esto es para remover el tr seleccionado
-        // si se repite mando un alerta que s repite el producto
-        if (checkId(nproducto.val())) {
-            AlertInformacion("El producto "+nproducto.val()+" ya esta en proceso de ingreso por favor actualice la cantidad manualmente!");
-            return false;
-        }
-            let html = '<tr>';
-            // aqui estaran los id del productos
-            html += '<td for="nproducto">';
-            html += '<input type="hidden" class=".productid" id="productid" name="productid[]" value="'+productoid.val()+'">'+nproducto.val();
-            html += '</td>';
-            html += '<td>'+marca.val()+'</td>';
-            html += '<td>'+categoria.val()+'</td>';
-            html += '<td width="20px">';
-            html += '<input type="number" class="form-control cant" min="0" id="cant" name="cant[]" value="0">';
-            html += '</td>';
-            html += '<td width="120px">';
-            html += '<input type="number" class="form-control cotsin" min="0" step="any" id="cotsin" name="cotsin[]" value="0">';
-            html += '</td>';
-            html += '<td width="120px">';
-            html += '<input type="number" class="form-control costotal" min="0" step="any" id="costotal" name="costotal[]" value="0" readonly>';
-            html += '</td>';
-            html += '<td class="text-center"><button  type="button" class="btn btn-danger quitar"><i class="fas fa-trash"></i></button></td>'
-            html += '</tr>';
-            rowTable.append(html);
-        pickedup = $( this );
-    });
+        $.ajax({
+            url: '/buscarProductosIngreso',
+            type: 'GET',
+            dataType: 'JSON',
+            data: frm,
+            success: function (data){
+                $("#tblcontent").LoadingOverlay("hide");
+                $("#tblcontent").html(data);
+            },
+            error: function (err){
+                $("#tblcontent").LoadingOverlay("hide");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: '¡Error algo salio mal!'
+                });
+            }
+        });
+    })
+
 });
 // para que no se repita el producto
 function checkId (id) {
@@ -232,11 +221,12 @@ $(document).on('click', '#paginationmodal .pagination a', function (e){
     let categoria   = $("#categoriasearch").val();
     let marca       = $("#marcasearch").val();
     let producto    = $("#productosearch").val();
+    let estado      = $("#estado").val();
 
     let page = $(this).attr('href').split('page=')[1];
     $.ajax({
         url: '/buscarProductosIngreso',
-        data: {page: page, codigo: codigo, categoria: categoria, marca: marca, producto: producto},
+        data: {page: page, codigosearch: codigo, categoriasearch: categoria, marcasearch: marca, productosearch: producto, estado: estado},
         type: 'GET',
         dataType: 'JSON',
         success: function (data){
@@ -245,64 +235,70 @@ $(document).on('click', '#paginationmodal .pagination a', function (e){
     })
 })
 
+$(document).on('click', '#btnactive', function (){
+    let id = $(this).val();
+    let type = "update";
+    let codigo      = $("#codigosearch").val();
+    let categoria   = $("#categoriasearch").val();
+    let marca       = $("#marcasearch").val();
+    let producto    = $("#productosearch").val();
+    let estado      = $("#estado").val();
+    // let page = $(this).attr('href').split('page=')[1];
+    $("#estado").val(estado == 1 ? 0 : 1)
+    $.ajax({
+        url: '/buscarProductosIngreso',
+        data: {
+            codigosearch: codigo,
+            categoriasearch: categoria,
+            marcasearch: marca,
+            productosearch: producto,
+            estado: estado,
+            type: type,
+            id: id
+        },
+        type: 'GET',
+        dataType: 'JSON',
+        success: function (data){
+            $("#tblcontent").html(data);
+            AlertConfirmacin("El estado del producto ha sido cambiado");
+        }
+    })
+});
 
-function dataAddSelected(){
-    // obtemos los id para darle valor luego
-    let rowTable = $('#rowstable');
-    let proid = $('#proid').val();
-    let nproducto = $('#nombreproducto');
-    let marca = $('#marca').val();
-    let categoria = $('#categoria').val();
-    let unidadmedida = $('#unidadmedida').val();
+$(document).on('click', '#btnaddproduct', function (){
+    let tblsearch = $("#tbldataselected tbody tr");
 
-    let cantidad = $('#cantidad');
-    let costosiniva = $('#costosiniva');
-    let costototal = $('#costototal').val();
+    let productoid  = tblsearch.find('.proid');
+    let code        = tblsearch.find('.code');
+    let marca       = tblsearch.find('.marca');
+    let categoria   = tblsearch.find('.categoria');
+    let nproducto   = tblsearch.find('.nombreproducto');
+    let rowTable    = $('#rowstable');
+
+    $(this).closest('tr').remove(); // esto es para remover el tr seleccionado
     // si se repite mando un alerta que s repite el producto
     if (checkId(nproducto.val())) {
         AlertInformacion("El producto "+nproducto.val()+" ya esta en proceso de ingreso por favor actualice la cantidad manualmente!");
-        return false; }
-    if(nproducto.val() == ''){
-        AlertError("El producto es obligatorio");
-        nproducto.addClass("is-invalid");
-    } else if(cantidad.val() == '') {
-        AlertError("la cantidad es obligatoria");
-        cantidad.addClass("is-invalid");
-    } else if(costosiniva.val() == '') {
-        AlertError("El costo sin iva es obligatorio");
-        costosiniva.addClass("is-invalid");
-    } else {
-
-        let html = '<tr>';
-        // aqui estaran los id del productos
-        html += '<td for="nproducto">';
-        html += '<input type="hidden" class=".productid" id="productid" name="productid[]" value="'+proid+'">'+nproducto.val();
-        html += '</td>';
-        html += '<td>'+marca+'</td>';
-        html += '<td>'+categoria+'</td>';
-        html += '<td width="20px">';
-        html += '<input type="number" class="form-control cant" min="0" id="cant" name="cant[]" value="'+cantidad.val()+'">';
-        html += '</td>';
-        html += '<td width="120px">';
-        html += '<input type="number" class="form-control cotsin" min="0" step="any" id="cotsin" name="cotsin[]" value="'+costosiniva.val()+'">';
-        html += '</td>';
-        html += '<td width="120px">';
-        html += '<input type="number" class="form-control costotal" min="0" step="any" id="costotal" name="costotal[]" value="'+costototal+'" readonly>';
-        html += '</td>';
-        html += '<td class="text-center"><button  type="button" class="btn btn-danger quitar"><i class="fas fa-trash"></i></button></td>'
-        html += '</tr>';
-        rowTable.append(html);
-        // limpiar
-        nproducto.removeClass("is-invalid")
-        cantidad.removeClass("is-invalid")
-        costosiniva.removeClass("is-invalid")
-        // si todo sale bien reseteo los input
-        $("#producto_id").empty();
-        $("#producto_id").val('').trigger('change');
-        nproducto.val('')
-        cantidad.val('')
-        costosiniva.val('')
-        $("#costototal").val('')
-        sumarCostoTotalFinal()
+        return false;
     }
-}
+    let html = '<tr>';
+    // aqui estaran los id del productos
+    html += '<td>'+code.val()+'</td>';
+    html += '<td for="nproducto">';
+    html += '<input type="hidden" class=".productid" id="productid" name="productid[]" value="'+productoid.val()+'">'+nproducto.val();
+    html += '</td>';
+    html += '<td>'+marca.val()+'</td>';
+    html += '<td>'+categoria.val()+'</td>';
+    html += '<td width="20px">';
+    html += '<input type="number" class="form-control cant" min="0" id="cant" name="cant[]" value="0">';
+    html += '</td>';
+    html += '<td width="120px">';
+    html += '<input type="number" class="form-control cotsin" min="0" step="any" id="cotsin" name="cotsin[]" value="0">';
+    html += '</td>';
+    html += '<td width="120px">';
+    html += '<input type="number" class="form-control costotal" min="0" step="any" id="costotal" name="costotal[]" value="0" readonly>';
+    html += '</td>';
+    html += '<td class="text-center"><button  type="button" class="btn btn-danger quitar"><i class="fas fa-trash"></i></button></td>'
+    html += '</tr>';
+    rowTable.append(html);
+});

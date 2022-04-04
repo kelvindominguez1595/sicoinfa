@@ -44,7 +44,7 @@
                             <button type="button" class="btn btn-primary mb-3 mt-3" id="showmodalSearch">
                                 Nuevo cliente <i class="fa fa-save"></i>
                             </button>
-                            @include('ingresos.partials.searchproduct')
+                            @include('ingresos.modals.searchproduct')
                           <!--
                             <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
                                 <label for="producto_id" class="form-label fw-bold">Producto</label>

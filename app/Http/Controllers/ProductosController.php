@@ -1364,18 +1364,27 @@ class ProductosController extends Controller
     public function buscarProductosIngreso(Request $request)
     {
         if($request->ajax()) {
-            $codigo     = $request->codigo;
-            $categoria  = $request->categoria;
-            $marca      = $request->marca;
-            $producto   = $request->producto;
-
+            $codigosearch     = $request->codigosearch;
+            $categoriasearch  = $request->categoriasearch;
+            $marcasearch      = $request->marcasearch;
+            $productosearch   = $request->productosearch;
+            $estado           = $request->estado;
+            if($request->type == "update"){
+                if($estado == 1){
+                    $estado = 0;
+                } else {
+                    $estado = 1;
+                }
+                $up = Productos::find($request->id);
+                $up->state = $estado;
+                $up->save();
+            }
             $query = DB::table('stocks as sk')
                 ->join('categories as c', 'sk.category_id', 'c.id')
                 ->join('manufacturers as man', 'sk.manufacturer_id', 'man.id')
                 ->join('measures as me', 'sk.measures_id', 'me.id')
                 ->join('detalle_products as dp', 'sk.id', 'dp.stocks_id')
                 ->join('branch_offices as bo', 'dp.branch_offices_id', 'bo.id')
-
                 ->select(
                     'sk.id',
                     'sk.image',
@@ -1385,6 +1394,7 @@ class ProductosController extends Controller
                     'sk.exempt_iva',
                     'sk.stock_min',
                     'sk.description',
+                    'sk.state',
                     'c.name as category_name',
                     'man.name as marca_name',
                     'me.name as medida_name',
@@ -1394,23 +1404,23 @@ class ProductosController extends Controller
                 );
 
             // busqueda por codigo
-            if(!empty($codigo)){
-                $query->where('sk.code', 'LIKE', '%' . $codigo . '%');
+            if(!empty($codigosearch)){
+                $query->where('sk.code', 'LIKE', '%' . $codigosearch . '%');
             }
 
             // busqueda por categoria
-            if(!empty($categoria)){
-                $query->where('c.name', 'LIKE', '%'.$categoria.'%');
+            if(!empty($categoriasearch)){
+                $query->where('c.name', 'LIKE', '%'.$categoriasearch.'%');
             }
             // busqueda por marca
-            if(!empty($marca)){
-                $query->where('man.name', 'LIKE', '%'.$marca.'%');
+            if(!empty($marcasearch)){
+                $query->where('man.name', 'LIKE', '%'.$marcasearch.'%');
             }
             // busqueda por producto
-            if(!empty($producto)){
-                $query->where('sk.name', 'LIKE', '%'.$producto.'%');
+            if(!empty($productosearch)){
+                $query->where('sk.name', 'LIKE', '%'.$productosearch.'%');
             }
-            $query->where('sk.state', '=', 1);
+            $query->where('sk.state', '=', $estado);
             // por estados de productos
             $query->groupBy('sk.id');
             // busqueda por almacen
@@ -1418,7 +1428,13 @@ class ProductosController extends Controller
             $data = $query->paginate(15);
 
             //return $data;
-            return response()->json(view('ingresos.partials.searchTable', compact('data', 'codigo', 'categoria', 'marca', 'producto',
+            return response()->json(view('ingresos.partials.searchTable',
+                compact('data',
+                'codigosearch',
+                'categoriasearch',
+                'marcasearch',
+                'productosearch',
+                'estado',
             ))->render());
         }
     }

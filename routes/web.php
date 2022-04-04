@@ -64,7 +64,9 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/productoid/{id}', [ProductosController::class, 'productoid']);
     Route::get('/getItemProducts/{id}/{sucursalid}', [ProductosController::class, 'getItemProducts']);
     /** NUEVO INGRESO DE FACTURAS DE PRODUCTOS */
-    Route::post('/ingresofactura',[IngresosController::class, 'ingresofactura']);
+    Route::get('/ingresofactura',[IngresosController::class, 'ingresofactura']);
+    Route::get('/modificarPrecioVenta/{factura}',[IngresosController::class, 'modificarPrecioVenta']);
+    Route::post('/modprecioventa',[IngresosController::class, 'modprecioventa']);
     Route::get('/precioRealdelProducto/{producto}/{sucursal}', [IngresosController::class, 'precioRealdelProducto']);
     /** MARCAS */
     Route::resource('/marcas', MarcasController::class);

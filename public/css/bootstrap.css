@@ -18,6 +18,7 @@
   --bs-cyan: #0dcaf0;
   --bs-white: #fff;
   --bs-gray: #6c757d;
+  --bs-blue-light: #A4D9FF;
   --bs-gray-dark: #343a40;
   --bs-gray-100: #f8f9fa;
   --bs-gray-200: #e9ecef;
@@ -11284,4 +11285,27 @@ textarea.form-control-lg {
 a .titletableorder {
     pointer-events: none;
     cursor: default;
+}
+
+/*dropdow scroll*/
+.scrollable-menu {
+    height: auto;
+    max-height: 300px;
+    overflow-x: hidden;
+    margin: 0;
+    padding-left: 8px;
+    padding-right: 8px;
+    list-style: none;
+}
+ /* 12 px */
+.size-font-long-small {
+    font-size: 0.75em;
+}
+/*11 px*/
+.size-font-medium-small {
+    font-size: 0.688em;
+}
+/*10 px*/
+.size-font-very-small {
+    font-size: 0.625em;
 }
