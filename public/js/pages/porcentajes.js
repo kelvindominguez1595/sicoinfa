@@ -58,19 +58,31 @@ $(function () {
         }
     });
 
-    // submit data 
+    // submit data
     $("#frmreporte").submit(function(e){
         e.preventDefault();
         let frm = $(this).serialize();
 
         $.ajax({
             url: '/porcentajereporte',
-            dataType: 'JSON',
+             dataType: 'JSON',
             type: 'POST',
             data: frm,
-            success: function (res) { 
+            /*cache: false,
+            contentType: false,
+            processData: false,
+            xhrFields: {
+                responseType: 'blob'
+            }, */
+            success: function (res) {
+              /*  var a = document.createElement('a');
+                var url = window.URL.createObjectURL(res);
+                a.href = url;
+                a.download = 'archivo.pdf';
+                a.click();
+                window.URL.revokeObjectURL(url);*/
                 // console.log(res)
-                $("#tblshow").html(res);
+               $("#tblshow").html(res);
              },
             error: function(err) {  }
         })

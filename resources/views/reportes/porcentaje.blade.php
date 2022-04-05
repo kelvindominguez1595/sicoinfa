@@ -15,12 +15,13 @@
         <div class="col-xs-12 co-sm-12 col-md-6 col-lg-6 col-xl-6 ">
             <div class="card mb-4 border-primary">
                 <div class="card-header bg-primary text-white ">
-                    REPORTE DE PORCENTAJES          
+                    REPORTE DE PORCENTAJES
                 </div>
                 <div class="card-body">
-                    <form id="frmreporte" >
+                    <form id="" method="get" action="{{ url('porcentajereporte') }}">
+                        @csrf
                         <div class="row mb-3">
-    
+
                             <div class="col-4">
                                 <label for="tiporeporte" class="form-label fw-bold">Seleccione Tipo de Reporte</label>
                                 <select name="tiporeporte" id="tiporeporte" class="form-select">
@@ -29,7 +30,7 @@
                                     <option value="categoria">Categorias</option>
                                 </select>
                             </div>
-    
+
                             <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 col-xl-4 d-none" id="contentcategoria">
                                 <label for="categoria" class="form-label fw-bold">Categoria Producto</label>
                                 <select  class="form-control mb-1 edit" name="categoria" id="categoria"></select>
@@ -38,7 +39,7 @@
                                 <label for="categoria" class="form-label fw-bold">Marca</label>
                                 <select class="form-control"  name="marca" id="marca"></select>
                             </div>
-    
+
                             <div class="col-4">
                                 <label for="tiporeporte" class="form-label fw-bold">Ordernar Por</label>
                                 <div class="row">
@@ -51,10 +52,10 @@
                                             <input class="form-check-input" type="radio" name="orderby" id="inlineRadio2" value="DESC">
                                             <label class="form-check-label fw-bold" for="inlineRadio2">Z-A</label>
                                         </div>
-                                    </div>                            
+                                    </div>
                                 </div>
                             </div>
-                           
+
                         </div>
                         <div class="row mb-3">
                             <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
@@ -77,24 +78,24 @@
                                             <input class="form-check-input" type="radio" name="tipoprint" id="inlineRadio2" value="excel">
                                             <label class="form-check-label fw-bold" for="inlineRadio2">Excel</label>
                                         </div>
-                                    </div>                            
+                                    </div>
                                 </div>
                             </div>
                         </div>
-    
+
                         <div class="row mb-2 ">
                             <div class="col-12 text-center">
                                 <button type="submit" class="btn btn-primary">Imprimir</button>
                             </div>
-                        </div>                        
+                        </div>
 
                     </form>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <div class="row" id="tblshow">
-       
+
     </div>
 @endsection
