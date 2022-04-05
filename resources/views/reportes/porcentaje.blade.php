@@ -6,82 +6,95 @@
 @endsection
 @section('js')
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
-    <script src="{{ asset('js/pages/filterproductos.js') }}"></script>
+    <script src="{{ asset('js/pages/porcentajes.js') }}"></script>
 @endsection
 
 @section('content')
-    <div class="row mb-2">
-        {{-- columna 1  --}}
-        <div class="col-xs-12 co-sm-12 col-md-3 col-lg-3 col-xl-3">
+    <div class="row mb-2 justify-content-md-center">
+
+        <div class="col-xs-12 co-sm-12 col-md-6 col-lg-6 col-xl-6 ">
             <div class="card mb-4 border-primary">
-                <div class="card-header bg-primary text-white">
-                    Filtros de búsqueda
+                <div class="card-header bg-primary text-white ">
+                    REPORTE DE PORCENTAJES          
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('productos.index')}}" method="get">
+                    <form id="frmreporte" >
+                        <div class="row mb-3">
+    
+                            <div class="col-4">
+                                <label for="tiporeporte" class="form-label fw-bold">Seleccione Tipo de Reporte</label>
+                                <select name="tiporeporte" id="tiporeporte" class="form-select">
+                                    <option value="all">Todos</option>
+                                    <option value="marca">Marca</option>
+                                    <option value="categoria">Categorias</option>
+                                </select>
+                            </div>
+    
+                            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 col-xl-4 d-none" id="contentcategoria">
+                                <label for="categoria" class="form-label fw-bold">Categoria Producto</label>
+                                <select  class="form-control mb-1 edit" name="categoria" id="categoria"></select>
+                            </div>
+                            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 col-xl-4 d-none" id="contentmarcar">
+                                <label for="categoria" class="form-label fw-bold">Marca</label>
+                                <select class="form-control"  name="marca" id="marca"></select>
+                            </div>
+    
+                            <div class="col-4">
+                                <label for="tiporeporte" class="form-label fw-bold">Ordernar Por</label>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="orderby" id="inlineRadio1" value="ASC" checked>
+                                            <label class="form-check-label fw-bold" for="inlineRadio1">A-Z</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="orderby" id="inlineRadio2" value="DESC">
+                                            <label class="form-check-label fw-bold" for="inlineRadio2">Z-A</label>
+                                        </div>
+                                    </div>                            
+                                </div>
+                            </div>
+                           
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                <label for="desde" class="form-label fw-bold">Desde</label>
+                                <input type="date" name="desde" id="desde" class="form-control">
+                            </div>
+                            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                <label for="hasta" class="form-label fw-bold">Hasta</label>
+                                <input type="date" name="hasta" id="hasta" class="form-control">
+                            </div>
+                            <div class="col-4">
+                                <label for="tiporeporte" class="form-label fw-bold">Tipo</label>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="tipoprint" id="inlineRadio1" value="pdf" checked>
+                                            <label class="form-check-label fw-bold" for="inlineRadio1">PDF</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="tipoprint" id="inlineRadio2" value="excel">
+                                            <label class="form-check-label fw-bold" for="inlineRadio2">Excel</label>
+                                        </div>
+                                    </div>                            
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="row mb-2 ">
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-primary">Imprimir</button>
+                            </div>
+                        </div>                        
 
                     </form>
                 </div>
             </div>
         </div>
-        {{-- columna 2 --}}
-        <div class="col-xs-12 co-sm-12 col-md-9 col-lg-9 col-xl-9">
-            <div class="card mb-4 border-primary">
-                <div class="card-header bg-primary text-white d-flex justify-content-between">
-                    <div class="">
-
-                    </div>
-                    <a class="btn btn btn-light btn-sm" href="{{ route('productos.create') }}">Nuevo Producto&nbsp;<i class="fa fa-save"></i></a>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover">
-                            <thead>
-                            <th class="small">Código</th>
-                            <th class="small">C. de Barra</th>
-                            <th class="small">Categoría</th>
-                            <th class="small">Marca</th>
-                            <th class="small">Nombre</th>
-                            <th class="small">Cantidad</th>
-                            <th class="small">Costo</th>
-                            <th class="small">Total de Compra</th>
-                            <th class="small">P. Venta</th>
-                            <th class="small">Venta Total</th>
-                            <th class="small">% Diferencia</th>
-                            <th class="small">Diferencia Unitaria</th>
-                            <th class="small">Utilidad Total</th>
-                            </thead>
-
-                            <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            </tbody>
-                        </table>
-
-                        <div class="d-flex justify-content-between">
-                            {{--                            <div>Mostrando {{ $data->firstItem() }}  a  {{ $data->lastItem() }} de {{ $data->total() }} registros.</div>--}}
-                            <div>
-
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-
+    
+    <div class="row" id="tblshow">
+       
+    </div>
 @endsection

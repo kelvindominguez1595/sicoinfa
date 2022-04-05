@@ -350,7 +350,6 @@ class IngresosController extends Controller
      */
     public function precioRealdelProducto($producto_id, $sucursal_id) {
         // 1 necesitamos obtener el ultimo y antepenultimo registros del los precios del producto
-
         /**
          * PREGUNTAMOS QUE SI EN LA NUEVA TABLA PRECIOS EXISTEN POR LO MENOS DOS REGISTROS
          * ENTONCES DE AHI SACAMOS EL ULTIMO Y ANTEPENULTIMO REGISTRO
@@ -589,18 +588,27 @@ class IngresosController extends Controller
                     $upingreso->save();
 
                     $precio = DetalleIngreso::where('detalle_stock_id', '=', $ingreso->id)->first();
-                    $costsinivaActual       = $precio->cost_s_iva;
-                    $costoconivaActual      = $precio->cost_c_iva;
-                    $gananciaActual         = $precio->earn_c_iva;
-                    $porcentajeActual       = $precio->earn_porcent;
-                    $precioventaActual      = $precio->sale_price;
-                    $esta = "ESTA EN EL VIEJO";
-                    $id = $productoid;
-                    // ACTUALIZO LOS PRECIOS VIEJOS
-                    $upprecioviejo = DetalleIngreso::find($precio->id);
-                    $upprecioviejo->state = 10;
-                    $upprecioviejo->save();
-
+                    if($precio){
+                        $costsinivaActual       = $precio->cost_s_iva == '' ? 0 : $precio->cost_s_iva;
+                        $costoconivaActual      = $precio->cost_c_iva;
+                        $gananciaActual         = $precio->earn_c_iva;
+                        $porcentajeActual       = $precio->earn_porcent;
+                        $precioventaActual      = $precio->sale_price;
+                        $esta = "ESTA EN EL VIEJO";
+                        $id = $productoid;
+                        // ACTUALIZO LOS PRECIOS VIEJOS
+                        $upprecioviejo = DetalleIngreso::find($precio->id);
+                        $upprecioviejo->state = 10;
+                        $upprecioviejo->save();
+                    } else {
+                        $costsinivaActual       = 0;
+                        $costoconivaActual      = 0;
+                        $gananciaActual         = 0;
+                        $porcentajeActual       = 0;
+                        $precioventaActual      = 0;
+                        $id = 0;
+                        $esta = "SI ESTA INGRESADO PERO NO TIENE PRECIO EN EL DETALLE STOCK";
+                    }
                 }else{
                     $costsinivaActual       = 0;
                     $costoconivaActual      = 0;
@@ -633,7 +641,7 @@ class IngresosController extends Controller
                 $cambio = "nuevo";
                 // multiplicamos el nuevo costo con iva
                 $precioconivaFinal = $this->costomasIVA($costonsinivaingreso);
-
+                $costoFormat = $costonsinivaingreso;
                 $gananciaFinal          = 0;
                 $porcentajeFinal        = 0;
                 $precioventaFinal       = 0;

@@ -1260,20 +1260,20 @@ class ProductosController extends Controller
         // ver los almacenes
         $almaceneslist = Sucursales::all();
         return view('productos.historicocompras',  compact('data',
-        'codigo',
-        'codbarra',
-        'categoria',
-        'marca',
-        'nombre',
-        'almacen',
-        'orderby',
-        'estado',
-        'pages',
-        'almaceneslist',
-        'proveedor',
-        'credito',
-        'desde',
-        'hasta'
+            'codigo',
+            'codbarra',
+            'categoria',
+            'marca',
+            'nombre',
+            'almacen',
+            'orderby',
+            'estado',
+            'pages',
+            'almaceneslist',
+            'proveedor',
+            'credito',
+            'desde',
+            'hasta'
         ));
     }
 

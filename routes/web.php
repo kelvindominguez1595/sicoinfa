@@ -96,6 +96,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/porcentaje', [ReporteController::class, 'porcentaje']);
     Route::get('/promedio', [ReporteController::class, 'promedio']);
     Route::get('/rendimiento', [ReporteController::class, 'rendimiento']);
+    Route::post('/porcentajereporte', [ReporteController::class, 'porcentajereporte']);
 
     /** RUTAS PARA DEUDAS */
     Route::get('/deudas', [DeudasController::class, 'index']);
