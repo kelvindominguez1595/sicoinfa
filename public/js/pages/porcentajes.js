@@ -66,23 +66,19 @@ $(function () {
         $.ajax({
             url: '/porcentajereporte',
              dataType: 'JSON',
-            type: 'POST',
+            type: 'GET',
             data: frm,
-            /*cache: false,
-            contentType: false,
-            processData: false,
-            xhrFields: {
-                responseType: 'blob'
-            }, */
             success: function (res) {
-              /*  var a = document.createElement('a');
-                var url = window.URL.createObjectURL(res);
-                a.href = url;
-                a.download = 'archivo.pdf';
-                a.click();
-                window.URL.revokeObjectURL(url);*/
-                // console.log(res)
-               $("#tblshow").html(res);
+
+                $("#tblshow").html(res);
+
+                $('#tbdata').DataTable( {
+                    dom: 'Bfrtip',
+                    buttons: [
+                        'copy', 'csv', 'excel',
+                    ]
+                } );
+
              },
             error: function(err) {  }
         })

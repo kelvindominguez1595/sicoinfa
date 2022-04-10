@@ -108,12 +108,12 @@ class ReporteController extends Controller
         $query->whereBetween('detsto.created_at', [$desde, $hasta]);
         $data = $query->get();
         $date = date('d-m-Y-s');
-       // return response()->json(view('reportes.template.porcentajePDF', compact('data', 'date'))->render());
+        //return response()->json(view('reportes.template.porcentajePDF', compact('data', 'date'))->render());
 
-        $pdf = PDF::loadView('reportes.template.porcentajePDF', compact('data', 'date'));
-        $pdf->setPaper('legal', 'landscape');
+        $pdf = PDF::loadView('reportes.template.porcentajePDF', compact('data', 'date'))->setPaper('legal', 'landscape');
         set_time_limit(300);
-        return $pdf->stream('Reporte-porcentaje-'.$date.'.pdf');
+
+        return $pdf->download('Reporte-porcentaje-'.$date.'.pdf');
     }
 
     public function reportExcel() {
@@ -233,6 +233,6 @@ class ReporteController extends Controller
 
         $pdf = PDF::loadView('reportes.template.detPDF', compact('data'))->setPaper('letter', 'landscape');
         $date = date('d-m-Y-s');
-        return $pdf->download('Reporte-producto-'.$date.'.pdf');
+        return $pdf->stream('Reporte-producto-'.$date.'.pdf');
     }
 }

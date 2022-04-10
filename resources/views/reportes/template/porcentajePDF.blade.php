@@ -5,20 +5,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
     <title>Reporte-Porcentaje- {{ $date }}</title>
-    <?php
-        $host = $_SERVER['HTTP_HOST'];
-    ?>
-    <style>
-        body {
-            font-family: 'Arial';
-        }
 
-        @font-face {
-            font-family: 'Arial';
-            font-style: normal;
-            font-weight: normal;
-           src: url(<?php echo $host; ?>'/fonts/arial.ttf') format('truetype');
-        }
+    <style>
+
         /** Defina ahora los márgenes reales de cada página en el PDF **/
         table.table2 {
             border: 1px solid #1C6EA4;
@@ -34,7 +23,7 @@
         }
 
         table.table2 tbody td {
-            font-family: 'Arial';
+
             font-size: 13px;
         }
 
@@ -66,7 +55,7 @@
         }
 
         table.table2 tfoot td {
-            font-family: 'Arial
+
             font-size: 12px;
         }
 
@@ -81,10 +70,6 @@
             padding: 2px 8px;
             border-radius: 5px;
         }
-
-        @page { margin: 20px 30px 40px 50px; }
-        #footer { position: fixed; right: 0px; top: 1px; bottom: 1px; text-align: center;}
-        #footer .page:after { content: counter(page, decimal); }
         /** Definir las reglas del encabezado **/
         header {
             position: absolute;
@@ -289,29 +274,27 @@
                         </td>
                     </tr>
                 @endforeach
-                <tfoot>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td style="text-align: center;">${{ number_format($totalcosto, 2) }}</td>
-                        <td style="text-align: center;">${{ number_format($totalGlobalCompra, 2) }}</td>
-                        <td style="text-align: center;">${{ number_format($totalprecioventa, 2) }}</td>
-                        <td style="text-align: center;">${{ number_format($totalventatotal, 2) }}</td>
-                        <td></td>
-                        <td style="text-align: center;">${{ number_format($totaldiferencia, 2) }}</td>
-                        <td style="text-align: center;">${{ number_format($totalutilidad, 2) }}</td>
-                    </tr>
-                </tfoot>
             </tbody>
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td style="text-align: center;">${{ number_format($totalcosto, 2) }}</td>
+                    <td style="text-align: center;">${{ number_format($totalGlobalCompra, 2) }}</td>
+                    <td style="text-align: center;">${{ number_format($totalprecioventa, 2) }}</td>
+                    <td style="text-align: center;">${{ number_format($totalventatotal, 2) }}</td>
+                    <td></td>
+                    <td style="text-align: center;">${{ number_format($totaldiferencia, 2) }}</td>
+                    <td style="text-align: center;">${{ number_format($totalutilidad, 2) }}</td>
+                </tr>
+            </tfoot>
         </table>
     </main>
-    <?php
 
-    ?>
 {{--    <div id="footer">--}}
 {{--        <p class="page">Page </p>--}}
 {{--    </div>--}}
