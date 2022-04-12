@@ -5,14 +5,29 @@ $(function () {
         }
     });
 
+    $(".typereport").change(function (){
+        let pdfcontentForm = $('#pdfcontentForm');
+        let excelcontentForm = $('#excelcontentForm');
+
+        if($(this).val() === "pdf"){
+            pdfcontentForm.removeClass('d-none')
+            excelcontentForm.addClass('d-none')
+            $('#tblsucontenedorexcel').addClass('d-none');
+        } else {
+            pdfcontentForm.addClass('d-none')
+            excelcontentForm.removeClass('d-none')
+        }
+
+    })
+
     $("#tiporeporte").change(function(){
         let data = $(this).val();
         let contentcategoria = $('#contentcategoria');
         let contentmarcar = $('#contentmarcar');
-        if(data == 'marca') {
+        if(data === 'marca') {
             contentmarcar.removeClass('d-none');
             contentcategoria.addClass('d-none');
-        } else if(data == 'categoria') {
+        } else if(data === 'categoria') {
             contentcategoria.removeClass('d-none');
             contentmarcar.addClass('d-none');
         } else {
@@ -62,14 +77,15 @@ $(function () {
     $("#frmreporte").submit(function(e){
         e.preventDefault();
         let frm = $(this).serialize();
-
+        $("#showresultcontent").LoadingOverlay("show");
         $.ajax({
             url: '/porcentajereporte',
              dataType: 'JSON',
             type: 'GET',
             data: frm,
             success: function (res) {
-
+                $('#tblsucontenedorexcel').removeClass('d-none');
+                $("#showresultcontent").LoadingOverlay("hide");
                 $("#tblshow").html(res);
 
                 $('#tbdata').DataTable( {

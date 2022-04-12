@@ -1,4 +1,4 @@
-<table class="table2" id="tbdata">
+<table class="table table-striped " id="tbdata">
 
     <thead style="border: 2px solid;">
         <th style="text-align: center;">Código</th>
@@ -18,12 +18,7 @@
 
     <tbody>
         @php
-            $totalcosto         = 0;
-            $totalGlobalCompra       = 0;
-            $totalprecioventa   = 0;
-            $totalventatotal    = 0;
-            $totaldiferencia    = 0;
-            $totalutilidad      = 0;
+            $totalcosto = 0; $totalGlobalCompra = 0; $totalprecioventa = 0; $totalventatotal = 0; $totaldiferencia = 0; $totalutilidad = 0;
         @endphp
         @foreach ($data as $item)
             <tr>

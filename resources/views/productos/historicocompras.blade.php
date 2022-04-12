@@ -105,9 +105,14 @@
                     <div class="">
                         HISTORICO DE COMPRAS
                     </div>
-
                 </div>
                 <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-12">
+                            <a href="{{ url('historialcompras?report=PDF&codigo='.$codigo.'&codbarra='.$codbarra.'&categoria='.$categoria.'&marca='.$marca.'&nombre='.$nombre.'&almacen='.$almacen.'&orderby='.$orderby.'&estado='.$estado.'&proveedor='.$proveedor.'&credito='.$credito.'&desde='.$desde.'&hasta='.$hasta) }}" target="_blank" class="btn btn-primary">PDF <i class="fas fa-file-pdf"></i></a>
+                            <a href="{{ url('historialcompras?report=excel&codigo='.$codigo.'&codbarra='.$codbarra.'&categoria='.$categoria.'&marca='.$marca.'&nombre='.$nombre.'&almacen='.$almacen.'&orderby='.$orderby.'&estado='.$estado.'&proveedor='.$proveedor.'&credito='.$credito.'&desde='.$desde.'&hasta='.$hasta) }}" target="_blank" class="btn btn-success">Excel <i class="fas fa-file-excel"></i></a>
+                        </div>
+                    </div>
 
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered">
@@ -145,9 +150,9 @@
                                         @endif
 
                                         <td class="small">{{ $item->sucursal }}</td>
-                                        <td class="small">{{ $item->fechaingreso }}</td>
+                                        <td class="small">{{ date('d-m-Y h:i:s A', strtotime($item->fechaingreso)) }}</td>
                                         <td class="small">{{ $item->nit }}</td>
-                                        <td class="small">{{ $item->fechafactura }}</td>
+                                        <td class="small">{{ date('d-m-Y', strtotime($item->fechafactura)) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Almacenes;
-use App\Models\Categorias;
-use App\Models\DetalleIngreso;
-use App\Models\Ingresos;
 use App\Models\Marcas;
 use App\Models\Precios;
+use App\Models\Ingresos;
+use App\Models\Almacenes;
 use App\Models\Productos;
-use App\Models\Proveedores;
-use App\Models\Unidaddemedidas;
-use Illuminate\Http\Request;
 use App\Models\Sucursales;
+use App\Models\Categorias;
+use App\Models\Proveedores;
+use Illuminate\Http\Request;
+use App\Models\DetalleIngreso;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Unidaddemedidas;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
-
+use Illuminate\Support\Facades\Auth;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ProductosController extends Controller
 {
@@ -1256,25 +1258,38 @@ class ProductosController extends Controller
         }
 
         $query->orderBy('detsto.created_at', 'DESC');
-        $data = $query->paginate($pages);
+
         // ver los almacenes
         $almaceneslist = Sucursales::all();
-        return view('productos.historicocompras',  compact('data',
-            'codigo',
-            'codbarra',
-            'categoria',
-            'marca',
-            'nombre',
-            'almacen',
-            'orderby',
-            'estado',
-            'pages',
-            'almaceneslist',
-            'proveedor',
-            'credito',
-            'desde',
-            'hasta'
-        ));
+        $date = date('d-m-Y-s');
+        $code = generarCodigo(4);
+        if($request['report'] == 'PDF'){
+            $data = $query->get();
+            $pdf = PDF::loadView('reportes.template.historialdeComprasPDF', compact('data', 'date'))->setPaper('legal', 'landscape');
+            //set_time_limit(300);
+            return $pdf->download('Reporte-Historial-'.$code.'.pdf');
+        } else if($request['report'] == 'excel'){
+            $data = $query->get();
+            $this->reporteHistorialExcel($data);
+        } else{
+            $data = $query->paginate($pages);
+            return view('productos.historicocompras',  compact('data',
+                'codigo',
+                'codbarra',
+                'categoria',
+                'marca',
+                'nombre',
+                'almacen',
+                'orderby',
+                'estado',
+                'pages',
+                'almaceneslist',
+                'proveedor',
+                'credito',
+                'desde',
+                'hasta'
+            ));
+        }
     }
 
     // function para validar los precios
@@ -1438,4 +1453,76 @@ class ProductosController extends Controller
             ))->render());
         }
     }
+
+    public function reporteHistorialExcel($data){
+        $username = Auth::user()->name;
+
+        $spreadsheet = new Spreadsheet();
+        $write = new Xlsx($spreadsheet);
+
+        $spreadsheet->setActiveSheetIndex(0);
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $spreadsheet->getProperties()
+            ->setCreator(dataTitlesExcel()['creador'])
+            ->setLastModifiedBy($username)
+            ->setTitle(dataTitlesExcel()['titlereportepro'])
+            ->setSubject(dataTitlesExcel()['titlereportepro'])
+            ->setDescription(dataTitlesExcel()['descripcionpro'])
+            ->setKeywords('Reportes')
+            ->setCategory(dataTitlesExcel()['titlereportepro']);
+
+        $sheet->setCellValue('A1', 'CÓDIGO');
+        $sheet->setCellValue('B1', 'CATEGORÍA');
+        $sheet->setCellValue('C1', 'MARCA');
+        $sheet->setCellValue('D1', 'PRODUCTO');
+        $sheet->setCellValue('E1', 'PROVEEDOR');
+        $sheet->setCellValue('F1', 'CANTIDAD');
+        $sheet->setCellValue('G1', 'U. DE MEDIDA');
+        $sheet->setCellValue('H1', 'P. UNI. SIN IVA');
+        $sheet->setCellValue('I1', 'P. UNI. CON IVA');
+        $sheet->setCellValue('J1', 'ALMACÉN');
+        $sheet->setCellValue('K1', 'FECHA INGRESO');
+        $sheet->setCellValue('L1', 'CRÉDITO FISCAL');
+        $sheet->setCellValue('M1', 'FECHA FACTURA');
+
+        $i = 2;
+        foreach($data as $item) {
+            $sheet->setCellValue('A'.$i, $item->code);
+            $sheet->setCellValue('B'.$i, $item->category_name);
+            $sheet->setCellValue('C'.$i, $item->marca_name);
+            $sheet->setCellValue('D'.$i, $item->name);
+            $sheet->setCellValue('E'.$i, $item->cliente);
+            $sheet->setCellValue('F'.$i, $item->cantidadnew);
+            $sheet->setCellValue('G'.$i, $item->medida_name);
+            if(isset($item->costosiniva)){
+                $costsiniva = number_format($item->costosiniva, 4);
+                $costconiva = number_format($item->costoconiva, 4);
+            } else {
+                $costsiniva = number_format($item->cost_s_iva, 4);
+                $costconiva = number_format($item->cost_c_iva, 4);
+            }
+            $sheet->setCellValue('H'.$i, $costsiniva);
+            $sheet->setCellValue('I'.$i, $costconiva);
+
+            $sheet->setCellValue('J'.$i, $item->sucursal);
+            $sheet->setCellValue('K'.$i, date('d-m-Y h:i:s A', strtotime($item->fechaingreso)));
+            $sheet->setCellValue('L'.$i, $item->nit);
+            $sheet->setCellValue('M'.$i, date('d-m-Y', strtotime($item->fechafactura)));
+            $i++;
+        }
+        $code = generarCodigo(4);
+        $filename = 'historial-compras-'.$code.'.xlsx';
+
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename='. $filename);
+        header('Cache-Control: max-age=0');
+
+        $write->save('php://output');
+        exit();
+    }
+
+
+
+
 }

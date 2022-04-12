@@ -108,39 +108,14 @@ class ReporteController extends Controller
         $query->whereBetween('detsto.created_at', [$desde, $hasta]);
         $data = $query->get();
         $date = date('d-m-Y-s');
-        //return response()->json(view('reportes.template.porcentajePDF', compact('data', 'date'))->render());
-
-        $pdf = PDF::loadView('reportes.template.porcentajePDF', compact('data', 'date'))->setPaper('legal', 'landscape');
-        set_time_limit(300);
-
-        return $pdf->download('Reporte-porcentaje-'.$date.'.pdf');
-    }
-
-    public function reportExcel() {
-        $data = DB::table('branch_offices')
-            ->select('name', 'phone', 'address', 'state')
-            ->get();
-        $delimiter = ",";
-        $filename = "prubitalocal_" . date('Y-m-d') . ".csv";
-
-        //create a file pointer
-        $f = fopen('php://memory', 'w');
-
-        //set column headers
-        $fields = array('Name','Phone', 'address', 'state');
-        fputcsv($f, $fields, $delimiter);
-        foreach ($data as $item){
-            $lineData = array($item->name, $item->phone, $item->address, $item->state);
-            fputcsv($f, $lineData, $delimiter);
+        if($request['typereport'] == 'excel'){
+            return response()->json(view('reportes.template.porcentajeExcel', compact('data', 'date'))->render());
+        } else {
+            $pdf = PDF::loadView('reportes.template.porcentajePDF', compact('data', 'date'))->setPaper('legal', 'landscape');
+            set_time_limit(300);
+            return $pdf->download('Reporte-porcentaje-'.$date.'.pdf');
         }
-        //move back to beginning of file
-        fseek($f, 0);
-        //set headers to download file rather than displayed
-        header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename="' . $filename . '";');
 
-        //output all remaining data on a file pointer
-        fpassthru($f);
     }
 
     public function reporteDET(Request $request){

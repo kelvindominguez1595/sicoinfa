@@ -68,6 +68,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/modificarPrecioVenta/{factura}',[IngresosController::class, 'modificarPrecioVenta']);
     Route::post('/modprecioventa',[IngresosController::class, 'modprecioventa']);
     Route::get('/precioRealdelProducto/{producto}/{sucursal}', [IngresosController::class, 'precioRealdelProducto']);
+
     /** MARCAS */
     Route::resource('/marcas', MarcasController::class);
     /** CATEGORIAS */
