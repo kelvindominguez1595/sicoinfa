@@ -95,7 +95,7 @@
                     <br>
                     FABRICACIÓN DE PRODUCTOS DE CEMENTO Y FERREYERIA
                     <br>
-                    <strong>PORCENTAJES</strong>
+                    <strong>REPORTE DE PRODUCTOS</strong>
                     @if (isset($sucursal))
                         {{$sucursal->name}}
                     @endif
@@ -139,7 +139,7 @@
             <tbody>
                 @php
                     $totalcosto         = 0;
-                    $totalGlobalCompra       = 0;
+                    $totalGlobalCompra  = 0;
                     $totalprecioventa   = 0;
                     $totalventatotal    = 0;
                     $totaldiferencia    = 0;

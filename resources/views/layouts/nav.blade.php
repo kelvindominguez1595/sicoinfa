@@ -64,9 +64,9 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
                 <li><a class="dropdown-item" href=""><i class="fas fa-file-csv"></i> Reporte DET</a></li>
-                <li><a class="dropdown-item" href="{{ url('/porcentaje') }}"><i class="fas fa-file-csv"></i> Porcentaje</a></li>
-                <li><a class="dropdown-item" href="{{ url('/rendimiento') }}"><i class="fas fa-file-csv"></i> Rendimiento de Venta Por Producto</a></li>
-                <li><a class="dropdown-item" href="{{ url('/promedio') }}"><i class="fas fa-file-csv"></i> Promedios</a></li>
+                <li><a class="dropdown-item" href="{{ url('/porcentaje') }}"><i class="fas fa-file-csv"></i> Reporte de Productos</a></li>
+{{--                <li><a class="dropdown-item" href="{{ url('/rendimiento') }}"><i class="fas fa-file-csv"></i> Rendimiento de Venta Por Producto</a></li>--}}
+{{--                <li><a class="dropdown-item" href="{{ url('/promedio') }}"><i class="fas fa-file-csv"></i> Promedios</a></li>--}}
             </ul>
         </li>
         <li class="nav-item dropdown dropdown-pull-right">
