@@ -15,12 +15,15 @@ class ReporteController extends Controller
         return view('reportes.porcentaje');
     }
 
-    public function promedio(Request $request) {
+    public function promedio() {
         return view('reportes.promedio');
     }
 
-    public function rendimiento(Request $request) {
+    public function rendimiento() {
         return view('reportes.rendimiento');
+    }
+    public function detView() {
+        return view('reportes.reporteDETView');
     }
 
     public function porcentajereporte(Request $request) {
@@ -131,11 +134,9 @@ class ReporteController extends Controller
     }
 
     public function reporteDET(Request $request){
-        $categoria = $request->categoria;
-        $marca = $request->marca;
-        $orderby = $request->orderby;
-        $desde = $request->desde;
-        $hasta = $request->hasta;
+
+        $year = $request->year;
+
 
         $oldprice = DB::table('detalle_stock')
             ->select(
@@ -206,21 +207,32 @@ class ReporteController extends Controller
             );
         $query->where('sk.state', '=', 1);
         $query->groupBy('sk.id');
-        // $query->orderBy('sk.name', 'desc');
+         $query->orderBy('sk.name', 'ASC');
         // busqueda por categoria
-        if(!empty($categoria)){
+        /*if(!empty($categoria)){
             $query->where('sk.category_id', '=', $categoria);
         }
         // busqueda por marca
         if(!empty($marca)){
             $query->where('sk.manufacturer_id', '=', $marca);
+        }*/
+        if(empty($year)){
+            $fyear = date('Y');
+        } else {
+            $fyear = $year;
         }
-        $query->whereBetween('detsto.created_at', [$desde, $hasta]);
+        $code = generarCodigo(4);
+        $query->whereYear('detsto.created_at', $fyear);
         $data = $query->get();
+        if($request['tipoprint'] == 'excel'){
+            return $this->reporteDETExcel($data);
+        } else {
+            $pdf = PDF::loadView('reportes.template.detPDF', compact('data'))->setPaper('letter', 'landscape');
+            $date = date('d-m-Y-s');
+            return $pdf->stream('Reporte-det-'.$code.'.pdf');
+        }
 
-        $pdf = PDF::loadView('reportes.template.detPDF', compact('data'))->setPaper('letter', 'landscape');
-        $date = date('d-m-Y-s');
-        return $pdf->stream('Reporte-producto-'.$date.'.pdf');
+
     }
 
     public function porcentajeExcel($data){
@@ -235,11 +247,11 @@ class ReporteController extends Controller
         $spreadsheet->getProperties()
             ->setCreator(dataTitlesExcel()['creador'])
             ->setLastModifiedBy($username)
-            ->setTitle(dataTitlesExcel()['titlereportepro'])
-            ->setSubject(dataTitlesExcel()['titlereportepro'])
-            ->setDescription(dataTitlesExcel()['descripcionpro'])
+            ->setTitle(dataTitlesExcel()['titlereportepor'])
+            ->setSubject(dataTitlesExcel()['titlereportepor'])
+            ->setDescription(dataTitlesExcel()['descripcionpor'])
             ->setKeywords('Reportes')
-            ->setCategory(dataTitlesExcel()['titlereportepro']);
+            ->setCategory(dataTitlesExcel()['titlereportepor']);
 
         $sheet->setCellValue('A1', 'CÓDIGO');
         $sheet->setCellValue('B1', 'C. DE BARRA');
@@ -378,4 +390,84 @@ class ReporteController extends Controller
         exit();
     }
 
+    public function reporteDETExcel($data){
+        $username = Auth::user()->name;
+
+        $spreadsheet = new Spreadsheet();
+        $write = new Xlsx($spreadsheet);
+
+        $spreadsheet->setActiveSheetIndex(0);
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $spreadsheet->getProperties()
+            ->setCreator(dataTitlesExcel()['creador'])
+            ->setLastModifiedBy($username)
+            ->setTitle(dataTitlesExcel()['titlereportepor'])
+            ->setSubject(dataTitlesExcel()['titlereportepor'])
+            ->setDescription(dataTitlesExcel()['descripcionpor'])
+            ->setKeywords('Reportes')
+            ->setCategory(dataTitlesExcel()['titlereportepor']);
+
+        $sheet->setCellValue('A1', 'CÓDIGO');
+        $sheet->setCellValue('B1', 'C. DE BARRA');
+        $sheet->setCellValue('C1', 'CATEGORIA');
+        $sheet->setCellValue('D1', 'MARCA');
+        $sheet->setCellValue('E1', 'NOMBRE');
+        $sheet->setCellValue('F1', 'CANTIDAD');
+        $sheet->setCellValue('G1', 'MEDIDA');
+        $sheet->setCellValue('H1', 'COSTO');
+        $sheet->setCellValue('I1', 'TOTAL DE COMPRA');
+
+        $i = 2;
+        $totalcosto         = 0;
+        $totalGlobalCompra  = 0;
+        foreach($data as $item) {
+            $sheet->setCellValue('A'.$i, $item->code);
+            $sheet->setCellValue('B'.$i, $item->barcode);
+            $sheet->setCellValue('C'.$i, $item->category_name);
+            $sheet->setCellValue('D'.$i, $item->marca_name);
+            $sheet->setCellValue('E'.$i, $item->name);
+
+            if(isset($item->cantidadnew)){
+                $cantidad = $item->cantidadnew;
+            } else {
+                $cantidad = 0;
+            }
+            $sheet->setCellValue('F'.$i, $cantidad);
+
+            $sheet->setCellValue('G'.$i, $item->medida_name);
+
+            if(isset($item->cost_s_iva)){
+                $costoReal = $item->cost_s_iva;
+            }else {
+                $costoReal = $item->costosiniva;
+            }
+            $totalcosto += $costoReal;
+            $sheet->setCellValue('H'.$i, number_format($costoReal,2));
+
+            if(isset($item->cost_s_iva)){
+                $costo = $item->cost_s_iva;
+            }else {
+                $costo = $item->costosiniva;
+            }
+            $totalCompra =  $item->cantidadnew * $costo;
+            $totalGlobalCompra += $totalCompra;
+
+            $sheet->setCellValue('I'.$i, number_format($totalCompra,2));
+
+            $i++;
+        }
+
+
+
+        $code = generarCodigo(4);
+        $filename = 'historial-det-'.$code.'.xlsx';
+
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename='. $filename);
+        header('Cache-Control: max-age=0');
+
+        $write->save('php://output');
+        exit();
+    }
 }

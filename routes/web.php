@@ -98,7 +98,8 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/promedio', [ReporteController::class, 'promedio']);
     Route::get('/rendimiento', [ReporteController::class, 'rendimiento']);
     Route::get('/porcentajereporte', [ReporteController::class, 'porcentajereporte']);
-    Route::get('/reportExcel', [ReporteController::class, 'reportExcel']);
+    Route::get('/detView', [ReporteController::class, 'detView']);
+    Route::get('/reporteDET', [ReporteController::class, 'reporteDET']);
 
     /** RUTAS PARA DEUDAS */
     Route::get('/deudas', [DeudasController::class, 'index']);

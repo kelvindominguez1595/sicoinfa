@@ -26,12 +26,12 @@ function dataTitlesExcel(){
         "creador" => "Fábrica y Ferretería Arcoiris",
         "titlereportepro" => "Histórico de compras de productos",
         "titlereportedet" => "Reporte Anual DET",
-        "titlereportepor" => "Porcentajde de Ventas",
+        "titlereportepor" => "Reporte de Producto",
         "titlereporteren" => "Rendimiento",
 
         "descripcionpro" => "Histórico de compra de productos",
         "descripciondet" => "Reporte anual DET",
-        "descripcionpor" => "Reporte de porcentaje de ventas",
+        "descripcionpor" => "Reporte de producto",
         "descripcionren" => "Reporte de rendimiento de ventas",
     ];
     return $data;
