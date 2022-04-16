@@ -4,15 +4,38 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ReporteController extends Controller
 {
-    public function porcentaje() {
-        return view('reportes.porcentaje');
+    public function reportes() {
+
+        $title = [
+            "CATEGORIA", "CODIGO", "CANTIDAD", "COSTO S/IVA", "COSTO C/IVA",
+            "CODIGO DE BARRA", "DIFERENCIA UNITARIA", "FECHA", "MARCA", "NOMBRE",
+            "PRECIO DE VENTA", "PORCENTAJE %", "TOTAL COMPRA S/IVA", "TOTAL COMPRA C/IVA", "TOTAL EXISTENCIA S/IVA",
+            "TOTAL EXISTENCIA C/IVA", "TOTAL COSTOS", "UTILIDAD TOTAL", "UNIDAD DE MEDIDA", "VENTA TOTAL",
+        ];
+
+        $order = array(
+            array("name" => "CÓDIGO", "val" => "sk.code"),
+            array("name" => "CÓDIGO DE BARRA", "val" => "sk.barcode"),
+            array("name" => "CATEGORIA", "val" => "c.name"),
+            array("name" => "MARCA", "val" => "man.name"),
+            array("name" => "NOMBRE", "val" => "sk.name"),
+        );
+
+        $type_report = array(
+            array("name" => "PRECIO DE VENTAS", "val" => "precioventas"),
+            array("name" => "COSTOS SIN IVA", "val" => "costosiniva"),
+            array("name" => "COSTOS Y PORCENTAJES DE UTILIDAD", "val" => "cosporutilidad"),
+            array("name" => "UTILIDAD CODIGO Y PERIODO", "val" => "codigoperiodo"),
+        );
+
+        return view('reportes.reporte', compact('title', 'order', 'type_report'));
     }
 
     public function promedio() {
@@ -27,6 +50,10 @@ class ReporteController extends Controller
     }
 
     public function porcentajereporte(Request $request) {
+        $request->validate([
+            'tipo_de_reporte' => 'required',
+        ]);
+
         $categoria  = $request->categoria;
         $marca      = $request->marca;
         $orderby    = $request->orderby;
@@ -34,6 +61,33 @@ class ReporteController extends Controller
         $hasta      = $request->hasta;
         $tipoprint  = $request->tipoprint;
         $campo      = $request->campo;
+
+        $codigotxt      = $request->codigotxt;
+        $codbarratxt    = $request->codigobarratxt;
+
+        /**
+         * CAMPOS PARA VER VISIBILIDAD DE LOS CAMPOS
+         */
+          $CATEGORIA            = $request['CATEGORIA'];
+          $CODIGO               = $request['CODIGO'];
+          $CANTIDAD             = $request['CANTIDAD'];
+          $COSTOSIVA            = $request['COSTOSIVA'];
+          $COSTOCIVA            = $request['COSTOCIVA'];
+          $CODIGODEBARRA        = $request['CODIGODEBARRA'];
+          $DIFERENCIAUNITARIA   = $request['DIFERENCIAUNITARIA'];
+          $FECHA                = $request['FECHA'];
+          $MARCA                = $request['MARCA'];
+          $NOMBRE               = $request['NOMBRE'];
+          $PRECIODEVENTA        = $request['PRECIODEVENTA'];
+          $PORCENTAJE           = $request['PORCENTAJE'];
+          $TOTALCOMPRASIVA      = $request['TOTALCOMPRASIVA'];
+          $TOTALCOMPRACIVA      = $request['TOTALCOMPRACIVA'];
+          $TOTALEXISTENCIASIVA  = $request['TOTALEXISTENCIASIVA'];
+          $TOTALEXISTENCIACIVA  = $request['TOTALEXISTENCIACIVA'];
+          $TOTALCOSTOS          = $request['TOTALCOSTOS'];
+          $UTILIDADTOTAL        = $request['UTILIDADTOTAL'];
+          $UNIDADDEMEDIDA       = $request['UNIDADDEMEDIDA'];
+          $VENTATOTAL           = $request['VENTATOTAL'];
 
         $oldprice = DB::table('detalle_stock')
             ->select(
@@ -106,30 +160,37 @@ class ReporteController extends Controller
         $query->where('sk.state', '=', 1);
         $query->groupBy('sk.id');
 
-
-
-
          // busqueda por categoria
          if(!empty($categoria)){
             $query->where('sk.category_id', '=', $categoria);
+        }
+
+         if(!empty($codigotxt)){
+            $query->where('sk.code', '=', $codigotxt);
+        }
+
+         if(!empty($codbarratxt)){
+            $query->where('sk.barcode', '=', $codbarratxt);
         }
         // busqueda por marca
         if(!empty($marca)){
             $query->where('sk.manufacturer_id', '=', $marca);
         }
-        $query->whereBetween('detsto.created_at', [$desde, $hasta]);
+        if(!empty($desde) && !empty($hasta)){
+            $query->whereBetween('sk.created_at', [$desde, $hasta]);
+        }
         $query->orderBy($campo, $orderby);
 
         $data = $query->get();
         $date = date('d-m-Y-s');
         $code = generarCodigo(4);
-        if($request['tipoprint'] == 'excel'){
-            return $this->porcentajeExcel($data);
-        } else {
-            $pdf = PDF::loadView('reportes.template.porcentajePDF', compact('data', 'date'))->setPaper('legal', 'landscape');
-            set_time_limit(300);
-            return $pdf->download('Reporte-porcentaje-'.$code.'.pdf');
-        }
+//        if($request['tipoprint'] == 'excel'){
+//            return $this->porcentajeExcel($data);
+//        } else {
+//            $pdf = PDF::loadView('reportes.template.porcentajePDF', compact('data', 'date'))->setPaper('legal', 'landscape');
+//            set_time_limit(300);
+//            return $pdf->download('Reporte-porcentaje-'.$code.'.pdf');
+//        }
 
     }
 

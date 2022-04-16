@@ -57,18 +57,12 @@
                 <i class="fas fa-hand-holding-usd"></i> Deudas
             </a>
         </li>
-        <li class="nav-item dropdown dropdown-pull-right">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fas fa-print"></i>
-                Reportes
+        <li class="nav-item">
+            <a class="nav-link " aria-current="page" href="{{ url('Reportes') }}">
+                <i class="fas fa-print"></i> Reportes
             </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-                <li><a class="dropdown-item" href="{{ url('/detView') }}"><i class="fas fa-file-csv"></i> Reporte DET</a></li>
-                <li><a class="dropdown-item" href="{{ url('/porcentaje') }}"><i class="fas fa-file-csv"></i> Reporte de Productos</a></li>
-{{--                <li><a class="dropdown-item" href="{{ url('/rendimiento') }}"><i class="fas fa-file-csv"></i> Rendimiento de Venta Por Producto</a></li>--}}
-{{--                <li><a class="dropdown-item" href="{{ url('/promedio') }}"><i class="fas fa-file-csv"></i> Promedios</a></li>--}}
-            </ul>
         </li>
+
         <li class="nav-item dropdown dropdown-pull-right">
             <a class="nav-link" href="#" id="showNotifications" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <div class="badge rounded-pill bg-primary position-relative">

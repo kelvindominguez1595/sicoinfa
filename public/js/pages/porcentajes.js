@@ -58,4 +58,106 @@ $(function () {
         }
     });
 
+    // type report
+    $('.type_report').change(function (){
+        let type = $(this).val();
+        if(type === 'precioventas') {
+            $('#CODIGO').attr('checked', true);
+            $('#CODIGODEBARRA').attr('checked', true);
+            $('#CATEGORIA').attr('checked', true);
+            $('#MARCA').attr('checked', true);
+            $('#NOMBRE').attr('checked', true);
+            $('#UNIDADDEMEDIDA').attr('checked', true);
+            $('#CANTIDAD').attr('checked', true);
+            $('#PRECIODEVENTA').attr('checked', true);
+            $('#VENTATOTAL').attr('checked', true);
+            // false
+            $('#COSTOSIVA').attr('checked', false);
+            $('#TOTALCOMPRACIVA').attr('checked', false);
+            $('#FECHA').attr('checked', false);
+            $('#TOTALEXISTENCIASIVA').attr('checked', false);
+            $('#PORCENTAJE').attr('checked', false);
+            // $('#GANANCIAUNITARIA').attr('checked', false);
+            $('#TOTALEXISTENCIACIVA').attr('checked', false);
+            $('#COSTOCIVA').attr('checked', false);
+            $('#UTILIDADTOTAL').attr('checked', false);
+            $('#TOTALCOMPRASIVA').attr('checked', false);
+            $('#TOTALCOSTOS').attr('checked', false);
+            $('#DIFERENCIAUNITARIA').attr('checked', false);
+        } else if(type === 'costosiniva') {
+            $('#CODIGO').attr('checked', true);
+            $('#CODIGODEBARRA').attr('checked', true);
+            $('#CATEGORIA').attr('checked', true);
+            $('#MARCA').attr('checked', true);
+            $('#NOMBRE').attr('checked', true);
+            $('#UNIDADDEMEDIDA').attr('checked', true);
+            $('#CANTIDAD').attr('checked', true);
+            $('#COSTOSIVA').attr('checked', true);
+            $('#TOTALCOSTOS').attr('checked', true);
+
+            // false
+            $('#VENTATOTAL').attr('checked', false);
+            $('#PRECIODEVENTA').attr('checked', false);
+            $('#TOTALCOMPRACIVA').attr('checked', false);
+            $('#FECHA').attr('checked', false);
+            $('#TOTALEXISTENCIASIVA').attr('checked', false);
+            $('#PORCENTAJE').attr('checked', false);
+            // $('#GANANCIAUNITARIA').attr('checked', false);
+            $('#TOTALEXISTENCIACIVA').attr('checked', false);
+            $('#COSTOCIVA').attr('checked', false);
+            $('#UTILIDADTOTAL').attr('checked', false);
+            $('#TOTALCOMPRASIVA').attr('checked', false);
+            $('#DIFERENCIAUNITARIA').attr('checked', false);
+        } else if(type === 'cosporutilidad') {
+            $('#CODIGO').attr('checked', true);
+            $('#CODIGODEBARRA').attr('checked', true);
+            $('#CATEGORIA').attr('checked', true);
+            $('#MARCA').attr('checked', true);
+            $('#NOMBRE').attr('checked', true);
+            $('#UNIDADDEMEDIDA').attr('checked', true);
+            $('#CANTIDAD').attr('checked', true);
+            $('#COSTOSIVA').attr('checked', true);
+            $('#TOTALCOMPRASIVA').attr('checked', true);
+            $('#PRECIODEVENTA').attr('checked', true);
+            $('#VENTATOTAL').attr('checked', true);
+            $('#PORCENTAJE').attr('checked', true);
+            $('#UTILIDADTOTAL').attr('checked', true);
+            $('#DIFERENCIAUNITARIA').attr('checked', true);
+
+            // false
+            $('#TOTALCOSTOS').attr('checked', false);
+            $('#TOTALCOMPRACIVA').attr('checked', false);
+            $('#FECHA').attr('checked', false);
+            $('#TOTALEXISTENCIASIVA').attr('checked', false);
+            $('#TOTALEXISTENCIACIVA').attr('checked', false);
+            $('#COSTOCIVA').attr('checked', false);
+            // $('#GANANCIAUNITARIA').attr('checked', false);
+        } else {
+            $('#CODIGO').attr('checked', true);
+            $('#FECHA').attr('checked', true);
+            $('#CODIGODEBARRA').attr('checked', true);
+            $('#CATEGORIA').attr('checked', true);
+            $('#MARCA').attr('checked', true);
+            $('#NOMBRE').attr('checked', true);
+            $('#UNIDADDEMEDIDA').attr('checked', true);
+            $('#CANTIDAD').attr('checked', true);
+
+            $('#COSTOSIVA').attr('checked', true);
+            $('#TOTALCOMPRASIVA').attr('checked', true);
+
+            $('#PRECIODEVENTA').attr('checked', true);
+
+            $('#VENTATOTAL').attr('checked', true);
+            $('#PORCENTAJE').attr('checked', true);
+            $('#DIFERENCIAUNITARIA').attr('checked', true);
+            $('#UTILIDADTOTAL').attr('checked', true);
+
+            // false
+            $('#TOTALCOSTOS').attr('checked', false);
+            $('#TOTALCOMPRACIVA').attr('checked', false);
+            $('#TOTALEXISTENCIASIVA').attr('checked', false);
+            $('#TOTALEXISTENCIACIVA').attr('checked', false);
+            $('#COSTOCIVA').attr('checked', false);
+        }
+    });
 });

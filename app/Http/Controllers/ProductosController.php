@@ -1266,7 +1266,7 @@ class ProductosController extends Controller
         if($request['report'] == 'PDF'){
             $data = $query->get();
             $pdf = PDF::loadView('reportes.template.historialdeComprasPDF', compact('data', 'date'))->setPaper('legal', 'landscape');
-            //set_time_limit(300);
+            set_time_limit(300);
             return $pdf->download('Reporte-Historial-'.$code.'.pdf');
         } else if($request['report'] == 'excel'){
             $data = $query->get();

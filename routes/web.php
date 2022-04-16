@@ -94,10 +94,12 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::resource('/sucursales', SucursalesController::class);
     Route::get('/listsubcursal', [SucursalesController::class, 'listsubcursal']);
     /** REPORTES */
-    Route::get('/porcentaje', [ReporteController::class, 'porcentaje']);
+    Route::get('/Reportes', [ReporteController::class, 'reportes']);
+
     Route::get('/promedio', [ReporteController::class, 'promedio']);
     Route::get('/rendimiento', [ReporteController::class, 'rendimiento']);
     Route::get('/porcentajereporte', [ReporteController::class, 'porcentajereporte']);
+
     Route::get('/detView', [ReporteController::class, 'detView']);
     Route::get('/reporteDET', [ReporteController::class, 'reporteDET']);
 
