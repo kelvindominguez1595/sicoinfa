@@ -61,7 +61,7 @@ $(function () {
     // type report
     $('.type_report').change(function (){
         let type = $(this).val();
-        if(type === 'precioventas') {
+        if(type === 'PRECIO DE VENTAS') {
             $('#CODIGO').attr('checked', true);
             $('#CODIGODEBARRA').attr('checked', true);
             $('#CATEGORIA').attr('checked', true);
@@ -84,7 +84,7 @@ $(function () {
             $('#TOTALCOMPRASIVA').attr('checked', false);
             $('#TOTALCOSTOS').attr('checked', false);
             $('#DIFERENCIAUNITARIA').attr('checked', false);
-        } else if(type === 'costosiniva') {
+        } else if(type === 'COSTOS SIN IVA') {
             $('#CODIGO').attr('checked', true);
             $('#CODIGODEBARRA').attr('checked', true);
             $('#CATEGORIA').attr('checked', true);
@@ -108,7 +108,7 @@ $(function () {
             $('#UTILIDADTOTAL').attr('checked', false);
             $('#TOTALCOMPRASIVA').attr('checked', false);
             $('#DIFERENCIAUNITARIA').attr('checked', false);
-        } else if(type === 'cosporutilidad') {
+        } else if(type === 'COSTOS Y PORCENTAJES DE UTILIDAD') {
             $('#CODIGO').attr('checked', true);
             $('#CODIGODEBARRA').attr('checked', true);
             $('#CATEGORIA').attr('checked', true);

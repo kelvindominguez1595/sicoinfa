@@ -14,10 +14,26 @@ class ReporteController extends Controller
     public function reportes() {
 
         $title = [
-            "CATEGORIA", "CODIGO", "CANTIDAD", "COSTO S/IVA", "COSTO C/IVA",
-            "CODIGO DE BARRA", "DIFERENCIA UNITARIA", "FECHA", "MARCA", "NOMBRE",
-            "PRECIO DE VENTA", "PORCENTAJE %", "TOTAL COMPRA S/IVA", "TOTAL COMPRA C/IVA", "TOTAL EXISTENCIA S/IVA",
-            "TOTAL EXISTENCIA C/IVA", "TOTAL COSTOS", "UTILIDAD TOTAL", "UNIDAD DE MEDIDA", "VENTA TOTAL",
+            "CODIGO",
+            "FECHA",
+            "CODIGO DE BARRA",
+            "CATEGORIA",
+            "MARCA",
+            "NOMBRE",
+            "UNIDAD DE MEDIDA",
+            "CANTIDAD",
+            "COSTO S/IVA",
+            "COSTO C/IVA",
+            "TOTAL COMPRA S/IVA",
+            "TOTAL COMPRA C/IVA",
+            "PRECIO DE VENTA",
+            "VENTA TOTAL",
+            "PORCENTAJE %",
+            "DIFERENCIA UNITARIA",
+            "TOTAL EXISTENCIA S/IVA",
+            "TOTAL EXISTENCIA C/IVA",
+            "TOTAL COSTOS",
+            "UTILIDAD TOTAL",
         ];
 
         $order = array(
@@ -60,34 +76,13 @@ class ReporteController extends Controller
         $desde      = $request->desde;
         $hasta      = $request->hasta;
         $tipoprint  = $request->tipoprint;
+        $tipo_de_reporte  = $request->tipo_de_reporte;
         $campo      = $request->campo;
 
         $codigotxt      = $request->codigotxt;
         $codbarratxt    = $request->codigobarratxt;
-
-        /**
-         * CAMPOS PARA VER VISIBILIDAD DE LOS CAMPOS
-         */
-          $CATEGORIA            = $request['CATEGORIA'];
-          $CODIGO               = $request['CODIGO'];
-          $CANTIDAD             = $request['CANTIDAD'];
-          $COSTOSIVA            = $request['COSTOSIVA'];
-          $COSTOCIVA            = $request['COSTOCIVA'];
-          $CODIGODEBARRA        = $request['CODIGODEBARRA'];
-          $DIFERENCIAUNITARIA   = $request['DIFERENCIAUNITARIA'];
-          $FECHA                = $request['FECHA'];
-          $MARCA                = $request['MARCA'];
-          $NOMBRE               = $request['NOMBRE'];
-          $PRECIODEVENTA        = $request['PRECIODEVENTA'];
-          $PORCENTAJE           = $request['PORCENTAJE'];
-          $TOTALCOMPRASIVA      = $request['TOTALCOMPRASIVA'];
-          $TOTALCOMPRACIVA      = $request['TOTALCOMPRACIVA'];
-          $TOTALEXISTENCIASIVA  = $request['TOTALEXISTENCIASIVA'];
-          $TOTALEXISTENCIACIVA  = $request['TOTALEXISTENCIACIVA'];
-          $TOTALCOSTOS          = $request['TOTALCOSTOS'];
-          $UTILIDADTOTAL        = $request['UTILIDADTOTAL'];
-          $UNIDADDEMEDIDA       = $request['UNIDADDEMEDIDA'];
-          $VENTATOTAL           = $request['VENTATOTAL'];
+        /** PARA MOSTRAR LOS CAMPOS */
+        $campVisibility = $request['visibility'];
 
         $oldprice = DB::table('detalle_stock')
             ->select(
@@ -184,20 +179,25 @@ class ReporteController extends Controller
         $data = $query->get();
         $date = date('d-m-Y-s');
         $code = generarCodigo(4);
+        return $this->porcentajeExcel($data, $campVisibility, $tipo_de_reporte);
 //        if($request['tipoprint'] == 'excel'){
 //            return $this->porcentajeExcel($data);
 //        } else {
-//            $pdf = PDF::loadView('reportes.template.porcentajePDF', compact('data', 'date'))->setPaper('legal', 'landscape');
-//            set_time_limit(300);
-//            return $pdf->download('Reporte-porcentaje-'.$code.'.pdf');
+
 //        }
 
     }
 
+    public function reportePDF(){
+        $pdf = PDF::loadView('reportes.template.reportePDF', compact('data', 'date'))->setPaper('legal', 'landscape');
+        set_time_limit(300);
+        return $pdf->download('Reporte-porcentaje-'.$code.'.pdf');
+    }
+    public function reporteExcel(){}
+
     public function reporteDET(Request $request){
 
         $year = $request->year;
-
 
         $oldprice = DB::table('detalle_stock')
             ->select(
@@ -296,8 +296,11 @@ class ReporteController extends Controller
 
     }
 
-    public function porcentajeExcel($data){
+
+
+    public function porcentajeExcel($data, $campvisibility, $tipo_de_reporte){
         $username = Auth::user()->name;
+        $mi_letra = "A";
 
         $spreadsheet = new Spreadsheet();
         $write = new Xlsx($spreadsheet);
@@ -314,134 +317,217 @@ class ReporteController extends Controller
             ->setKeywords('Reportes')
             ->setCategory(dataTitlesExcel()['titlereportepor']);
 
-        $sheet->setCellValue('A1', 'CÓDIGO');
-        $sheet->setCellValue('B1', 'C. DE BARRA');
-        $sheet->setCellValue('C1', 'CATEGORIA');
-        $sheet->setCellValue('D1', 'MARCA');
-        $sheet->setCellValue('E1', 'NOMBRE');
-        $sheet->setCellValue('F1', 'CANTIDAD');
-        $sheet->setCellValue('G1', 'COSTO');
-        $sheet->setCellValue('H1', 'TOTAL DE COMPRA');
-        $sheet->setCellValue('I1', 'P. VENTA');
-        $sheet->setCellValue('J1', 'VENTA TOTAL');
-        $sheet->setCellValue('K1', '% DIFERENCIA');
-        $sheet->setCellValue('L1', 'DIFERENCIA UNITARIA');
-        $sheet->setCellValue('M1', 'UTILIDAD TOTAL');
+        for ($i =0; $i < count($campvisibility); $i++){
+            $sheet->setCellValue($mi_letra.'1', $campvisibility[$i]);
+            $mi_letra++;
+        }
+
+        $arrayLetras = $this->matriz_Letras_AZ($campvisibility);
 
         $i = 2;
-        $totalcosto         = 0;
+        $total_costo         = 0;
+        $total_costo_coniva  = 0;
         $totalGlobalCompra  = 0;
+        $totalGlobalCompraConIVA  = 0;
         $totalprecioventa   = 0;
         $totalventatotal    = 0;
         $totaldiferencia    = 0;
         $totalutilidad      = 0;
+        $total_costo_total = 0;
+
         foreach($data as $item) {
-            $sheet->setCellValue('A'.$i, $item->code);
-            $sheet->setCellValue('B'.$i, $item->barcode);
-            $sheet->setCellValue('C'.$i, $item->category_name);
-            $sheet->setCellValue('D'.$i, $item->marca_name);
-            $sheet->setCellValue('E'.$i, $item->name);
-            if(isset($item->cantidadnew)){
-                $cantidad = $item->cantidadnew;
-            } else {
-                $cantidad = 0;
-            }
-            $sheet->setCellValue('F'.$i, $cantidad);
 
-            if(isset($item->cost_s_iva)){
-                $costoReal = $item->cost_s_iva;
-            }else {
-                $costoReal = $item->costosiniva;
-            }
-            $totalcosto += $costoReal;
-
-            $sheet->setCellValue('G'.$i, number_format($costoReal,2));
-            if(isset($item->cost_s_iva)){
-                $costo = $item->cost_s_iva;
-            }else {
-                $costo = $item->costosiniva;
-            }
-            $totalCompra =  $item->cantidadnew * $costo;
-            $totalGlobalCompra += $totalCompra;
-
-            $sheet->setCellValue('H'.$i, number_format($totalCompra,2));
-            if(isset($item->precioventa)){
-                $preVenta = $item->precioventa;
-            }else {
-                $preVenta = $item->sale_price;
-            }
-            $totalprecioventa += $preVenta;
-            $sheet->setCellValue('I'.$i, number_format($preVenta,2));
-            if(isset($item->precioventa)){
-                $precioventa = $item->precioventa;
-            }else {
-                $precioventa = $item->sale_price;
-            }
-            $ventatotal =  $item->cantidadnew * $precioventa;
-            $totalventatotal += $ventatotal;
-
-            $sheet->setCellValue('J'.$i, number_format($ventatotal,2));
-            if(isset($item->cost_s_iva)){
-                $costoper = $item->cost_s_iva;
-            }else {
-                $costoper = $item->costosiniva;
+            if($this->filter_letra('CODIGO',$arrayLetras)){
+                $letra = $this->filter_letra('CODIGO',$arrayLetras);
+                $sheet->setCellValue($letra.$i, $item->code);
             }
 
-            if(isset($item->precioventa)){
-                $precioventaper = $item->precioventa;
-            }else {
-                $precioventaper = $item->sale_price;
+            if($this->filter_letra('FECHA',$arrayLetras)){
+                $letra = $this->filter_letra('FECHA',$arrayLetras);
+                $sheet->setCellValue($letra.$i, date('d-m-Y', strtotime($item->created_at)));
             }
 
-            if(isset($costoper)){
-                $costoperval = $costoper;
-            } else {
-                $costoperval = 0;
+            if($this->filter_letra('CODIGO DE BARRA',$arrayLetras)){
+                $letra = $this->filter_letra('CODIGO DE BARRA',$arrayLetras);
+                $sheet->setCellValue($letra.$i, $item->barcode);
             }
 
-            if(isset($precioventaper)){
-                $precioventapervali =  $precioventaper;
-            } else {
-                $precioventapervali = 0;
-            }
-            if($costoperval == 0 || $precioventapervali == 0 )
-            {
-                $diferencia = 0;
-
-            } else {
-                $diferencia =  ((($precioventapervali / $costoperval) - 1) *100);
+            if($this->filter_letra('CATEGORIA',$arrayLetras)){
+                $letra = $this->filter_letra('CATEGORIA',$arrayLetras);
+                $sheet->setCellValue($letra.$i, $item->category_name);
             }
 
-            $sheet->setCellValue('K'.$i, number_format(abs($diferencia),2));
-            if(isset($item->cost_s_iva)){
-                $costoUni = $item->cost_s_iva;
-            }else {
-                $costoUni = $item->costosiniva;
+            if($this->filter_letra('MARCA',$arrayLetras)){
+                $letra = $this->filter_letra('MARCA',$arrayLetras);
+                $sheet->setCellValue($letra.$i, $item->marca_name);
             }
-            if(isset($item->precioventa)){
-                $ventaUni = $item->precioventa;
-            }else {
-                $ventaUni = $item->sale_price;
-            }
-            $diferenciauni = $ventaUni - $costoUni;
-            $totaldiferencia += $diferenciauni;
 
-            $sheet->setCellValue('L'.$i, number_format(abs($diferenciauni),2));
-            $utilidad = $ventatotal - $totalCompra;
-            $totalutilidad += $utilidad;
-            $sheet->setCellValue('M'.$i, number_format(abs($utilidad),2));
+            if($this->filter_letra('NOMBRE',$arrayLetras)){
+                $letra = $this->filter_letra('NOMBRE',$arrayLetras);
+                $sheet->setCellValue($letra.$i, $item->name);
+            }
+
+            if($this->filter_letra('UNIDAD DE MEDIDA',$arrayLetras)){
+                $letra = $this->filter_letra('UNIDAD DE MEDIDA',$arrayLetras);
+                $sheet->setCellValue($letra.$i, $item->medida_name);
+            }
+
+            if($this->filter_letra('CANTIDAD',$arrayLetras)){
+                $letra = $this->filter_letra('CANTIDAD',$arrayLetras);
+                $cantidad = $item->cantidadnew ?? 0;
+                $sheet->setCellValue($letra.$i, $cantidad);
+            }
+
+            if($this->filter_letra('COSTO S/IVA',$arrayLetras)){
+                $letra = $this->filter_letra('COSTO S/IVA',$arrayLetras);
+                $costoReal = $item->cost_s_iva ?? $item->costosiniva;
+                $total_costo += $costoReal;
+                $sheet->setCellValue($letra.$i, number_format($costoReal,2));
+            }
+
+            if($this->filter_letra('COSTO C/IVA',$arrayLetras)){
+                $letra = $this->filter_letra('COSTO C/IVA',$arrayLetras);
+                $costoReal = $item->cost_c_iva ?? $item->costoconiva;
+                $total_costo_coniva += $costoReal;
+                $sheet->setCellValue($letra.$i, number_format($costoReal,2));
+            }
+
+            if($this->filter_letra('TOTAL COMPRA S/IVA',$arrayLetras)){
+                $letra = $this->filter_letra('TOTAL COMPRA S/IVA',$arrayLetras);
+                $costo = $item->cost_s_iva ?? $item->costosiniva;
+                $totalCompra =  $item->cantidadnew * $costo;
+                $totalGlobalCompra += $totalCompra;
+
+                $sheet->setCellValue($letra.$i, number_format($totalCompra,2));
+            }
+
+            if($this->filter_letra('TOTAL COMPRA C/IVA',$arrayLetras)){
+                $letra = $this->filter_letra('TOTAL COMPRA C/IVA',$arrayLetras);
+                $costo = $item->cost_c_iva ?? $item->costoconiva;
+                $totalCompra =  $item->cantidadnew * $costo;
+                $totalGlobalCompraConIVA += $totalCompra;
+
+                $sheet->setCellValue($letra.$i, number_format($totalCompra,2));
+            }
+
+            if($this->filter_letra('PRECIO DE VENTA',$arrayLetras)){
+                $letra = $this->filter_letra('PRECIO DE VENTA',$arrayLetras);
+                $preVenta = $item->precioventa ?? $item->sale_price;
+                $totalprecioventa += $preVenta;
+                $sheet->setCellValue($letra.$i, number_format($preVenta,2));
+            }
+
+            if($this->filter_letra('VENTA TOTAL',$arrayLetras)){
+                $letra = $this->filter_letra('VENTA TOTAL',$arrayLetras);
+                $precioventa = $item->precioventa ?? $item->sale_price;
+                $ventatotal =  $item->cantidadnew * $precioventa;
+                $totalventatotal += $ventatotal;
+
+                $sheet->setCellValue($letra.$i, number_format($ventatotal,2));
+            }
+
+            if($this->filter_letra('PORCENTAJE %',$arrayLetras)){
+                $letra = $this->filter_letra('PORCENTAJE %',$arrayLetras);
+                $costoper = $item->cost_s_iva ?? $item->costosiniva;
+                $precioventaper = $item->precioventa ?? $item->sale_price;
+                $costoperval = $costoper ?? 0;
+                $precioventapervali = $precioventaper ?? 0;
+
+                if($costoperval == 0 || $precioventapervali == 0 ) {
+                    $diferencia = 0;
+                } else {
+                    $diferencia =  ((($precioventapervali / $costoperval) - 1) *100);
+                }
+                $sheet->setCellValue($letra.$i, number_format(abs($diferencia),2));
+            }
+
+            if($this->filter_letra('DIFERENCIA UNITARIA',$arrayLetras)){
+                $letra = $this->filter_letra('DIFERENCIA UNITARIA',$arrayLetras);
+                $costoUni = $item->cost_s_iva ?? $item->costosiniva;
+                $ventaUni = $item->precioventa ?? $item->sale_price;
+                $diferenciauni = $ventaUni - $costoUni;
+                $totaldiferencia += $diferenciauni;
+
+                $sheet->setCellValue($letra.$i, number_format(abs($diferenciauni),2));
+            }
+
+            if($this->filter_letra('TOTAL EXISTENCIA S/IVA',$arrayLetras)){
+                $letra = $this->filter_letra('TOTAL EXISTENCIA S/IVA',$arrayLetras);
+                $sheet->setCellValue($letra.$i, $item->code);
+            }
+
+            if($this->filter_letra('TOTAL EXISTENCIA C/IVA',$arrayLetras)){
+                $letra = $this->filter_letra('TOTAL EXISTENCIA C/IVA',$arrayLetras);
+                $sheet->setCellValue($letra.$i, $item->code);
+            }
+
+            if($this->filter_letra('TOTAL COSTOS',$arrayLetras)){
+                $letra = $this->filter_letra('TOTAL COSTOS',$arrayLetras);
+                $costo = $item->cost_s_iva ?? $item->costosiniva;
+                $result =  $item->cantidadnew * $costo;
+
+                $total_costo_total += $result;
+                $sheet->setCellValue($letra.$i, $total_costo_total);
+            }
+
+            if($this->filter_letra('UTILIDAD TOTAL',$arrayLetras)){
+                $letra = $this->filter_letra('UTILIDAD TOTAL',$arrayLetras);
+                $precioventa = $item->precioventa ?? $item->sale_price;
+                $ventatotal =  $item->cantidadnew * $precioventa;
+                $costo = $item->cost_c_iva ?? $item->costoconiva;
+                $totalCompra =  $item->cantidadnew * $costo;
+                $utilidad = $ventatotal - $totalCompra;
+
+                $totalutilidad += $utilidad;
+                $sheet->setCellValue($letra.$i,  number_format(abs($utilidad),2));
+            }
             $i++;
         }
+        if($this->filter_letra('COSTO S/IVA',$arrayLetras)){
+            $letra = $this->filter_letra('COSTO S/IVA',$arrayLetras);
+            $sheet->setCellValue($letra.$i, number_format($total_costo, 2));
+        }
 
-        $sheet->setCellValue('G'.$i, number_format($totalcosto, 2));
-        $sheet->setCellValue('H'.$i, number_format($totalGlobalCompra, 2));
-        $sheet->setCellValue('I'.$i, number_format($totalprecioventa, 2));
-        $sheet->setCellValue('J'.$i, number_format($totalventatotal, 2));
-        $sheet->setCellValue('L'.$i, number_format($totaldiferencia, 2));
-        $sheet->setCellValue('M'.$i, number_format($totalutilidad, 2));
+        if($this->filter_letra('TOTAL COSTOS',$arrayLetras)){
+            $letra = $this->filter_letra('TOTAL COSTOS',$arrayLetras);
+            $sheet->setCellValue($letra.$i, number_format($total_costo_total, 2));
+        }
 
+        if($this->filter_letra('VENTA TOTAL',$arrayLetras)){
+            $letra = $this->filter_letra('VENTA TOTAL',$arrayLetras);
+            $sheet->setCellValue($letra.$i, number_format($totalventatotal, 2));
+        }
+
+        if($this->filter_letra('TOTAL COMPRA S/IVA',$arrayLetras)){
+            $letra = $this->filter_letra('TOTAL COMPRA S/IVA',$arrayLetras);
+            $sheet->setCellValue($letra.$i, number_format($totalGlobalCompra, 2));
+        }
+
+        if($this->filter_letra('PRECIO DE VENTA',$arrayLetras)){
+            $letra = $this->filter_letra('PRECIO DE VENTA',$arrayLetras);
+            $sheet->setCellValue($letra.$i, number_format($totalprecioventa, 2));
+        }
+
+        if($this->filter_letra('VENTA TOTAL',$arrayLetras)){
+            $letra = $this->filter_letra('VENTA TOTAL',$arrayLetras);
+            $sheet->setCellValue($letra.$i, number_format($totalventatotal, 2));
+        }
+
+        if($this->filter_letra('DIFERENCIA UNITARIA',$arrayLetras)){
+            $letra = $this->filter_letra('DIFERENCIA UNITARIA',$arrayLetras);
+            $sheet->setCellValue($letra.$i, number_format(abs($totaldiferencia), 2));
+        }
+
+        if($this->filter_letra('UTILIDAD TOTAL',$arrayLetras)){
+            $letra = $this->filter_letra('UTILIDAD TOTAL',$arrayLetras);
+            $sheet->setCellValue($letra.$i, number_format(abs($totalutilidad), 2));
+        }
+
+
+        $date = date('d-m-Y');
+        $time = date('h.i.s A');
         $code = generarCodigo(4);
-        $filename = 'historial-compras-'.$code.'.xlsx';
+        $filename = $tipo_de_reporte.' - '.$code.' - '.$date.' '.$time.'.xlsx';
 
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename='. $filename);
@@ -489,28 +575,16 @@ class ReporteController extends Controller
             $sheet->setCellValue('D'.$i, $item->marca_name);
             $sheet->setCellValue('E'.$i, $item->name);
 
-            if(isset($item->cantidadnew)){
-                $cantidad = $item->cantidadnew;
-            } else {
-                $cantidad = 0;
-            }
+            $cantidad = $item->cantidadnew ?? 0;
             $sheet->setCellValue('F'.$i, $cantidad);
 
             $sheet->setCellValue('G'.$i, $item->medida_name);
 
-            if(isset($item->cost_s_iva)){
-                $costoReal = $item->cost_s_iva;
-            }else {
-                $costoReal = $item->costosiniva;
-            }
+            $costoReal = $item->cost_s_iva ?? $item->costosiniva;
             $totalcosto += $costoReal;
             $sheet->setCellValue('H'.$i, number_format($costoReal,2));
 
-            if(isset($item->cost_s_iva)){
-                $costo = $item->cost_s_iva;
-            }else {
-                $costo = $item->costosiniva;
-            }
+            $costo = $item->cost_s_iva ?? $item->costosiniva;
             $totalCompra =  $item->cantidadnew * $costo;
             $totalGlobalCompra += $totalCompra;
 
@@ -530,5 +604,26 @@ class ReporteController extends Controller
 
         $write->save('php://output');
         exit();
+    }
+
+    public function matriz_Letras_AZ($visibility): array
+    {
+        $mi_letra = "A";
+        $arr = [];
+        for ($i =0; $i < count($visibility); $i++) {
+            $arr[] = ["name" => $visibility[$i], "letra" => $mi_letra];
+            $mi_letra++;
+        }
+        return $arr;
+    }
+
+    public function filter_letra($name, $letraArray){
+        $letra = '';
+        foreach ($letraArray as  $val){
+            if($name === $val['name']){
+                $letra = $val['letra'];
+            }
+        }
+        return $letra;
     }
 }

@@ -39,7 +39,7 @@
                                     @for ($i = 0; $i < count($type_report); $i++)
                                         <div class="col-5">
                                             <div class="form-check ">
-                                                <input class="form-check-input type_report" type="radio" name="tipo_de_reporte" id="type_report{{ $type_report[$i]['name'] }}" value="{{ $type_report[$i]['val'] }}" >
+                                                <input class="form-check-input type_report" type="radio" name="tipo_de_reporte" id="type_report{{ $type_report[$i]['name'] }}" value="{{ $type_report[$i]['name'] }}" >
                                                 <label class="form-check-label " for="type_report{{ $type_report[$i]['name'] }}">{{ $type_report[$i]['name'] }}</label>
                                             </div>
                                         </div>
@@ -121,6 +121,7 @@
                                 <div class="col-12">
                                     <label for="tiporeporte" class="form-label fw-bold">Visibilidad de campos</label>
                                     <div class="row">
+
                                             @foreach($title as $item)
                                                 @php
                                                     $limpiar = str_replace(' ', '', $item);
@@ -129,7 +130,7 @@
                                                 @endphp
                                                 <div class="col-3">
                                                     <div class="form-check ">
-                                                        <input class="form-check-input" type="checkbox" name="{{ $name }}" id="{{ $name }}">
+                                                        <input class="form-check-input" type="checkbox" name="visibility[]" id="{{ $name }}" value="{{$item}}">
                                                         <label class="form-check-label size-font-long-small" for="{{ $name }}">{{$item}}</label>
                                                     </div>
                                                 </div>
