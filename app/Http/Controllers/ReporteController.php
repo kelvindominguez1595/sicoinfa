@@ -177,13 +177,12 @@ class ReporteController extends Controller
         $query->orderBy($campo, $orderby);
 
         $data = $query->get();
-        return $this->reportePDF($data, $campVisibility, $tipo_de_reporte);
-       // return $this->porcentajeExcel($data, $campVisibility, $tipo_de_reporte);
-//        if($request['tipoprint'] == 'excel'){
-//            return $this->porcentajeExcel($data);
-//        } else {
 
-//        }
+        if($request['tipoprint'] == 'excel'){
+            return $this->porcentajeExcel($data, $campVisibility, $tipo_de_reporte);
+        } else {
+            return $this->reportePDF($data, $campVisibility, $tipo_de_reporte);
+       }
 
     }
 
