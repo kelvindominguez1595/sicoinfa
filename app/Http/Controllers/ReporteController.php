@@ -177,9 +177,8 @@ class ReporteController extends Controller
         $query->orderBy($campo, $orderby);
 
         $data = $query->get();
-        $date = date('d-m-Y-s');
-        $code = generarCodigo(4);
-        return $this->porcentajeExcel($data, $campVisibility, $tipo_de_reporte);
+        return $this->reportePDF($data, $campVisibility, $tipo_de_reporte);
+       // return $this->porcentajeExcel($data, $campVisibility, $tipo_de_reporte);
 //        if($request['tipoprint'] == 'excel'){
 //            return $this->porcentajeExcel($data);
 //        } else {
@@ -188,12 +187,19 @@ class ReporteController extends Controller
 
     }
 
-    public function reportePDF(){
-        $pdf = PDF::loadView('reportes.template.reportePDF', compact('data', 'date'))->setPaper('legal', 'landscape');
+    public function reportePDF($data, $campvisibility, $tipo_de_reporte){
+        $date = date('d-m-Y');
+        $code = generarCodigo(4);
+        $time = date('h.i.s A');
+
+//        return view('reportes.template.reportePDF',
+//            compact('data', 'date', 'campvisibility', 'tipo_de_reporte', 'time', 'code'));
+        $pdf = PDF::loadView('reportes.template.reportePDF',
+            compact('data', 'date', 'campvisibility', 'tipo_de_reporte', 'time', 'code'))
+            ->setPaper('legal', 'landscape');
         set_time_limit(300);
-        return $pdf->download('Reporte-porcentaje-'.$code.'.pdf');
+        return $pdf->download( $tipo_de_reporte.' - '.$code.' - '.$date.' '.$time.'.pdf');
     }
-    public function reporteExcel(){}
 
     public function reporteDET(Request $request){
 
@@ -295,8 +301,6 @@ class ReporteController extends Controller
 
 
     }
-
-
 
     public function porcentajeExcel($data, $campvisibility, $tipo_de_reporte){
         $username = Auth::user()->name;

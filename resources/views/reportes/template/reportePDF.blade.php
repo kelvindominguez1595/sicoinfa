@@ -4,7 +4,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-    <title>Reporte-Porcentaje- {{ $date }}</title>
+    <title>{{ $tipo_de_reporte }} - {{ $code }} - {{ $date }} {{ $time }}</title>
 
     <style>
 
@@ -93,9 +93,11 @@
                 <td style=" width: 50%; text-align: center;">
                     <strong>ARCO IRIS</strong>
                     <br>
-                    FABRICACIÓN DE PRODUCTOS DE CEMENTO Y FERREYERIA
+                    FABRICACIÓN DE PRODUCTOS DE CEMENTO Y FERRETERIA
                     <br>
-                    <strong>REPORTE DE PRODUCTOS</strong>
+
+                    <strong>{{ $tipo_de_reporte }}</strong>
+
                     @if (isset($sucursal))
                         {{$sucursal->name}}
                     @endif
@@ -103,9 +105,10 @@
 
                 <td style=" width: 15%; font-size:12px; text-align: left;">
                     <strong>Reg. </strong>57462-7 <br>
-                    <strong>Direccion.</strong> Av. el Progreso Barrio San Juan, Carretera Litoral, DevioPrincipal de
+                    <strong>Dirección.</strong> Av. el Progreso Barrio San Juan, Carretera Litoral, Desvío Principal de
                     Santiago Nonualco <br>
                     <strong>Tel: </strong>2305-6679
+                 
                 </td>
             </tr>
             </tbody>
@@ -121,23 +124,15 @@
 
         <table class="table2">
             <thead style="border: 2px solid;">
-                <th style="text-align: center;">Código</th>
-                <th style="text-align: center;">C. de Barra</th>
-                <th style="text-align: center;">Categoría</th>
-                <th style="text-align: center;">Marca</th>
-                <th style="text-align: center;">Nombre</th>
-                <th style="text-align: center;">Cantidad</th>
-                <th style="text-align: center;">Costo</th>
-                <th style="text-align: center;">Total de Compra</th>
-                <th style="text-align: center;">P. Venta</th>
-                <th style="text-align: center;">Venta Total</th>
-                <th style="text-align: center;">% Diferencia</th>
-                <th style="text-align: center;">Diferencia Unitaria</th>
-                <th style="text-align: center;">Utilidad Total</th>
+            @foreach($campvisibility as $item)
+                <th style="text-align: center;">{{$item}}</th>
+            @endforeach
             </thead>
 
             <tbody>
+
                 @php
+
                     $totalcosto         = 0;
                     $totalGlobalCompra  = 0;
                     $totalprecioventa   = 0;
@@ -146,6 +141,7 @@
                     $totalutilidad      = 0;
                 @endphp
                 @foreach ($data as $item)
+
                     <tr>
                         <td style="text-align: center;">{{ $item->code }}</td>
                         <td style="text-align: center;">{{ $item->barcode }}</td>

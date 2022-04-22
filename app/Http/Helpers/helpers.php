@@ -37,3 +37,35 @@ function dataTitlesExcel(){
     return $data;
 }
 
+function showFields($name){
+    $title = [
+        "CODIGO",
+        "FECHA",
+        "CODIGO DE BARRA",
+        "CATEGORIA",
+        "MARCA",
+        "NOMBRE",
+        "UNIDAD DE MEDIDA",
+        "CANTIDAD",
+        "COSTO S/IVA",
+        "COSTO C/IVA",
+        "TOTAL COMPRA S/IVA",
+        "TOTAL COMPRA C/IVA",
+        "PRECIO DE VENTA",
+        "VENTA TOTAL",
+        "PORCENTAJE %",
+        "DIFERENCIA UNITARIA",
+        "TOTAL EXISTENCIA S/IVA",
+        "TOTAL EXISTENCIA C/IVA",
+        "TOTAL COSTOS",
+        "UTILIDAD TOTAL",
+    ];
+    $field = false;
+    foreach($title as $item) {
+        if($name === $item){
+            $field = true;
+        }
+    }
+    return $field;
+}
+
