@@ -153,6 +153,7 @@ class ReporteController extends Controller
             'canprodu.cantidadnew',
         );
         $query->where('sk.state', '=', 1);
+       // $query->where('canprodu.cantidadnew', '>', 0);
         $query->groupBy('sk.id');
 
          // busqueda por categoria
@@ -340,7 +341,7 @@ class ReporteController extends Controller
 
         foreach($data as $item) {
 
-            if($this->filter_letra('CODIGO',$arrayLetras)){
+            if($this->filter_letra('CODIGO', $arrayLetras)){
                 $letra = $this->filter_letra('CODIGO',$arrayLetras);
                 $sheet->setCellValue($letra.$i, $item->code);
             }
@@ -456,12 +457,18 @@ class ReporteController extends Controller
 
             if($this->filter_letra('TOTAL EXISTENCIA S/IVA',$arrayLetras)){
                 $letra = $this->filter_letra('TOTAL EXISTENCIA S/IVA',$arrayLetras);
-                $sheet->setCellValue($letra.$i, $item->code);
+                $costoSinIVA = $item->cost_s_iva ?? $item->costosiniva;
+                $cantidad = $item->cantidadnew ?? 0;
+                $exissiniva =  $cantidad * $costoSinIVA;
+                $sheet->setCellValue($letra.$i,  number_format(abs($exissiniva),2));
             }
 
             if($this->filter_letra('TOTAL EXISTENCIA C/IVA',$arrayLetras)){
                 $letra = $this->filter_letra('TOTAL EXISTENCIA C/IVA',$arrayLetras);
-                $sheet->setCellValue($letra.$i, $item->code);
+                $costoConiva = $item->cost_c_iva ?? $item->costoconiva;
+                $cantidad = $item->cantidadnew ?? 0;
+                $existConiva =  $cantidad * $costoConiva;
+                $sheet->setCellValue($letra.$i,  number_format(abs($existConiva),2));
             }
 
             if($this->filter_letra('TOTAL COSTOS',$arrayLetras)){
@@ -486,6 +493,7 @@ class ReporteController extends Controller
             }
             $i++;
         }
+
         if($this->filter_letra('COSTO S/IVA',$arrayLetras)){
             $letra = $this->filter_letra('COSTO S/IVA',$arrayLetras);
             $sheet->setCellValue($letra.$i, number_format($total_costo, 2));

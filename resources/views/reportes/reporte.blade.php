@@ -177,7 +177,15 @@
                                 </div>
 
                                 <div class="col-12 col-sm-12 col-md-4 col-lg-4 text-center d-flex align-items-center">
-                                    <button type="submit" class="btn btn-primary" value="det">REPORTE DET</button>
+{{--                                    <button type="submit" class="btn btn-primary" value="det">REPORTE DET</button>--}}
+                                    @php
+
+                                        $fechaactual = date('Y');// 2016-12-29
+                                        $nuevafecha = strtotime ('-1 year' , strtotime($fechaactual)); //Se resta un año menos
+                                        $nuevafecha = date ('Y',$nuevafecha);
+
+                                        @endphp
+                                    <a href="{{ url('reporteDET?year='.$nuevafecha) }}" target="_blank" class="btn btn-primary">REPORTE DET</a>
                                 </div>
 
                             </div>

@@ -17,7 +17,6 @@ function generarCodigo($longitud) {
     for ($c = 0; $c < $longitud; $c++) {
         $cadena_aleatoria .= $caracteres[random_int(0, $longitud_caracteres - 1)];
     }
-
     return $cadena_aleatoria;
 }
 
@@ -28,7 +27,6 @@ function dataTitlesExcel(){
         "titlereportedet" => "Reporte Anual DET",
         "titlereportepor" => "Reporte de Producto",
         "titlereporteren" => "Rendimiento",
-
         "descripcionpro" => "Histórico de compra de productos",
         "descripciondet" => "Reporte anual DET",
         "descripcionpor" => "Reporte de producto",
@@ -37,35 +35,23 @@ function dataTitlesExcel(){
     return $data;
 }
 
-function showFields($name){
-    $title = [
-        "CODIGO",
-        "FECHA",
-        "CODIGO DE BARRA",
-        "CATEGORIA",
-        "MARCA",
-        "NOMBRE",
-        "UNIDAD DE MEDIDA",
-        "CANTIDAD",
-        "COSTO S/IVA",
-        "COSTO C/IVA",
-        "TOTAL COMPRA S/IVA",
-        "TOTAL COMPRA C/IVA",
-        "PRECIO DE VENTA",
-        "VENTA TOTAL",
-        "PORCENTAJE %",
-        "DIFERENCIA UNITARIA",
-        "TOTAL EXISTENCIA S/IVA",
-        "TOTAL EXISTENCIA C/IVA",
-        "TOTAL COSTOS",
-        "UTILIDAD TOTAL",
-    ];
+function showFields($name, $arrayData){
     $field = false;
-    foreach($title as $item) {
+    foreach($arrayData as $item) {
         if($name === $item){
             $field = true;
         }
     }
     return $field;
+}
+
+function showPositionTotal($name, $arrayData) {
+    $keysRes = 0;
+    foreach($arrayData as $key => $val) {
+        if($name === $val){
+            $keysRes = $key;
+        }
+    }
+    return $keysRes;
 }
 
