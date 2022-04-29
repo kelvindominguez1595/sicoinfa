@@ -31,7 +31,7 @@
                             <tbody>
                                 @foreach($data as $item)
                                     <tr>
-                                        <td>{{ $item->name }}</td>
+                                        <td>{{ $item->name }} </td>
                                         <td class="text-center">${{ number_format($item->costosiniva, 4) }}</td>
                                         <td class="text-center">${{ number_format($item->costoconiva, 4) }}</td>
 {{--                                        <td class="text-center">${{ number_format($item->ganancia, 4) }}</td>--}}
@@ -51,9 +51,10 @@
                                             @else
                                                 <i class="text-danger fas fa-arrow-down"></i>
                                             @endif
+
                                         </td>
                                         <td>
-                                            <input type="hidden" name="product_id[]"  id="product_id"  value="{{ $item->product_id }}">
+                                            <input type="hidden" name="product_id[]"  id="product_id"  value="{{ $item->id }}">
                                             <input type="hidden" class="costosiniva" name="costosiniva[]" id="costosiniva" value="{{ $item->costosiniva }}">
                                             <input type="hidden" class="costoconiva" name="costoconiva[]" id="costoconiva" value="{{ $item->costoconiva }}">
                                             <input type="hidden" class="cambio" name="cambio[]"      id="cambio"      value="{{ $item->cambio }}">

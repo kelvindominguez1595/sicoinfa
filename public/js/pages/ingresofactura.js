@@ -285,18 +285,18 @@ $(document).on('click', '#btnaddproduct', function (){
     // aqui estaran los id del productos
     html += '<td>'+code.val()+'</td>';
     html += '<td for="nproducto">';
-    html += '<input type="hidden" class=".productid" id="productid" name="productid[]" value="'+productoid.val()+'">'+nproducto.val();
+    html += '<input type="hidden" class="productid" name="product_id[]" value="'+productoid.val()+'">'+nproducto.val();
     html += '</td>';
     html += '<td>'+marca.val()+'</td>';
     html += '<td>'+categoria.val()+'</td>';
     html += '<td width="20px">';
-    html += '<input type="number" class="form-control cant" min="0" id="cant" name="cant[]" value="0">';
+    html += '<input type="number" class="form-control cant" min="0" name="cant[]" value="0">';
     html += '</td>';
     html += '<td width="120px">';
-    html += '<input type="number" class="form-control cotsin" min="0" step="any" id="cotsin" name="cotsin[]" value="0">';
+    html += '<input type="number" class="form-control cotsin" min="0" step="any" name="cot_sin[]" value="0">';
     html += '</td>';
     html += '<td width="120px">';
-    html += '<input type="number" class="form-control costotal" min="0" step="any" id="costotal" name="costotal[]" value="0" readonly>';
+    html += '<input type="number" class="form-control costotal" min="0" step="any" name="cos_total[]" value="0" readonly>';
     html += '</td>';
     html += '<td class="text-center"><button  type="button" class="btn btn-danger quitar"><i class="fas fa-trash"></i></button></td>'
     html += '</tr>';

@@ -530,105 +530,111 @@ class IngresosController extends Controller
         return $costosiniva + ($costosiniva * 0.13);
     }
 
+    public function existPriceProduct($producto_id){
+        $res = "NO";
+        $result = Precios::where('producto_id', '=', $producto_id)->exists();
+        if($result){
+            $res = "SI";
+        }
+        return $res;
+    }
+
+    public function existProductSucursal($producto_id, $sucursal_id){
+        $res = "NO";
+        $result = Almacenes::where('branch_offices_id', '=', $sucursal_id)
+            ->where('stocks_id', '=', $producto_id)
+            ->exists();
+        if($result){
+            $res = "SI";
+        }
+        return $res;
+    }
+
+    public function priceDataNew($producto_id) {
+        return Precios::where('producto_id', $producto_id)
+            ->limit(1)
+            ->orderBy('id','DESC')
+            ->first();
+    }
+
+    public function precio_Antiguo($producto_id) {
+        $existIngreso= Ingresos::where('stocks_id', $producto_id)
+            ->limit(1)
+            ->orderBy('id','DESC')
+            ->exists();
+        if($existIngreso){
+            $ingreso = Ingresos::where('stocks_id', $producto_id)
+                ->limit(1)
+                ->orderBy('id','DESC')
+                ->first();
+            $res = DetalleIngreso::where('detalle_stock_id', '=', $ingreso->id)->first();
+            if($res){
+                $result = $res;
+            } else {
+                $result = "SIN PRECIO VIEJO";
+            }
+        } else {
+            $result = "NO HAY INGRESOS";
+        }
+        return $result;
+    }
+
     public function ingresofactura(Request $request){
         // registramos los datos de la factura
+        $proveedor_id = $request->proveedor_id;
+        $creditofiscal = $request->creditofiscal;
+        $fechafactura = $request->fechafactura;
+        $fechaingreso = date('Y-m-d h:i:s', strtotime($request->fechaingreso)) ;
+
         $datoingreso = DatosIngresos::create([
-            'proveedor_id' => $request->proveedor_id,
-            'numerofiscal' => $request->creditofiscal,
-            'fechafactura' => $request->fechafactura,
-            'fechaingreso' => $request->fechaingreso
+            'proveedor_id' => $proveedor_id,
+            'numerofiscal' => $creditofiscal,
+            'fechafactura' => $fechafactura,
+            'fechaingreso' => $fechaingreso
         ]);
         // recorremos los datos de la tabla registrada
         $almacenid =  $request->branch_offices_id;
-        foreach($request['productid'] as $key => $value){
+        foreach($request['product_id'] as $key => $value){
             // hacemos el ingreso del producto
-            $productoid    = $request['productid'][$key];
-            $cantidadingreso      = $request['cant'][$key];
-            $costonsinivaingreso  = $request['cotsin'][$key];
+            $productoid             = $request['product_id'][$key];
+            $cantidadingreso        = $request['cant'][$key];
+            $costonsinivaingreso    = $request['cot_sin'][$key];
 
-            Ingresos::create([
-                'invoice_number'        => $request->creditofiscal,
-                'invoice_date'          => $request->fechafactura,
-                'register_date'         => $request->fechaingreso,
-                'quantity'              => $cantidadingreso,
-                'unit_price'            => $costonsinivaingreso,
-                'stocks_id'             => $productoid,
-                'state'                 => 1,
-                'clientefacturas_id'    => $request->proveedor_id,
-                'datosingresos_id'      => $datoingreso->id,
-            ]);
-
-            /** BUSCAMOS EL PRECIO DEL PRODUCTO */
-            $existproduct = Precios::where('producto_id', '=', $productoid)->exists();
-            if($existproduct){
-                $precio = Precios::where('producto_id', $productoid)
-                    ->limit(1)
-                    ->orderBy('id','DESC')
-                    ->first();
-                $costsinivaActual       = $precio->costosiniva;
-                $costoconivaActual      = $precio->costoconiva;
-                $gananciaActual         = $precio->ganancia;
-                $porcentajeActual       = $precio->porcentaje;
-                $precioventaActual      = $precio->precioventa;
-                $esta = "ESTA EN EL NUEVO PRECIO";
-                $id = $productoid;
+            if ($this->existPriceProduct($productoid) == "SI") {
+                $res = $this->priceDataNew($productoid);
+                $costsiniva     = $res->costosiniva;
+                $costoconiva    = $res->costoconiva;
+                $ganancia       = $res->ganancia;
+                $porcentaje     = $res->porcentaje;
+                $precioventa    = $res->precioventa;
             } else {
-                $existIngreso= Ingresos::where('stocks_id', $productoid)
-                    ->limit(1)
-                    ->orderBy('id','DESC')
-                    ->exists();
-                if($existIngreso){
-                    $ingreso = Ingresos::where('stocks_id', $productoid)
-                        ->limit(1)
-                        ->orderBy('id','DESC')
-                        ->first();
-                    // ACTUALIZO LOS PRECIOS ANTIGUOS A 10
-                    $upingreso = Ingresos::find($ingreso->id);
-                    $upingreso->state = 10;
-                    $upingreso->save();
-
-                    $precio = DetalleIngreso::where('detalle_stock_id', '=', $ingreso->id)->first();
-                    if($precio){
-                        $costsinivaActual       = $precio->cost_s_iva == '' ? 0 : $precio->cost_s_iva;
-                        $costoconivaActual      = $precio->cost_c_iva;
-                        $gananciaActual         = $precio->earn_c_iva;
-                        $porcentajeActual       = $precio->earn_porcent;
-                        $precioventaActual      = $precio->sale_price;
-                        $esta = "ESTA EN EL VIEJO";
-                        $id = $productoid;
-                        // ACTUALIZO LOS PRECIOS VIEJOS
-                        $upprecioviejo = DetalleIngreso::find($precio->id);
-                        $upprecioviejo->state = 10;
-                        $upprecioviejo->save();
-                    } else {
-                        $costsinivaActual       = 0;
-                        $costoconivaActual      = 0;
-                        $gananciaActual         = 0;
-                        $porcentajeActual       = 0;
-                        $precioventaActual      = 0;
-                        $id = 0;
-                        $esta = "SI ESTA INGRESADO PERO NO TIENE PRECIO EN EL DETALLE STOCK";
-                    }
-                }else{
-                    $costsinivaActual       = 0;
-                    $costoconivaActual      = 0;
-                    $gananciaActual         = 0;
-                    $porcentajeActual       = 0;
-                    $precioventaActual      = 0;
-                    $id = 0;
-                    $esta = "NO HAY NADA";
+                if ($this->precio_Antiguo($productoid) == "SIN PRECIO VIEJO") {
+                    $costsiniva     = 0;
+                    $costoconiva    = 0;
+                    $ganancia       = 0;
+                    $porcentaje     = 0;
+                    $precioventa    = 0;
+                } else if ($this->precio_Antiguo($productoid) == "NO HAY INGRESOS") {
+                    $costsiniva     = 0;
+                    $costoconiva    = 0;
+                    $ganancia       = 0;
+                    $porcentaje     = 0;
+                    $precioventa    = 0;
+                } else {
+                    $res = $this->precio_Antiguo($productoid);
+                    $costsiniva     = $res->cost_s_iva ?? 0;
+                    $costoconiva    = $res->cost_c_iva ?? 0;
+                    $ganancia       = $res->earn_c_iva ?? 0;
+                    $porcentaje     = $res->earn_porcent ?? 0;
+                    $precioventa    = $res->sale_price ?? 0;
                 }
             }
-            /** FIN PARA ENCONTRAR EL PRECIO */
-            /** VOLVEMOS A VERIFICAR EL PRODUCTO SI EXISTE EN EL ALMACEN */
-            $existAlmacen = Almacenes::where('branch_offices_id', '=', $almacenid)
-                ->where('stocks_id', '=', $productoid)
-                ->exists();
-            if($existAlmacen){
+
+            if($this->existProductSucursal($productoid, $almacenid) == "SI") {
                 $almacen = Almacenes::where('branch_offices_id', '=', $almacenid)
                     ->where('stocks_id', '=', $productoid)
                     ->first();
-            }else{
+            } else {
                 $almacen = Almacenes::create([
                     'stock_min' => 2,
                     'quantity' => 0,
@@ -636,19 +642,19 @@ class IngresosController extends Controller
                     'stocks_id' => $productoid,
                 ]);
             }
-            /** FORMULAS DE CALCULO DE PROMEDIO */
-            if($costsinivaActual == 0){
-                $cambio = "nuevo";
-                // multiplicamos el nuevo costo con iva
-                $precioconivaFinal = $this->costomasIVA($costonsinivaingreso);
-                $costoFormat = $costonsinivaingreso;
-                $gananciaFinal          = 0;
-                $porcentajeFinal        = 0;
-                $precioventaFinal       = 0;
+            /** ESTO ES POR SI EL PRODUCTO EXISTE PERO NO HAY INGRESO O SI HAY INGRESO PERO NO TIENE PRECIO DETALLE ANTIGUO*/
+
+            if($costsiniva == 0 && $costoconiva  == 0 && $ganancia == 0 && $porcentaje == 0 && $precioventa == 0)  {
+                $cambio = "mantiene";
+                $costoFormat            = $costonsinivaingreso;
+                $precioconivaFinal      = $this->costomasIVA($costonsinivaingreso);
+                $gananciaSave           = 0;
+                $porcentajeSave         = 0;
+                $precioventaSave        = 0;
                 $cantidadPromedio       = $cantidadingreso;
             } else {
                 /** COSTO ACTUAL*/
-                $costoTotal = $almacen->quantity * $costsinivaActual;
+                $costoTotal = $almacen->quantity * $costsiniva;
                 /** COSTO DE INGRESO */
                 $costoTotalIngreso = intval($cantidadingreso) * floatval($costonsinivaingreso);
                 /** SUMAR CANTIDAD ACTUAL Y NUEVA */
@@ -659,47 +665,36 @@ class IngresosController extends Controller
                 $costoFinal = $costoPromedio / $cantidadPromedio;
                 /** EL COSTO FINAL LE PONDREMOS 5 DECIMALES */
                 $costoFormat = floatval(number_format($costoFinal, 5));
-                /** VERIFICAMOS SI EL PRECIO HA VARIADO */
-                if($costoFormat > $costsinivaActual){
-                    $cambio = "subio";
-                    $precioconivaFinal = $this->costomasIVA($costoFormat);
-                    if($porcentajeActual == 0 || $gananciaActual == 0 || $precioventaActual== 0)  {
-                        $precioventaFinal       = 0;
-                        $gananciaFinal          = 0;
-                        $porcentajeFinal        = 0;
-                    } else {
-                        $CalprecioventaFinal    = $this->porcentaje($porcentajeActual, $precioconivaFinal);
-                        $precioventaFinal       = $CalprecioventaFinal['preciofinal'];
-                        $gananciaFinal          = $CalprecioventaFinal['ganancia'];
-                        $porcentajeFinal        = $porcentajeActual;
-                    }
-                }
-                if($costoFormat == $costsinivaActual){
+                $precioconivaFinal = $this->costomasIVA($costoFormat);
+
+                if($ganancia == 0 && $porcentaje == 0 && $precioventa == 0)  {
                     $cambio = "mantiene";
-                    $precioconivaFinal = $this->costomasIVA($costoFormat);
-                    if($porcentajeActual == 0 || $gananciaActual == 0 || $precioventaActual== 0)  {
-                        $precioventaFinal       = 0;
-                        $gananciaFinal          = 0;
-                        $porcentajeFinal        = 0;
-                    } else {
-                        $CalprecioventaFinal    = $this->porcentaje($porcentajeActual, $precioconivaFinal);
-                        $precioventaFinal       = $CalprecioventaFinal['preciofinal'];
-                        $gananciaFinal          = $CalprecioventaFinal['ganancia'];
-                        $porcentajeFinal        = $porcentajeActual;
+                    $gananciaSave       = 0;
+                    $porcentajeSave     = 0;
+                    $precioventaSave    = 0;
+                } else {
+                    if($costoFormat > $costsiniva){
+                        $cambio = "subio";
+                        $CalprecioventaFinal    = $this->porcentaje($porcentaje, $precioconivaFinal);
+                        $gananciaSave           = $CalprecioventaFinal['ganancia'];
+                        $porcentajeSave         = $porcentaje;
+                        $precioventaSave        = $CalprecioventaFinal['preciofinal'];
                     }
-                }
-                if($costoFormat < $costsinivaActual){
-                    $cambio = "bajo";
-                    $precioconivaFinal = $this->costomasIVA($costoFormat);
-                    if($porcentajeActual == 0 || $gananciaActual == 0 || $precioventaActual== 0)  {
-                        $precioventaFinal       = 0;
-                        $gananciaFinal          = 0;
-                        $porcentajeFinal        = 0;
-                    } else {
-                        $CalprecioventaFinal    = $this->porcentaje($porcentajeActual, $precioconivaFinal);
-                        $precioventaFinal       = $CalprecioventaFinal['preciofinal'];
-                        $gananciaFinal          = $CalprecioventaFinal['ganancia'];
-                        $porcentajeFinal        = $porcentajeActual;
+
+                    if($costoFormat == $costsiniva){
+                        $cambio = "mantiene";
+                        $CalprecioventaFinal    = $this->porcentaje($porcentaje, $precioconivaFinal);
+                        $gananciaSave          = $CalprecioventaFinal['ganancia'];
+                        $porcentajeSave        = $porcentaje;
+                        $precioventaSave       = $CalprecioventaFinal['preciofinal'];
+                    }
+
+                    if($costoFormat < $costsiniva){
+                        $cambio = "bajo";
+                        $CalprecioventaFinal    = $this->porcentaje($porcentaje, $precioconivaFinal);
+                        $gananciaSave          = $CalprecioventaFinal['ganancia'];
+                        $porcentajeSave        = $porcentaje;
+                        $precioventaSave       = $CalprecioventaFinal['preciofinal'];
                     }
                 }
             }
@@ -707,57 +702,73 @@ class IngresosController extends Controller
             $update = date('Y-m-d H:i:s');
             DB::table('detalle_products')
                 ->where('branch_offices_id', $almacenid)
-                ->where('stocks_id', $id)
+                ->where('stocks_id', $productoid)
                 ->update([
                     'quantity'      => $cantidadPromedio,
                     'updated_at'    => $update
                 ]);
 
+            /** GUARDO EL INGRESO DE LOS PRODUCTOS */
+
+            Ingresos::create([
+                'invoice_number' => $creditofiscal,
+                'invoice_date' => $fechafactura,
+                'register_date' => $fechaingreso,
+                'quantity' => $cantidadPromedio,
+                'unit_price' => $costoFormat,
+                'stocks_id' => $productoid,
+                'state' => 1,
+                'clientefacturas_id' => $proveedor_id,
+                'datosingresos_id' => $datoingreso->id,
+            ]);
+
             /** GUARDO EN LA NUEVA TABLA DE PRECIOS */
             Precios::create([
-                'producto_id'   => $id,
+                'producto_id'   => $productoid,
                 'costosiniva'   => $costoFormat,
                 'costoconiva'   => $precioconivaFinal,
-                'ganancia'      => $gananciaFinal,
-                'porcentaje'    => $porcentajeFinal,
-                'precioventa'   => $precioventaFinal,
+                'ganancia'      => $gananciaSave,
+                'porcentaje'    => $porcentajeSave,
+                'precioventa'   => $precioventaSave,
                 'cambio'        => $cambio,
             ]);
         }
-        $cryp = Crypt::encryptString($datoingreso->id);
+     //   $cryp = Crypt::encryptString($datoingreso->id);
        return response()->json(["message" => "Guardado", "factura" => $datoingreso->id], 200);
     }
 
     public function modificarPrecioVenta($factura){
 
        // $factura_id = Crypt::decryptString($factura);
+
+
         $precionew = DB::table('precios')
             ->select(
-                DB::raw('MAX(id) as idprice'),
+                DB::raw('MAX(id) as price_id'),
                 'producto_id',
                 DB::raw('MAX(created_at) as created_at'))
             ->groupBy('producto_id');
 
-        $data = DB::table('detalle_stock as ds')
-            ->join('stocks as st', 'ds.stocks_id', '=', 'st.id')
-            ->joinSub($precionew, 'p', function ($join){
-                $join->on('ds.stocks_id', '=', 'p.producto_id');
+        $data = DB::table('stocks as stock')
+            ->Join('detalle_stock as d_stock', 'd_stock.stocks_id', 'stock.id')
+            ->JoinSub($precionew, 'precio', function($join){
+                $join->on('stock.id', '=', 'precio.producto_id');
             })
-            ->join('precios as pri', 'pri.id', '=', 'p.idprice')
+            ->Join('precios as price', 'precio.price_id', 'price.id')
             ->select(
-                'st.name',
-                'ds.stocks_id as product_id',
-                'pri.costosiniva',
-                'pri.costoconiva',
-                'pri.ganancia',
-                'pri.porcentaje',
-                'pri.precioventa',
-                'pri.cambio',
-                'ds.datosingresos_id'
+                'stock.id',
+                'stock.name',
+                'price.costosiniva',
+                'price.costoconiva',
+                'price.ganancia',
+                'price.porcentaje',
+                'price.precioventa',
+                'price.cambio',
+                'price.producto_id',
             )
-            ->where('ds.datosingresos_id', '=', $factura)
-
+            ->where('d_stock.datosingresos_id', '=', $factura)
             ->get();
+
         return view('ingresos.precioventa', compact('data'));
     }
 
