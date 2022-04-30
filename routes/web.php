@@ -109,6 +109,8 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::post('/guardar_deudas',[DeudasController::class, 'guardar']);
     Route::get('/editar_deudas/{id}',[DeudasController::class, 'editar']);
     Route::put('/actualizar_deudas',[DeudasController::class, 'actualizar']);
+    // para ver las notificaciones
+    Route::put('/verMensaje',[NotificacionesController::class, 'verMensaje']);
 
 });
 

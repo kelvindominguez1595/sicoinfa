@@ -740,8 +740,6 @@ class IngresosController extends Controller
     public function modificarPrecioVenta($factura){
 
        // $factura_id = Crypt::decryptString($factura);
-
-
         $precionew = DB::table('precios')
             ->select(
                 DB::raw('MAX(id) as price_id'),

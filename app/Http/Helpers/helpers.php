@@ -1,13 +1,38 @@
 <?php
 
 use App\Models\Notificaciones;
+use Illuminate\Support\Facades\DB;
 
 function verifiedCountState(){
     return Notificaciones::where('estado', 'activo')->count();
 }
 
 function listNotification(){
-    return Notificaciones::all();
+    return DB::table('notificaciones as n')
+        ->leftJoin('notificaciones_estados as ne', 'n.id', '=', 'ne.notificacion_id')
+        ->select(
+            'n.id', 'n.tipo', 'n.registro_id', 'n.comentario', 'n.estado',
+            'ne.id as estado_id', 'ne.notificacion_id', 'ne.usuario_id', 'ne.estado as estate_note', 'n.created_at'
+        )
+        ->take(10)
+        ->get();
+}
+
+function timeAgo($date) {
+    $timestamp = strtotime($date);
+
+    $strTime = array("segundo", "minuto", "hora", "dia", "mes", "año");
+    $length = array("60","60","24","30","12","10");
+
+    $currentTime = time();
+    if($currentTime >= $timestamp) {
+        $diff     = time()- $timestamp;
+        for($i = 0; $diff >= $length[$i] && $i < count($length)-1; $i++) {
+            $diff = $diff / $length[$i];
+        }
+        $diff = round($diff);
+        return "Hace " . $diff . " " . $strTime[$i] . "(s)";
+    }
 }
 
 function generarCodigo($longitud) {
