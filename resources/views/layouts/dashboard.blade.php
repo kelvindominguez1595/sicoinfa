@@ -20,7 +20,7 @@
     @yield('css')
     <link rel="stylesheet" href="{{ asset('css/toastr.css') }}">
 </head>
-<body>
+<body class="disable-select">
     <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light shadow-lg  bg-body mb-5">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
