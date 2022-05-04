@@ -1,21 +1,24 @@
 <?php
 
 use App\Models\Notificaciones;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Notificacion_estados;
 
-function verifiedCountState(){
-    return Notificaciones::where('estado', 'activo')->count();
+function verifiedCountState($notificacion_id){
+    $res =  Notificacion_estados::where('notificacion_id', $notificacion_id)
+        ->where('usuario_id', Auth::user()->id)
+        ->first();
+
+    if(!empty($res)){
+        $respuesta = $res->estado;
+    } else {
+        $respuesta = "NO VISTO";
+    }
+    return $respuesta;
 }
 
 function listNotification(){
-    return DB::table('notificaciones as n')
-        ->leftJoin('notificaciones_estados as ne', 'n.id', '=', 'ne.notificacion_id')
-        ->select(
-            'n.id', 'n.tipo', 'n.registro_id', 'n.comentario', 'n.estado',
-            'ne.id as estado_id', 'ne.notificacion_id', 'ne.usuario_id', 'ne.estado as estate_note', 'n.created_at'
-        )
-        ->take(10)
-        ->get();
+    return Notificaciones::orderBy('created_at', 'DESC')->take(10)->get();
 }
 
 function timeAgo($date) {

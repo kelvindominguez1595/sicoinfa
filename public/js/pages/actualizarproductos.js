@@ -247,6 +247,8 @@ $(function () {
                 }
             },
             error: function (response) {
+                $("#frmentradaproductos").LoadingOverlay("hide");
+                btndisable.prop('disabled', false);
                 if (response.responseJSON.errors.name) {
                     $("#idCpro4").addClass("has-error");
                     $("#txt_name").text('El campo nombre es obligatorio.');
@@ -307,6 +309,8 @@ $(function () {
                 }
             },
             error: function (response) {
+                btndisable.prop('disabled', false);
+                $("#frmentradaproductos").LoadingOverlay("hide");
                 if (response.responseJSON.errors.name) {
                     $("#suppliers_id").addClass("is-invalid");
                     $("#txt_name").text('El campo nombre es obligatorio.');

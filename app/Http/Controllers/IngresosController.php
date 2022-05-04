@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+
+use App\Models\Precios;
+use App\Models\Ingresos;
 use App\Models\Almacenes;
+use App\Models\Productos;
+use App\Models\Sucursales;
 use App\Models\DatosIngresos;
 use App\Models\DetalleIngreso;
-use App\Models\Ingresos;
-use App\Models\Precios;
-use App\Http\Requests\StoreIngresosRequest;
-use App\Http\Requests\UpdateIngresosRequest;
-use App\Models\Sucursales;
-use Illuminate\Http\Request;
+use App\Models\Notificaciones;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
+use App\Http\Requests\UpdateIngresosRequest;
 
 
 class IngresosController extends Controller
@@ -81,6 +83,14 @@ class IngresosController extends Controller
             'state' => 1,
             'clientefacturas_id' => $proveedor,
             'datosingresos_id' => $dataingre->id,
+        ]);
+        $respro = Productos::find($stock_id);
+
+        Notificaciones::create([
+            'tipo' => $res,
+            'registro_id' => $dataingre->id,
+            'comentario' => "Actualización de producto: ".$respro->name,
+            'estado' => "NO VISTO"
         ]);
         // respondemos
         return response()->json(["message" => "Nuevo ingreso guardado correctamente", "data" => $res],200);
@@ -767,7 +777,7 @@ class IngresosController extends Controller
             ->where('d_stock.datosingresos_id', '=', $factura)
             ->get();
 
-        return view('ingresos.precioventa', compact('data'));
+        return view('ingresos.precioventa', compact('data', 'factura'));
     }
 
     public function modprecioventa(Request $request){
@@ -789,7 +799,14 @@ class IngresosController extends Controller
                 'precioventa'   => $precioventa,
                 'cambio'        => $cambio,
             ]);
+
         }
+            Notificaciones::create([
+                'tipo' => "muchos",
+                'registro_id' => $request->factura,
+                'comentario' => "Uno o Varios Productos han actualizado su cantidad y precio",
+                'estado' => "NO VISTO"
+            ]);
         return response()->json(["message" => "Precio de venta Actualizados"], 200);
     }
 

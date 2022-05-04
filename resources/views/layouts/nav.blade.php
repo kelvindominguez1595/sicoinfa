@@ -63,40 +63,6 @@
             </a>
         </li>
 
-        <li class="nav-item dropdown dropdown-pull-right">
-            <a class="nav-link" href="#" id="showNotifications" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <div class="badge rounded-pill bg-primary position-relative">
-                    <span class="fas fa-bell"></span>
-                    @if(verifiedCountState() > 0)
-                        <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
-                             <span class="visually-hidden">New alerts</span>
-                        </span>
-                    @endif
-                </div>
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="showNotifications">
-                <li class="">
-                    <ul class=" scrollable-menu">
-                        @foreach(listNotification() as $item)
-                            <li >
-                                <a class="dropdown-item bg-primary bg-opacity-25  mt-1" href="">
-                                    <i class="fas fa-store-alt"></i>
-                                    <span class="fs-6">Hay Productos con nuevos Precios</span>
-                                    <br>
-                                    <span class="ms-4 fst-italic"> <i class="far fa-clock"></i> {{$item->created_at}}</span>
-                                </a>
-                            </li>
-                        @endforeach
-                    </ul>
-
-                </li>
-                <li>
-                    <a class="dropdown-item text-center text-primary border-top  mt-1" href="">
-                       Ver todo
-                    </a>
-                </li>
-            </ul>
-        </li>
     @else
         <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{{ url('inventarios') }}">
@@ -104,6 +70,65 @@
             </a>
         </li>
     @endif
+    <li class="nav-item dropdown dropdown-pull-right">
+        <a class="nav-link" href="#" id="showNotifications" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="badge rounded-pill bg-primary position-relative">
+                <span class="fas fa-bell"></span>
+                @php
+                    $count = 0;
+                    @endphp
+                @foreach(listNotification() as $item)
+                    @if(verifiedCountState($item->id) == "VISTO")
+                        @else
+                        @php
+                            $count += 1;
+                            $count++;
+                        @endphp
+                     @endif
+
+                @endforeach
+                @if($count > 0)
+                    <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+                             <span class="visually-hidden">New alerts</span>
+                        </span>
+                @endif
+            </div>
+        </a>
+
+        <ul class="dropdown-menu" aria-labelledby="showNotifications">
+            <li class="">
+                <ul class=" scrollable-menu">
+                    @foreach(listNotification() as $item)
+                        <li >
+                            @if(verifiedCountState($item->id) == "VISTO")
+                                <a class="dropdown-item mt-1" href="{{ url('/bandejaNotificaciones?notificacion_id='.$item->id) }}">
+                                    <i class="fas fa-store-alt"></i>
+                                    <span class="fs-6 "> {{  $item->comentario ?? 'Hay Productos con nuevos Precios' }}</span>
+                                    <br>
+                                    <span class="ms-4 fst-italic"> <i class="far fa-clock"></i> {{ timeAgo($item->created_at) }}</span>
+                                </a>
+                            @else
+                                <a class="dropdown-item bg-primary bg-opacity-25  mt-1" href="{{ url('/bandejaNotificaciones?notificacion_id='.$item->id) }}">
+                                    <i class="fas fa-store-alt"></i>
+                                    <span class="fs-6 fw-bold">{{  $item->comentario ?? 'Hay Productos con nuevos Precios' }}</span>
+                                    <br>
+                                    <span class="ms-4 fst-italic fw-bold"> <i class="far fa-clock"></i> {{ timeAgo($item->created_at) }}</span>
+                                </a>
+                            @endif
+
+                        </li>
+                    @endforeach
+                </ul>
+
+            </li>
+            <li>
+                <a class="dropdown-item text-center text-primary border-top  mt-1" href="{{url('/bandejaNotificaciones')}}">
+                    Ver todo
+                </a>
+            </li>
+        </ul>
+    </li>
+
     <li class="nav-item dropdown dropdown-pull-right">
         <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             @isset(Auth::user()->picture)

@@ -13,6 +13,7 @@ use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\SucursalesController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\DeudasController;
+use App\Http\Controllers\NotificacionesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -110,10 +111,9 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/editar_deudas/{id}',[DeudasController::class, 'editar']);
     Route::put('/actualizar_deudas',[DeudasController::class, 'actualizar']);
     // para ver las notificaciones
-    Route::put('/verMensaje',[NotificacionesController::class, 'verMensaje']);
+
 
 });
-
 
 Route::group(['middleware' => ['auth', 'user']], function () {
     Route::get('/inventarios', [ProductosController::class, 'index']);
@@ -121,4 +121,8 @@ Route::group(['middleware' => ['auth', 'user']], function () {
     Route::get('/list_categoriasempleado', [ProductosController::class, 'categorias']);
     Route::get('/marcasidemp/{id}', [ProductosController::class, 'marcasid']);
     Route::get('/findcategoriesempl/{id}', [ProductosController::class, 'categoriasid']);
+});
+/** rutas tanto para administradore y otros usuarios **/
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('/bandejaNotificaciones',[NotificacionesController::class, 'notify']);
 });

@@ -17,6 +17,7 @@
                 <div class="card-body">
                     @include('ingresos.modals.information')
                     <form id="frmventa"  >
+                        <input type="hidden" name="factura" id="factura" value="{{ $factura }}">
                         <table  class="table table-bordered table-striped table-hover">
                             <thead>
                             <th class="text-center">Descripción</th>
