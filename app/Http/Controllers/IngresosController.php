@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Carbon\Carbon;
 use App\Models\Precios;
 use App\Models\Ingresos;
 use App\Models\Almacenes;
@@ -13,9 +14,7 @@ use App\Models\DatosIngresos;
 use App\Models\DetalleIngreso;
 use App\Models\Notificaciones;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Crypt;
 use App\Http\Requests\UpdateIngresosRequest;
-
 
 class IngresosController extends Controller
 {
@@ -76,7 +75,7 @@ class IngresosController extends Controller
         Ingresos::create([
             'invoice_number' => $creditofiscal,
             'invoice_date' => $fechafactura,
-            'register_date' => date('Y-m-d H:i:s', strtotime($fechaingreso)),
+            'register_date' => Carbon::now(),
             'quantity' => $cantidad_ingreso,
             'unit_price' => $costo_ingreso,
             'stocks_id' => $stock_id,
