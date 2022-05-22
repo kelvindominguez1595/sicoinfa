@@ -76,7 +76,7 @@ class IngresosController extends Controller
         Ingresos::create([
             'invoice_number' => $creditofiscal,
             'invoice_date' => $fechafactura,
-            'register_date' => $fechaingreso,
+            'register_date' => date('Y-m-d H:i:s', strtotime($fechaingreso)),
             'quantity' => $cantidad_ingreso,
             'unit_price' => $costo_ingreso,
             'stocks_id' => $stock_id,

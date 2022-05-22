@@ -59,15 +59,17 @@ class DeudasController extends Controller
         ];
         return view('deudas.index', compact('data', 'formapago'));
     }
+
     public function create(){
         $tipofactura  = [
-            "CREDITO", "CONTADO", "CCF", "N/CREDITO", "FACTURA"
+            "CFF", "FACTURA", "TIKET", "IMPORTANCIÓN"
         ];
         $formapago = [
             "CHEQUE", "REMESA", "EFECTIVO", "DEPOSITO"
         ];
         return view('deudas.create', compact('tipofactura', 'formapago'));
     }
+
     public function guardar(Request $request){
         foreach ($request['proveedor_id'] as $key => $value){
             $deudas = Deudas::create([
