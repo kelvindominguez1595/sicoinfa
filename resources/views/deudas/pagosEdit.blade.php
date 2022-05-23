@@ -37,22 +37,35 @@
                         </div>
                     <form id="frmcuentas" class="row g-3 mt-1">
                         <div class="row table-responsive mb-3">
-                            <table id="rowstable" class="table table-hover table-striped table-bordered">
-                                <thead>
-                                    <th class="text-uppercase">Fecha Factura</th>
-                                    <th class="text-uppercase">N° Factura</th>
-                                    <th class="text-uppercase">Documento</th>
-                                    <th class="text-uppercase">total compra</th>
-                                    <th class="text-uppercase">nota de credito</th>
-                                    <th class="text-uppercase">n° nota de credito</th>
-                                    <th class="text-uppercase">fecha pago/abono</th>
-                                    <th class="text-uppercase">forma de pago</th>
-                                    <th class="text-uppercase">n° recibo</th>
-                                    <th class="text-uppercase">n° cheque/remesa</th>
-                                    <th class="text-uppercase">abono</th>
-                                    <th class="text-uppercase">saldo pte.</th>
-                                    <th class="text-uppercase">cancelado</th>
-                                    <th class="text-uppercase">estado</th>
+                            <table id="rowstable" class="table table-hover table-striped table-bordered styletabletable bordertitledeudas">
+                                <thead class="">
+                                    <tr>
+                                        <td class="text-uppercase text-center bg-deudauno " rowspan="2">Fecha Factura</td>
+                                        <td class="text-uppercase text-center bg-deudauno " rowspan="2"># Factura</td>
+                                        <td class="text-uppercase text-center bg-deudauno " rowspan="2">Tipo Documento</td>
+                                        <td class="text-uppercase text-center bg-deudauno " rowspan="2">Compra Total</td>
+                                        {{-- <td colspan="5" class="text-center bg-deudados fw-bold ">ABONOS</td>
+                                        <td colspan="4" class="text-uppercase text-center bg-deudatres fw-bold" >notas de crédito</td> --}}
+                                        {{-- <td class="text-uppercase text-center bg-deudacuatro" rowspan="2">importe pendiente</td> --}}
+                                        {{-- <td class="text-uppercase text-center bg-deudacinco " rowspan="2"># de Factura</td> --}}
+                                        <td class="text-uppercase text-center bg-deudacinco " rowspan="2">Fecha de pago</td>
+                                        <td class="text-uppercase text-center bg-deudacinco " rowspan="2">Pago aplicado</td>
+                                        <td class="text-uppercase text-center bg-deudacinco " rowspan="2"># de Recibo</td>
+                                        <td class="text-uppercase text-center bg-deudacinco " rowspan="2">Forma de pago</td>
+                                        <td class="text-uppercase text-center bg-deudacinco " rowspan="2"># de Documento de Pago</td>
+                                        <td class="text-uppercase text-center bg-deudacinco " rowspan="2">deuda</td>
+                                    </tr>
+                                    {{-- <tr>
+                                        <td class="text-uppercase text-center bg-deudados">abono $</td>
+                                        <td class="text-uppercase text-center bg-deudados">Fecha</td>
+                                        <td class="text-uppercase text-center bg-deudados">Forma de pago</td>
+                                        <td class="text-uppercase text-center bg-deudados"># Recibo</td>
+                                        <td class="text-uppercase text-center bg-deudados"># Documento</td>
+                                        <td class="text-uppercase text-center bg-deudatres"># Nota de Crédito</td>
+                                        <td class="text-uppercase text-center bg-deudatres">Valor Nota de Credito</td>
+                                        <td class="text-uppercase text-center bg-deudatres">Aplicado a CCF</td>
+                                        <td class="text-uppercase text-center bg-deudatres">FECHA</td>
+                                    </tr> --}}
                                 </thead>
                                 <tbody></tbody>
                             </table>

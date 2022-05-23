@@ -5,7 +5,7 @@ $(function () {
         }
     });
 
-    $('#proveedoradd').select2({
+    $('#proveedor').select2({
         theme: "bootstrap-5",
         placeholder: 'Seleccione...',
         allowClear: true,
@@ -22,6 +22,36 @@ $(function () {
             cache: true
         }
     });
+
+    $("#fechafacturado").change(function(){
+        let val = $(this).val();
+        let fechapago = $("#fechapago");
+
+        $.get("/addModdate/"+val, function(res){
+            console.log(res.dateforma);
+            fechapago.val(res.dateforma);
+        });
+    });
+   
+    $('input[type=radio][name=estado]').change(function(){
+        let val = $(this).val();
+        let conte = $('#contenedorformapago');
+        if(val == 'CONTADO') {
+            conte.removeClass('d-none');
+        } else {
+            conte.addClass('d-none');
+        }
+    })
+
+    // voy a controlar el tipo de pago
+    $('input[type=radio][name=formapago]').change(function() {
+        if (this.value === 'EFECTIVO') {
+            $('#numerocheque').prop('readonly', true);
+        } else {
+            $('#numerocheque').prop('readonly', false);
+        }
+    });
+
 
     // para modal registrar proveedor
     $("#btnaddproveedor").click(function () {
@@ -100,43 +130,23 @@ $(function () {
             $('#valornotacreditoadd').prop('readonly', true);
         }
     })
-    // voy a controlar el tipo de pago
-    $('input[type=radio][name=estadoadd]').change(function() {
-        if (this.value == 'PAGADO') {
-            $('#pagototaladd').val($('#totalcompraadd').val())
-            $('#abonoadd').prop('readonly', true);
-            $('#saldopendienteadd').prop('readonly', true);
-            $("#abonoadd").val('0');
-            $("#saldopendienteadd").val('0');
-            $("#notacreditoadd").val('0');
-            $("#valornotacreditoadd").val('0');
-        }
-        else if (this.value == 'ABONADO') {
-            $('#abonoadd').prop('readonly', false);
-            $('#saldopendienteadd').prop('readonly', false);
-        }
-    });
+
     // para agregar las filar a la tabla
     $("#btnadd").click(function (e){
         e.preventDefault();
         if(validateInput()){
-            /** DATOS DE PRECIO */
-            let totalcompraadd      = $('#totalcompraadd').val();
-            let abonoadd            = $('#abonoadd').val();
-            let saldopendienteadd   = $('#saldopendienteadd').val();
-            let notacreditoadd      = $('#notacreditoadd').val();
-            let valornotacreditoadd = $('#valornotacreditoadd').val();
-            let pagototaladd        = $('#pagototaladd').val();
-            let numreciboadd        = $('#numreciboadd').val();
-            let numchequeremesa     = $('#numchequeremesa').val();
-            let formapagoadd        = $('input:radio[name=formapagoadd]:checked').val();
             /** DATOS DE FACTURA */
-            let fechafacturaadd     = $('#fechafacturaadd').val();
-            let fechaabonoadd       = $('#fechaabonoadd').val();
-            let numfacturaadd       = $('#numfacturaadd').val();
             let proveedoradd        = $('#proveedoradd').val();
+            let numfacturaadd       = $('#numfacturaadd').val();
             let tipofacturadd       = $('input:radio[name=tipofacturadd]:checked').val();
+            let fechafacturaadd     = $('#fechafacturacionadd').val();
+            let fechaabonoadd       = $('#fechapagoadd').val();
+            let tocomp              = $('#tocomp').val();
             let estadoadd           = $('input:radio[name=estadoadd]:checked').val();
+            let formapagoadd        = $('input:radio[name=formapagoadd]:checked').val();
+            let numchequeremesa     = $('#numchequeremesa').val();
+            /** DATOS DE PRECIO */
+           
 
             let proveedor = $('select[name="proveedoradd"] option:selected').text();
 
@@ -190,28 +200,134 @@ $(function () {
     });
 
     /** GUARDAR LAS FACTURAS */
-    $("#frmcuentas").submit(function (e) {
+    $("#frmsavefactura").submit(function (e) {
         e.preventDefault();
-        let frm = $(this).serialize();
-        $.ajax({
-            url: '/guardar_deudas',
-            type: 'POST',
-            dataType: 'JSON',
-            data: frm,
-            success: function (res) {
-                console.log(res);
-                AlertConfirmacin("Se ha guardado correctamente");
-                setTimeout(function (){
-                    location.reload();
-                }, 3000);
-            },
-            error: function (err){
-                AlertError("No se pudo realizar esta acción");
-            }
-        })
+        if(validateFrmSave()){
+                alert("hola todo bien culo")
+                /*let frm = $(this).serialize();
+                $.ajax({
+                    url: '/guardar_deudas',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: frm,
+                    success: function (res) {
+                        console.log(res);
+                        AlertConfirmacin("Se ha guardado correctamente");
+                        setTimeout(function (){
+                            location.reload();
+                        }, 3000);
+                    },
+                    error: function (err){
+                        AlertError("No se pudo realizar esta acción");
+                    }
+                })*/
+            
+        } else {
+            AlertError("Todos los campos son obligatorios");
+        }
     });
 
     });
+
+    function validateFrmSave() {
+        let proveedor = false, tipofactura = false, numerofactura = false, fechafacturado = false, fechapago = false;
+        let containercondicipago = false, totalcompra = false;
+
+        let formapago = false, numerocheque = false;
+
+        if ($('input[type=radio][name=estado]:checked').val() === 'CONTADO') {
+            if($('input:radio[name=formapago]:checked').val() === undefined){
+                formapago = false;
+                $('#contenedorpagofrm').addClass('border border-danger');
+            } else {
+                formapago = true;
+                $('#contenedorpagofrm').removeClass('border border-danger');
+            }
+    
+            if($('input[type=radio][name=formapago]').val() == 'EFECTIVO') {
+                numerocheque = true;
+                $('#numerocheque').removeClass('is-invalid');
+            } else {
+                $('#numerocheque').addClass('is-invalid');
+                numerocheque = false;
+            }
+        } else {
+            formapago = true;
+            numerocheque = true;
+        }
+
+
+        if($('#proveedor').val() === '' || $('#proveedor').val() == null){
+            proveedor = false;
+            $('#proveedor').addClass('is-invalid');
+        } else {
+            proveedor = true;
+            $('#proveedor').removeClass('is-invalid');
+        }
+        
+        if($('input:radio[name=tipofactura]:checked').val() === undefined){
+            tipofactura = false;
+            $('#contenedortipofactura').addClass('border border-danger');
+        } else {
+            tipofactura = true;
+            $('#contenedortipofactura').removeClass('border border-danger');
+        }
+        
+       if($('#numerofactura').val() === '' || $('#proveedor').val() == null){
+            numerofactura = false;
+           $('#numerofactura').addClass('is-invalid');
+       } else {
+            numerofactura = true;
+           $('#numerofactura').removeClass('is-invalid');
+       }
+        
+       if($('#fechafacturado').val() === '' || $('#proveedor').val() == null){
+            fechafacturado = false;
+           $('#fechafacturado').addClass('is-invalid');
+       } else {
+            fechafacturado = true;
+           $('#fechafacturado').removeClass('is-invalid');
+       }
+        
+       if($('#fechapago').val() === '' || $('#proveedor').val() == null){
+            fechapago = false;
+           $('#fechapago').addClass('is-invalid');
+       } else {
+            fechapago = true;
+           $('#fechapago').removeClass('is-invalid');
+       }
+        
+       if($('#totalcompra').val() === '' || $('#proveedor').val() == null){
+            totalcompra = false;
+           $('#totalcompra').addClass('is-invalid');
+       } else {
+            totalcompra = true;
+           $('#totalcompra').removeClass('is-invalid');
+       }
+
+       if($('input:radio[name=estado]:checked').val() === undefined){
+        containercondicipago = false;
+        $('#containercondicipago').addClass('border border-danger');
+        } else {
+            containercondicipago = true;
+            $('#containercondicipago').removeClass('border border-danger');
+        }
+
+        if( proveedor 
+            && tipofactura 
+            && numerofactura 
+            && fechafacturado 
+            && fechapago 
+            && containercondicipago 
+            && totalcompra
+            && formapago
+            && numerocheque
+            ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 
 function validateInput(){

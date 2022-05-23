@@ -110,6 +110,8 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::post('/guardar_deudas',[DeudasController::class, 'guardar']);
     Route::get('/editar_deudas/{id}',[DeudasController::class, 'editar']);
     Route::put('/actualizar_deudas',[DeudasController::class, 'actualizar']);
+    Route::get('/addModdate/{date}',[DeudasController::class, 'addModdate']);
+    Route::get('/dateNow',[DeudasController::class, 'dateNow']);
     // para ver las notificaciones
 
 

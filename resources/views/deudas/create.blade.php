@@ -21,48 +21,37 @@
                 </div>
                 <div class="card-body">
 
-                        <div class="row mb-3">
-
-                            @include('deudas.partials.datofactura')
-
-                            <div class="col-5 border border-dark">
-                                @include('deudas.partials.preciosfactura')
-                            </div>
+                        <div class="row mb-3 d-flex justify-content-center">
+                            @include('deudas.partials.datofactura')                   
 
                         </div>
+                        <form id="frmcuentas" class="row g-3 mt-1">
+                            
                         <div class="row mb-3">
-                            <div class="col-12 text-center">
+                            <div class="col-6 d-flex justify-content-end">
                                 <button type="button" id="btnadd" class="btn btn-primary">Agregar</button>
                             </div>
+                            <div class="col-6 d-flex justify-content-end">
+                                <button type="submit"  class="btn btn-primary">Guardar cuentas</button>
+                            </div>
                         </div>
-                    <form id="frmcuentas" class="row g-3 mt-1">
                         <div class="row table-responsive mb-3">
-                            <table id="rowstable" class="table table-hover table-striped table-bordered">
-                                <thead>
-                                    <th class="text-uppercase">Fecha Factura</th>
-                                    <th class="text-uppercase">N° Factura</th>
-                                    <th class="text-uppercase">Documento</th>
-                                    <th class="text-uppercase">total compra</th>
-                                    <th class="text-uppercase">nota de credito</th>
-                                    <th class="text-uppercase">n° nota de credito</th>
-                                    <th class="text-uppercase">fecha pago/abono</th>
-                                    <th class="text-uppercase">forma de pago</th>
-                                    <th class="text-uppercase">n° recibo</th>
-                                    <th class="text-uppercase">n° cheque/remesa</th>
-                                    <th class="text-uppercase">abono</th>
-                                    <th class="text-uppercase">saldo pte.</th>
-                                    <th class="text-uppercase">cancelado</th>
-                                    <th class="text-uppercase">estado</th>
+                            <table id="rowstable" class="table table-hover table-striped table-bordered styletabletable ">
+                                <thead class="">                                 
+                                        <th class="text-uppercase text-center bg-deudauno">Fecha Factura</th>
+                                        <th class="text-uppercase text-center bg-deudauno"># Factura</th>
+                                        <th class="text-uppercase text-center bg-deudauno">Tipo Documento</th>
+                                        <th class="text-uppercase text-center bg-deudauno">Compra Total</th>                     
+                                        <th class="text-uppercase text-center bg-deudacinco">Fecha de pago</th>
+                                        <th class="text-uppercase text-center bg-deudacinco">Pago aplicado</th>
+                                         <th class="text-uppercase text-center bg-deudacinco">Forma de pago</th>
+                                        <th class="text-uppercase text-center bg-deudacinco">deuda</th>                    
                                 </thead>
                                 <tbody></tbody>
                             </table>
                         </div>
 
-                        <div class="row mb-3">
-                            <div class="col-12 text-center">
-                                <button type="submit"  class="btn btn-primary">Guardar cuentas</button>
-                            </div>
-                        </div>
+         
                     </form>
 
                 </div>

@@ -1,10 +1,12 @@
 @extends('layouts.dashboard')
 
 @section('css')
-
+    <link rel="stylesheet" href="{{ asset('css/select2/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/select2/select2-bootstrap-5-theme.min.css') }}">
 @endsection
 @section('js')
     <script src="{{ asset('js/moment.min.js') }}"></script>
+    <script src="{{ asset('js/select2/select2.min.js') }}"></script>
     <script src="{{ asset('js/jquery.inputmask.js') }}"></script>
     <script src="{{ asset('js/pages/deudas.js') }}"></script>
 @endsection
@@ -19,7 +21,7 @@
                     Filtros de búsqueda
                 </div>
                 <div class="card-body">
-                    @include('deudas.partials.frmSearch')
+        
                 </div>
             </div>
         </div>
@@ -28,7 +30,7 @@
             <div class="card mb-4 border-primary">
                 <div class="card-header bg-primary text-white d-flex justify-content-between">
                     <div class="">Deudas </div>
-                    <a class="btn btn-light" href="{{ url('ingresardeudas') }}">Ingresar deudas</a>
+                    <a class="btn btn-light"  data-bs-toggle="modal" data-bs-target="#exampleModal">Ingresar deudas</a>
 
                 </div>
                 <div class="card-body">

@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Carbon\Carbon;
 use App\Models\Deudas;
-use App\Models\DetalleDeudas;
 use App\Models\Clientes;
+use App\Models\Documentos;
+use App\Models\FormasPagos;
+use Illuminate\Http\Request;
+use App\Models\DetalleDeudas;
+use App\Models\CondicionesPagos;
 use Illuminate\Support\Facades\DB;
 
 class DeudasController extends Controller
@@ -54,19 +58,16 @@ class DeudasController extends Controller
             )
             ->orderBy('d.fecha_factura', 'DESC')
             ->paginate(10);
-        $formapago = [
-            "CHEQUE", "REMESA", "EFECTIVO", "DEPOSITO"
-        ];
-        return view('deudas.index', compact('data', 'formapago'));
+            
+
+        $formapago      = FormasPagos::all();
+        $tipofactura    = Documentos::all();
+        $condicion      = CondicionesPagos::all();
+        return view('deudas.index', compact('data', 'formapago', 'tipofactura', 'condicion'));
     }
 
     public function create(){
-        $tipofactura  = [
-            "CFF", "FACTURA", "TIKET", "IMPORTANCIÓN"
-        ];
-        $formapago = [
-            "CHEQUE", "REMESA", "EFECTIVO", "DEPOSITO"
-        ];
+
         return view('deudas.create', compact('tipofactura', 'formapago'));
     }
 
@@ -115,4 +116,14 @@ class DeudasController extends Controller
     }
 
     public function actualizar(Request $request){}
+
+    public function addModdate($date) {
+        $res = Carbon::parse($date)->addDays(30);
+        return response()->json(['dateforma' => $res->format('Y-m-d')], 200);
+    }
+
+    public function dateNow(){
+        $date = Carbon::now();
+        return response()->json(['dateforma' => $date->format('Y-m-d')], 200);
+    }
 }
