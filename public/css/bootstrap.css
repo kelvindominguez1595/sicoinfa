@@ -38,6 +38,11 @@
   --bs-light: #f8f9fa;
   --bs-dark: #212529;
   --bs-primary-rgb: 13, 110, 253;
+  --bs-uno-rgb: 189, 207, 149;
+  --bs-dos-rgb: 252, 213, 181;
+  --bs-tres-rgb: 204, 192, 216;
+  --bs-cuatro-rgb: 104, 255, 255;
+  --bs-cinco-rgb: 182, 221, 233;
   --bs-secondary-rgb: 108, 117, 125;
   --bs-success-rgb: 25, 135, 84;
   --bs-info-rgb: 13, 202, 240;
@@ -11317,4 +11322,33 @@ a .titletableorder {
     -moz-user-select: none;      /* Firefox */
     -ms-user-select: none;       /* Internet Explorer/Edge */
     user-select: none;           /* Non-prefixed version, currently supported by any browser but < IE9 */
+}
+
+.styletabletable>thead>tr>td {vertical-align: middle}
+
+
+/** COLOR TABLES DEUDAS */
+.bg-deudauno {
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-uno-rgb), var(--bs-bg-opacity)) !important;
+}
+.bg-deudados {
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-dos-rgb), var(--bs-bg-opacity)) !important;
+}
+.bg-deudatres {
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-tres-rgb), var(--bs-bg-opacity)) !important;
+}
+.bg-deudacuatro {
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-cuatro-rgb), var(--bs-bg-opacity)) !important;
+}
+.bg-deudacinco {
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-cinco-rgb), var(--bs-bg-opacity)) !important;
+}
+
+.bordertitledeudas thead td{
+    border: 1px solid;
 }
