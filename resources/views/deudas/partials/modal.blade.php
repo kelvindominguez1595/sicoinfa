@@ -8,10 +8,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="frmsavefactura">
-                @csrf
-                <input type="hidden" id="id" name="id">
+                @csrf            
                 <div class="modal-body">
+
                     <div class="row g-3">
+
                         <div class="col-12 col-sm-12 col-md-12 col-lg-12">
                             <label for="proveedor" class="form-label fw-bold text-uppercase">Proveedor</label>
                             <select class="form-control" id="proveedor" name="proveedor"></select>
@@ -82,7 +83,6 @@
 
 
                     </div>
-
         
                 </div>
                 <div class="modal-footer">

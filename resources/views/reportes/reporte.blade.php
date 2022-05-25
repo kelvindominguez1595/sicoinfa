@@ -19,7 +19,7 @@
                 </div>
                 <div class="card-body">
 
-                        <form method="get" action="{{ url('/porcentajereporte') }}" >
+                        <form method="get" action="{{ url('/porcentajereporte') }}" target="_blank" >
                             @csrf
 
                             <div id="row mb-2">

@@ -106,8 +106,10 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 
     /** RUTAS PARA DEUDAS */
     Route::get('/deudas', [DeudasController::class, 'index']);
+    Route::get('/listardeudas', [DeudasController::class, 'listardeudas']);
+    Route::get('/deudas_abonos/{id}', [DeudasController::class, 'deudas_abonos']);
     Route::get('/ingresardeudas', [DeudasController::class, 'create']);
-    Route::post('/guardar_deudas',[DeudasController::class, 'guardar']);
+    Route::post('/savefactura',[DeudasController::class, 'savefactura']);
     Route::get('/editar_deudas/{id}',[DeudasController::class, 'editar']);
     Route::put('/actualizar_deudas',[DeudasController::class, 'actualizar']);
     Route::get('/addModdate/{date}',[DeudasController::class, 'addModdate']);

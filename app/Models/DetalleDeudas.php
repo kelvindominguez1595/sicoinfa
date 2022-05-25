@@ -12,7 +12,7 @@ class DetalleDeudas extends Model
     protected $fillable = [
         'deudas_id',
         'total_compra',
-        'forma_pago',
+        'formapago_id',
         'fecha_abonopago',
         'num_documento',
         'num_recibo',
