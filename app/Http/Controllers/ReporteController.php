@@ -192,13 +192,13 @@ class ReporteController extends Controller
         $code = generarCodigo(4);
         $time = date('h.i.s A');
 
-//        return view('reportes.template.reportePDF',
-//            compact('data', 'date', 'campvisibility', 'tipo_de_reporte', 'time', 'code'));
-        $pdf = PDF::loadView('reportes.template.reportePDF',
-            compact('data', 'date', 'campvisibility', 'tipo_de_reporte', 'time', 'code'))
-            ->setPaper('legal', 'landscape');
+       return view('reportes.template.reportePDF',
+           compact('data', 'date', 'campvisibility', 'tipo_de_reporte', 'time', 'code'));
+      //  $pdf = PDF::loadView('reportes.template.reportePDF',
+            // compact('data', 'date', 'campvisibility', 'tipo_de_reporte', 'time', 'code'))
+            // ->setPaper('legal', 'landscape');
        // set_time_limit(300);
-        return $pdf->download( $tipo_de_reporte.' - '.$code.' - '.$date.' '.$time.'.pdf');
+     //   return $pdf->download( $tipo_de_reporte.' - '.$code.' - '.$date.' '.$time.'.pdf');
     }
 
     public function reporteDET(Request $request){
