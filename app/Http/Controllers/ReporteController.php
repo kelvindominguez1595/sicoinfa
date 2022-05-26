@@ -199,9 +199,10 @@ class ReporteController extends Controller
        $pdf = PDF::loadView('reportes.template.reportePDF',
             compact('data', 'date', 'campvisibility', 'tipo_de_reporte', 'time', 'code'))
             ->setPaper('legal', 'landscape');
-            return $pdf->stream();
+            ini_set('max_execution_time', 180);
        // set_time_limit(300);
-     //   return $pdf->download( $tipo_de_reporte.' - '.$code.' - '.$date.' '.$time.'.pdf');
+        return $pdf->download( $tipo_de_reporte.' - '.$code.' - '.$date.' '.$time.'.pdf');
+
     }
 
     public function reporteDET(Request $request){
