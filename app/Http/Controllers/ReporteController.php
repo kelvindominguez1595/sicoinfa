@@ -194,11 +194,12 @@ class ReporteController extends Controller
 
     //    return view('reportes.template.reportePDF',
     //        compact('data', 'date', 'campvisibility', 'tipo_de_reporte', 'time', 'code'));
-    $pdf = PDF::loadHTML('<h1>Test</h1>');
-    return $pdf->stream();
-      //  $pdf = PDF::loadView('reportes.template.reportePDF',
-            // compact('data', 'date', 'campvisibility', 'tipo_de_reporte', 'time', 'code'))
-            // ->setPaper('legal', 'landscape');
+   // $pdf = PDF::loadHTML('<h1>Test</h1>');
+
+       $pdf = PDF::loadView('reportes.template.reportePDF',
+            compact('data', 'date', 'campvisibility', 'tipo_de_reporte', 'time', 'code'))
+            ->setPaper('legal', 'landscape');
+            return $pdf->stream();
        // set_time_limit(300);
      //   return $pdf->download( $tipo_de_reporte.' - '.$code.' - '.$date.' '.$time.'.pdf');
     }
