@@ -196,11 +196,11 @@ class ReporteController extends Controller
     //        compact('data', 'date', 'campvisibility', 'tipo_de_reporte', 'time', 'code'));
    // $pdf = PDF::loadHTML('<h1>Test</h1>');
 
-   ini_set("memory_limit", "128M");
+   ini_set("memory_limit", "512M");
+   set_time_limit(300);
        $pdf = PDF::loadView('reportes.template.reportePDF',
             compact('data', 'date', 'campvisibility', 'tipo_de_reporte', 'time', 'code'))
             ->setPaper('legal', 'landscape');
-            // set_time_limit(300);
             return $pdf->download( $tipo_de_reporte.' - '.$code.' - '.$date.' '.$time.'.pdf');
 
     }
