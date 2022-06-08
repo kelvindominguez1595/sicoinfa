@@ -57,8 +57,7 @@
                                     <input class="form-check-input" type="radio" name="estado" id="pagado{{ $item->id }}" value="{{ $item->id }}" @if($item->name == 'CRÉDITO') checked @endif>
                                     <label class="form-check-label" for="pagado{{ $item->id }}">{{ $item->name }}</label>
                                 </div>                                
-                            @endforeach
-                      
+                            @endforeach                      
                         </div>
 
                         <div class="d-none row mt-2" id="contenedorformapago">

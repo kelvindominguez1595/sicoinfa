@@ -12,26 +12,27 @@
 @endsection
 
 @section('content')
+    @include('deudas.modals.abonos')
+    @include('deudas.modals.nota')
+    @include('deudas.modals.nuevo')
+    @include('deudas.modals.pagos')
     <div class="row mb-2">
-        @include('deudas.partials.modal')
-        {{-- columna 1  --}}
-        <div class="col-xs-12 co-sm-12 col-md-3 col-lg-3 col-xl-3">
-            <div class="card mb-4 border-primary">
-                <div class="card-header bg-primary text-white">
-                    Filtros de búsqueda
-                </div>
-                <div class="card-body">
-        
-                </div>
-            </div>
+        <div class="col-12">
+            <div class="btn-group" role="group" aria-label="Basic outlined example">
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#nuevo">NUEVO</button>
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#notacredito">NOTA DE CRÉDITO</button>
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#pagos">PAGOS</button>
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#abonos">ABONOS</button>
+              </div>    
         </div>
-        {{-- columna 2 --}}
-        <div class="col-xs-12 co-sm-12 col-md-9 col-lg-9 col-xl-9">
+    </div>
+    <div class="row mb-2">
+       
+        {{-- columna 1 --}}
+        <div class="col-xs-12 co-sm-12 col-md-12 col-lg-12 col-xl-12">
             <div class="card mb-4 border-primary">
                 <div class="card-header bg-primary text-white d-flex justify-content-between">
-                    <div class="">Deudas </div>
-                    <a class="btn btn-light"  data-bs-toggle="modal" data-bs-target="#exampleModal">Ingresar deudas</a>
-
+                   Deudas
                 </div>
                 <div class="card-body">
                     <div class="table-responsive" id="tbcontentdata"></div>
