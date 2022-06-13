@@ -1,19 +1,19 @@
 <table class="table table-striped " id="tbdata">
 
     <thead style="border: 2px solid;">
-        <th style="text-align: center;">Código</th>
-        <th style="text-align: center;">C. de Barra</th>
-        <th style="text-align: center;">Categoría</th>
-        <th style="text-align: center;">Marca</th>
-        <th style="text-align: center;">Nombre</th>
-        <th style="text-align: center;">Cantidad</th>
-        <th style="text-align: center;">Costo</th>
-        <th style="text-align: center;">Total de Compra</th>
-        <th style="text-align: center;">P. Venta</th>
-        <th style="text-align: center;">Venta Total</th>
-        <th style="text-align: center;">% Diferencia</th>
-        <th style="text-align: center;">Diferencia Unitaria</th>
-        <th style="text-align: center;">Utilidad Total</th>
+        <th style="">Código</th>
+        <th style="">C. de Barra</th>
+        <th style="">Categoría</th>
+        <th style="">Marca</th>
+        <th style="">Nombre</th>
+        <th style="">Cantidad</th>
+        <th style="">Costo</th>
+        <th style="">Total de Compra</th>
+        <th style="">P. Venta</th>
+        <th style="">Venta Total</th>
+        <th style="">% Diferencia</th>
+        <th style="">Diferencia Unitaria</th>
+        <th style="">Utilidad Total</th>
     </thead>
 
     <tbody>
@@ -22,13 +22,13 @@
         @endphp
         @foreach ($data as $item)
             <tr>
-                <td style="text-align: center;">{{ $item->code }}</td>
-                <td style="text-align: center;">{{ $item->barcode }}</td>
-                <td style="text-align: center;">{{ $item->category_name }}</td>
-                <td style="text-align: center;">{{ $item->marca_name }}</td>
-                <td style="text-align: center;">{{ $item->name }}</td>
+                <td style="">{{ $item->code }}</td>
+                <td style="">{{ $item->barcode }}</td>
+                <td style="">{{ $item->category_name }}</td>
+                <td style="">{{ $item->marca_name }}</td>
+                <td style="">{{ $item->name }}</td>
 
-                <td style="text-align: center;">
+                <td style="">
                     @isset($item->cantidadnew)
                         {{ $item->cantidadnew }}
                     @else
@@ -36,7 +36,7 @@
                     @endisset
                 </td>
 
-                <td style="text-align: center;">
+                <td style="">
                     @php
                     if(isset($item->cost_s_iva)){
                         $costoReal = $item->cost_s_iva;
@@ -48,7 +48,7 @@
                     ${{number_format($costoReal,2)}}
                 </td>
 
-                <td style="text-align: center;">
+                <td style="">
                     @php
                         if(isset($item->cost_s_iva)){
                             $costo = $item->cost_s_iva;
@@ -61,7 +61,7 @@
                      ${{number_format($totalCompra,2)}}
                 </td>
 
-                <td style="text-align: center;">
+                <td style="">
                     @php
                     if(isset($item->precioventa)){
                         $preVenta = $item->precioventa;
@@ -73,7 +73,7 @@
                     ${{number_format($preVenta,2)}}
                 </td>
 
-                <td style="text-align: center;">
+                <td style="">
                     @php
                     if(isset($item->precioventa)){
                         $precioventa = $item->precioventa;
@@ -86,7 +86,7 @@
                     ${{number_format($ventatotal,2)}}
                 </td>
 
-                <td style="text-align: center;">
+                <td style="">
                     @php
                         if(isset($item->cost_s_iva)){
                             $costoper = $item->cost_s_iva;
@@ -122,7 +122,7 @@
                     {{number_format(abs($diferencia),2)}}%
                 </td>
 
-                <td style="text-align: center;">
+                <td style="">
                     @php
                     if(isset($item->cost_s_iva)){
                         $costoUni = $item->cost_s_iva;
@@ -140,7 +140,7 @@
                     ${{number_format(abs($diferenciauni),2)}}
                 </td>
 
-                <td style="text-align: center;">
+                <td style="">
                     @php
                         $utilidad = $ventatotal - $totalCompra;
                         $totalutilidad += $utilidad;
@@ -160,13 +160,13 @@
             <td></td>
             <td></td>
             <td></td>
-            <td style="text-align: center;">${{ number_format($totalcosto, 2) }}</td>
-            <td style="text-align: center;">${{ number_format($totalGlobalCompra, 2) }}</td>
-            <td style="text-align: center;">${{ number_format($totalprecioventa, 2) }}</td>
-            <td style="text-align: center;">${{ number_format($totalventatotal, 2) }}</td>
+            <td style="">${{ number_format($totalcosto, 2) }}</td>
+            <td style="">${{ number_format($totalGlobalCompra, 2) }}</td>
+            <td style="">${{ number_format($totalprecioventa, 2) }}</td>
+            <td style="">${{ number_format($totalventatotal, 2) }}</td>
             <td></td>
-            <td style="text-align: center;">${{ number_format($totaldiferencia, 2) }}</td>
-            <td style="text-align: center;">${{ number_format($totalutilidad, 2) }}</td>
+            <td style="">${{ number_format($totaldiferencia, 2) }}</td>
+            <td style="">${{ number_format($totalutilidad, 2) }}</td>
         </tr>
 
     </tfoot>

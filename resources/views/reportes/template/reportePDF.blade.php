@@ -12,7 +12,7 @@
         table.table2 {
             border: 1px solid #1C6EA4;
             width: 100%;
-            /*text-align: center;*/
+            /**/
             border-collapse: collapse;
         }
 
@@ -90,7 +90,7 @@
                    <img src="{{ public_path('images/logoFerreteria.jpg') }}" width="60px" height="50px">
                 </td>
 
-                <td style=" width: 50%; text-align: center;">
+                <td style=" width: 50%; ">
                     <strong>ARCO IRIS</strong>
                     <br>
                     FABRICACIÓN DE PRODUCTOS DE CEMENTO Y FERRETERIA
@@ -305,13 +305,13 @@
 {{--                    <td></td>--}}
 {{--                    <td></td>--}}
 {{--                    <td></td>--}}
-{{--                    <td style="text-align: center;">${{ number_format($totalcosto, 2) }}</td>--}}
-{{--                    <td style="text-align: center;">${{ number_format($totalGlobalCompra, 2) }}</td>--}}
-{{--                    <td style="text-align: center;">${{ number_format($totalprecioventa, 2) }}</td>--}}
-{{--                    <td style="text-align: center;">${{ number_format($totalventatotal, 2) }}</td>--}}
+{{--                    <td style="">${{ number_format($totalcosto, 2) }}</td>--}}
+{{--                    <td style="">${{ number_format($totalGlobalCompra, 2) }}</td>--}}
+{{--                    <td style="">${{ number_format($totalprecioventa, 2) }}</td>--}}
+{{--                    <td style="">${{ number_format($totalventatotal, 2) }}</td>--}}
 {{--                    <td></td>--}}
-{{--                    <td style="text-align: center;">${{ number_format($totaldiferencia, 2) }}</td>--}}
-{{--                    <td style="text-align: center;">${{ number_format($totalutilidad, 2) }}</td>--}}
+{{--                    <td style="">${{ number_format($totaldiferencia, 2) }}</td>--}}
+{{--                    <td style="">${{ number_format($totalutilidad, 2) }}</td>--}}
 {{--                </tr>--}}
 {{--            </tfoot>--}}
         </table>
