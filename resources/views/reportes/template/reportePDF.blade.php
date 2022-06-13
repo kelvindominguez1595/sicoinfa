@@ -10,12 +10,14 @@
         @font-face {
             font-family: Arial, Helvetica, sans-serif;
             font-style: normal;
-            font-weight: 300;
+
             src: local('fonts/arial.ttf')
         }
 
         body {
             font-family: Arial, Helvetica, sans-serif;
+
+            letter-spacing: 1px;
         }
         /** Defina ahora los márgenes reales de cada página en el PDF **/
         table.table2 {
