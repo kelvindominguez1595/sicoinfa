@@ -125,7 +125,7 @@
         <table class="table2">
             <thead style="border: 2px solid;">
             @foreach($campvisibility as $item)
-                <th style="text-align: center;">{{$item}}</th>
+                <th style="">{{$item}}</th>
             @endforeach
             </thead>
 
@@ -146,36 +146,36 @@
 
                     <tr>
                         @if (showFields('CODIGO', $campvisibility))
-                            <td style="text-align: center;">{{ $item->code }}</td>
+                            <td style="">{{ $item->code }}</td>
                         @endif
 
                         @if (showFields('FECHA', $campvisibility))
-                                <td style="text-align: center;">{{  date('d-m-Y', strtotime($item->created_at))  }}</td>
+                                <td style="">{{  date('d-m-Y', strtotime($item->created_at))  }}</td>
                         @endif
 
                         @if (showFields('CODIGO DE BARRA', $campvisibility))
-                                <td style="text-align: center;">{{ $item->barcode }}</td>
+                                <td style="">{{ $item->barcode }}</td>
                         @endif
 
                         @if (showFields('CATEGORIA', $campvisibility))
-                                <td style="text-align: center;">{{ $item->category_name }}</td>
+                                <td style="">{{ $item->category_name }}</td>
                         @endif
 
                         @if (showFields('MARCA', $campvisibility))
-                                <td style="text-align: center;">{{ $item->marca_name }}</td>
+                                <td style="">{{ $item->marca_name }}</td>
                         @endif
 
                         @if (showFields('NOMBRE', $campvisibility))
-                                <td style="text-align: center;">{{ $item->name }}</td>
+                                <td style="">{{ $item->name }}</td>
                         @endif
 
                         @if (showFields('UNIDAD DE MEDIDA', $campvisibility))
-                                <td style="text-align: center;">{{ $item->medida_name }}</td>
+                                <td style="">{{ $item->medida_name }}</td>
                         @endif
 
                         @if (showFields('CANTIDAD', $campvisibility))
                             @php $cantidad = $item->cantidadnew ?? 0; @endphp
-                                <td style="text-align: center;"> {{ $cantidad }} </td>
+                                <td style=""> {{ $cantidad }} </td>
                         @endif
 
                         @if (showFields('COSTO S/IVA', $campvisibility))
@@ -183,7 +183,7 @@
                                     $costoReal = $item->cost_s_iva ?? $item->costosiniva;
                                     $total_costo += $costoReal;
                                 @endphp
-                                <td style="text-align: center;"> {{ number_format($costoReal,2) }} </td>
+                                <td style=""> {{ number_format($costoReal,2) }} </td>
                         @endif
 
                         @if (showFields('COSTO C/IVA', $campvisibility))
@@ -191,7 +191,7 @@
                                     $costoReal = $item->cost_c_iva ?? $item->costoconiva;
                                     $total_costo_coniva += $costoReal;
                                 @endphp
-                                <td style="text-align: center;"> {{ number_format($costoReal,2) }} </td>
+                                <td style=""> {{ number_format($costoReal,2) }} </td>
                         @endif
 
                         @if (showFields('TOTAL COMPRA S/IVA', $campvisibility))
@@ -200,7 +200,7 @@
                                     $totalCompra =  $item->cantidadnew * $costo;
                                     $totalGlobalCompra += $totalCompra;
                                 @endphp
-                                <td style="text-align: center;"> {{ number_format($totalCompra,2) }} </td>
+                                <td style=""> {{ number_format($totalCompra,2) }} </td>
                         @endif
 
                         @if (showFields('TOTAL COMPRA C/IVA', $campvisibility))
@@ -209,7 +209,7 @@
                                     $totalCompra =  $item->cantidadnew * $costo;
                                     $totalGlobalCompraConIVA += $totalCompra;
                                 @endphp
-                                <td style="text-align: center;"> {{ number_format($totalCompra,2) }} </td>
+                                <td style=""> {{ number_format($totalCompra,2) }} </td>
                         @endif
 
                         @if (showFields('PRECIO DE VENTA', $campvisibility))
@@ -217,7 +217,7 @@
                                     $preVenta = $item->precioventa ?? $item->sale_price;
                                     $totalprecioventa += $preVenta;
                                 @endphp
-                                <td style="text-align: center;"> {{ number_format($preVenta,2) }} </td>
+                                <td style=""> {{ number_format($preVenta,2) }} </td>
                         @endif
 
                         @if (showFields('VENTA TOTAL', $campvisibility))
@@ -226,7 +226,7 @@
                                     $ventatotal =  $item->cantidadnew * $precioventa;
                                     $totalventatotal += $ventatotal;
                                 @endphp
-                                <td style="text-align: center;"> {{ number_format($ventatotal,2) }} </td>
+                                <td style=""> {{ number_format($ventatotal,2) }} </td>
                         @endif
 
                         @if (showFields('PORCENTAJE %', $campvisibility))
@@ -242,7 +242,7 @@
                                         $diferencia =  ((($precioventapervali / $costoperval) - 1) *100);
                                     }
                                 @endphp
-                                <td style="text-align: center;"> {{ number_format(abs($diferencia),2) }} </td>
+                                <td style=""> {{ number_format(abs($diferencia),2) }} </td>
                         @endif
 
                             @if (showFields('DIFERENCIA UNITARIA', $campvisibility))
@@ -252,7 +252,7 @@
                                     $diferenciauni = $ventaUni - $costoUni;
                                     $totaldiferencia += $diferenciauni;
                                 @endphp
-                                <td style="text-align: center;"> {{  number_format(abs($diferenciauni),2) }} </td>
+                                <td style=""> {{  number_format(abs($diferenciauni),2) }} </td>
                         @endif
 
                             @if (showFields('TOTAL EXISTENCIA S/IVA', $campvisibility))
@@ -261,7 +261,7 @@
                                     $cantidad = $item->cantidadnew ?? 0;
                                     $exissiniva =  $cantidad * $costoSinIVA;
                                 @endphp
-                                <td style="text-align: center;"> {{  number_format(abs($exissiniva),2) }} </td>
+                                <td style=""> {{  number_format(abs($exissiniva),2) }} </td>
                         @endif
 
                             @if (showFields('TOTAL EXISTENCIA C/IVA', $campvisibility))
@@ -270,7 +270,7 @@
                                       $cantidad = $item->cantidadnew ?? 0;
                                       $existConiva =  $cantidad * $costoConiva;
                                 @endphp
-                                <td style="text-align: center;"> {{  number_format(abs($existConiva),2) }} </td>
+                                <td style=""> {{  number_format(abs($existConiva),2) }} </td>
                         @endif
 
                             @if (showFields('TOTAL COSTOS', $campvisibility))
@@ -279,7 +279,7 @@
                                     $result =  $item->cantidadnew * $costo;
                                     $total_costo_total += $result;
                                 @endphp
-                                <td style="text-align: center;"> {{  number_format(abs($total_costo_total),2) }} </td>
+                                <td style=""> {{  number_format(abs($total_costo_total),2) }} </td>
                         @endif
 
                             @if (showFields('UTILIDAD TOTAL', $campvisibility))
@@ -291,7 +291,7 @@
                                     $utilidad = $ventatotal - $totalCompra;
                                     $totalutilidad += $utilidad;
                                 @endphp
-                                <td style="text-align: center;"> {{  number_format(abs($utilidad),2) }} </td>
+                                <td style=""> {{  number_format(abs($utilidad),2) }} </td>
                         @endif
 
                     </tr>
