@@ -14,7 +14,7 @@ class Deudas extends Model
     protected $table = 'deudas';
     
     protected $fillable = [
-        'proveedor_id', 'fecha_factura', 'numero_factura', 'tipodocumento_id', 'estado'
+        'proveedor_id', 'numero_factura', 'documento_id', 'condicionespago_id', 'fecha_factura', 'fecha_pago', 'total_compra'
     ];
 
     protected $dates = ['deleted_at'];

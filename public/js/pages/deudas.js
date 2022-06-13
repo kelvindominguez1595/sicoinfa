@@ -7,8 +7,10 @@ $(function () {
     
     listdata();
 
-    $('#proveedor').select2({
+    // buscar proveedores 
+    $('#proveedor_id').select2({
         theme: "bootstrap-5",
+        dropdownParent: $('#nuevoModal'),
         placeholder: 'Seleccione...',
         allowClear: true,
         ajax: {
@@ -24,36 +26,91 @@ $(function () {
             cache: true
         }
     });
+    // buscar factura 
+    $('#deudas_id').select2({
+        theme: "bootstrap-5",
+        dropdownParent: $('#notacreditoModal'),
+        placeholder: 'Seleccione...',
+        allowClear: true,
+        ajax: {
+            url: '/searchfactura',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    term: params.term || '',
+                    page: params.page || 1
+                }
+            },
+            cache: true
+        }
+    });
+    // buscar factuara en modal pagos
+    $('#deudas_idpago').select2({
+        theme: "bootstrap-5",
+        dropdownParent: $('#pagosModal'),
+        placeholder: 'Seleccione...',
+        allowClear: true,
+        ajax: {
+            url: '/searchfactura',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    term: params.term || '',
+                    page: params.page || 1
+                }
+            },
+            cache: true
+        }
+    });
+    // buscar numero factura abonos
+    $('#deudas_idabonos').select2({
+        theme: "bootstrap-5",
+        dropdownParent: $('#abonosModal'),
+        placeholder: 'Seleccione...',
+        allowClear: true,
+        ajax: {
+            url: '/searchfactura',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    term: params.term || '',
+                    page: params.page || 1
+                }
+            },
+            cache: true
+        }
+    });
 
-    $("#fechafacturado").change(function(){
+    // para obtener el onchagen 
+    $("#deudas_idpago").change(function() {
+        $.get('/deudashow/'+$(this).val(), function(res) {
+            $('#totalfactura').val(res.total_compra)
+            $('#totalpagoshow').val(res.total_compra)
+            $('#fechafacturado_pago').val(res.fecha_factura)
+            $('#fechapago_pago').val(res.fecha_pago)
+        })
+    })
+
+    $("#fecha_factura").change(function(){
         let val = $(this).val();
-        let fechapago = $("#fechapago");
-
+        let fechapago = $("#fecha_pago");
         $.get("/addModdate/"+val, function(res){
             console.log(res.dateforma);
             fechapago.val(res.dateforma);
         });
     });
 
-    $('input[type=radio][name=estado]').change(function(){
-        let val = $(this).val();
-        let conte = $('#contenedorformapago');
-        if(val == 2) {
-            conte.removeClass('d-none');
-        } else {
-            conte.addClass('d-none');
-        }
-    })
-
-    // voy a controlar el tipo de pago
-    $('input[type=radio][name=formapago]').change(function() {
+     // voy a controlar el tipo de pago
+    $('input[type=radio][name=formapago_idpago]').change(function() {
         if ($(this).val() == 3) {
-            $('#numerocheque').prop('readonly', true);
+            $('#numerochequepago').prop('readonly', true);
         } else {
-            $('#numerocheque').prop('readonly', false);
+            $('#numerochequepago').prop('readonly', false);
         }
     });
-
 
     // para modal registrar proveedor
     $("#btnaddproveedor").click(function () {
@@ -94,136 +151,106 @@ $(function () {
         })
         event.preventDefault();
     });
-    // para mostrar el total de la compra en el otro input
-    $("#tocomp").keyup(function (){
-        $("#totalcompraadd").val($(this).val());
-        if($('input:radio[name=estadoadd]:checked').val() == 'PAGADO'){
-            $("#pagototaladd").val($(this).val());
-            $("#abonoadd").val('0');
-            $("#saldopendienteadd").val('0');
-            $("#notacreditoadd").val('0');
-            $("#valornotacreditoadd").val('0');
-        }
-    });
-    // para hacer la resta del pago de total de la compra
-    $("#abonoadd").keyup(function (){
-      let totalcompra =  $("#totalcompraadd").val();
-      let pagototal =  $("#pagototaladd");
-      let saldopendienteadd =  $("#saldopendienteadd");
-      let abono = $(this).val();
 
-      if(Number(abono) <= Number(totalcompra)){
-        let cal =  Number(totalcompra) - Number(abono);
-        pagototal.val('0');
-        saldopendienteadd.val(cal);
-      }else{
-          console.log("se paso el valor del abono "+abono +" al total de la compra "+totalcompra)
-      }
-    });
-    // para quitar el readonly
-    $("#aplicarcredito").change(function (){
-
-        if($(this).prop('checked')){
-            $('#notacreditoadd').prop('readonly', false);
-            $('#valornotacreditoadd').prop('readonly', false);
-
-        } else {
-            $('#notacreditoadd').prop('readonly', true);
-            $('#valornotacreditoadd').prop('readonly', true);
-        }
-    })
-
-    // para agregar las filar a la tabla
-    $("#btnadd").click(function (e){
-        e.preventDefault();
-        if(validateInput()){
-            /** DATOS DE FACTURA */
-            let proveedoradd        = $('#proveedoradd').val();
-            let numfacturaadd       = $('#numfacturaadd').val();
-            let tipofacturadd       = $('input:radio[name=tipofacturadd]:checked').val();
-            let fechafacturaadd     = $('#fechafacturacionadd').val();
-            let fechaabonoadd       = $('#fechapagoadd').val();
-            let tocomp              = $('#tocomp').val();
-            let estadoadd           = $('input:radio[name=estadoadd]:checked').val();
-            let formapagoadd        = $('input:radio[name=formapagoadd]:checked').val();
-            let numchequeremesa     = $('#numchequeremesa').val();
-            /** DATOS DE PRECIO */
-
-
-            let proveedor = $('select[name="proveedoradd"] option:selected').text();
-
-            let rowTable = $('#rowstable');
-
-            let fechafacformated = moment(fechafacturaadd).format('L');
-            let fechafacpago = moment(fechaabonoadd).format('L');
-
-            let html = "<tr>";
-            html += "<td class='text-center'>";
-                html += fechafacformated;
-                html += "<input type='hidden' name='proveedor_id[]' value='"+proveedoradd+"'>";
-                html += "<input type='hidden' name='fecha_factura[]' value='"+fechafacturaadd+"'>";
-                html += "<input type='hidden' name='numero_factura[]' value='"+numfacturaadd+"'>";
-                html += "<input type='hidden' name='tipo_factura[]' value='"+tipofacturadd+"'>";
-                html += "<input type='hidden' name='estado[]' value='"+estadoadd+"'>";
-
-                html += "<input type='hidden' name='total_compra[]' value='"+totalcompraadd+"'>";
-                html += "<input type='hidden' name='forma_pago[]' value='"+formapagoadd+"'>";
-                html += "<input type='hidden' name='fecha_abonopago[]' value='"+fechaabonoadd+"'>";
-
-                html += "<input type='hidden' name='num_documento[]' value='"+numchequeremesa+"'>";
-                html += "<input type='hidden' name='num_recibo[]' value='"+numreciboadd+"'>";
-
-                html += "<input type='hidden' name='abono[]' value='"+abonoadd+"'>";
-                html += "<input type='hidden' name='saldo[]' value='"+saldopendienteadd+"'>";
-                html += "<input type='hidden' name='nota_credito[]' value='"+notacreditoadd+"'>";
-                html += "<input type='hidden' name='valor_nota[]' value='"+valornotacreditoadd+"'>";
-                html += "<input type='hidden' name='pagototal[]' value='"+pagototaladd+"'>";
-            html += "</td>";
-            html += "<td class='text-center'>"+numfacturaadd+"</td>";
-            html += "<td class='text-center'>"+tipofacturadd+"</td>";
-            html += "<td class='text-center'>$"+totalcompraadd+"</td>";
-            html += "<td class='text-center'>$"+notacreditoadd+"</td>";
-            html += "<td class='text-center'>"+valornotacreditoadd+"</td>";
-            html += "<td class='text-center'>"+fechafacpago+"</td>";
-            html += "<td class='text-center'>"+formapagoadd+"</td>";
-            html += "<td class='text-center'>"+numreciboadd+"</td>";
-            html += "<td class='text-center'>"+numchequeremesa+"</td>";
-            html += "<td class='text-center'>$"+abonoadd+"</td>";
-            html += "<td class='text-center'>$"+saldopendienteadd+"</td>";
-            html += "<td class='text-center'>$"+pagototaladd+"</td>";
-            html += "<td class='text-center'>"+estadoadd+"</td>";
-            html += "</tr>";
-            rowTable.append(html);
-            // limpiamos los query
-            clearInpust();
-        }else{
-            AlertError("Los campos marcados en rojo son OBLIGATORIOS");
-        }
+    // crear deuda nueva
+    $("#frmnuevo").submit(function (event) {
+        var frm = $(this).serialize();
+        event.preventDefault();   
+            $.ajax({
+                url: '/nuevadeuda',
+                type: 'POST',
+                dataType: "JSON",
+                data: frm,
+                success: function (res) {
+                    console.log(res)
+                    AlerSuccess();
+                    // AlertConfirmacin(res.message);
+                    $("#frmnuevo").trigger("reset");
+                   // $("#nuevoModal").modal("hide");
+                },
+                error: function (err) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: '¡Error algo salio mal!'
+                    });
+                }
+            })       
     });
 
-    /** GUARDAR LAS FACTURAS */
-    $("#frmsavefactura").submit(function (e) {
-        e.preventDefault();
-        if(validateFrmSave()){
+    $("#frmNotacredito").submit(function (event) {
+        var frm = $(this).serialize();
+        event.preventDefault();   
+            $.ajax({
+                url: '/notacredito',
+                type: 'POST',
+                dataType: "JSON",
+                data: frm,
+                success: function (res) {
+                    console.log(res)
+                    AlerSuccess();
+                    // AlertConfirmacin(res.message);
+                    $("#frmNotacredito").trigger("reset");
+                   // $("#nuevoModal").modal("hide");
+                },
+                error: function (err) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: '¡Error algo salio mal!'
+                    });
+                }
+            })       
+    });
 
-                let frm = $(this).serialize();
-                $.ajax({
-                    url: '/savefactura',
-                    type: 'POST',
-                    dataType: 'JSON',
-                    data: frm,
-                    success: function (res) {                   
-                        $("#frmsavefactura").trigger("reset");
-                        AlertConfirmacin("Se ha guardado correctamente");
-                    },
-                    error: function (err){
-                        AlertError("No se pudo realizar esta acción");
-                    }
-                })
+    $("#frmpagos").submit(function (event) {
+        var frm = $(this).serialize();
+        event.preventDefault();   
+            $.ajax({
+                url: '/pagos',
+                type: 'POST',
+                dataType: "JSON",
+                data: frm,
+                success: function (res) {
+                    console.log(res)
+                    AlerSuccess();
+                    // AlertConfirmacin(res.message);
+                    $("#frmpagos").trigger("reset");
+                   // $("#nuevoModal").modal("hide");
+                },
+                error: function (err) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: '¡Error algo salio mal!'
+                    });
+                }
+            })       
+    });
 
-        } else {
-            AlertError("Todos los campos son obligatorios");
-        }
+    $("#frmAbonos").submit(function (event) {
+        var frm = $(this).serialize();
+        event.preventDefault();   
+            $.ajax({
+                url: '/abonos',
+                type: 'POST',
+                dataType: "JSON",
+                data: frm,
+                success: function (res) {
+                    console.log(res)
+                    AlerSuccess();
+                    // AlertConfirmacin(res.message);
+                    $("#frmAbonos").trigger("reset");
+                   // $("#nuevoModal").modal("hide");
+                },
+                error: function (err) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: '¡Error algo salio mal!'
+                    });
+                }
+            })       
     });
 
     });
@@ -527,7 +554,8 @@ $(function () {
     });
 
     function listdata(){
-        $.get("/listardeudas", function (res){
-            $("#tbcontentdata").html(res);
-        })
+        // $.get("/listardeudas", function (res){
+        //     $("#tbcontentdata").html(res);
+        // })
     }
+

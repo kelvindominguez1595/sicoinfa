@@ -106,14 +106,15 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 
     /** RUTAS PARA DEUDAS */
     Route::get('/deudas', [DeudasController::class, 'index']);
-    Route::get('/listardeudas', [DeudasController::class, 'listardeudas']);
-    Route::get('/deudas_abonos/{id}', [DeudasController::class, 'deudas_abonos']);
-    Route::get('/ingresardeudas', [DeudasController::class, 'create']);
-    Route::post('/savefactura',[DeudasController::class, 'savefactura']);
-    Route::get('/editar_deudas/{id}',[DeudasController::class, 'editar']);
-    Route::put('/actualizar_deudas',[DeudasController::class, 'actualizar']);
+    Route::post('/nuevadeuda', [DeudasController::class, 'nuevadeuda']);
+    Route::post('/notacredito', [DeudasController::class, 'notacredito']);
+    Route::post('/pagos', [DeudasController::class, 'pagos']);
+    Route::post('/abonos', [DeudasController::class, 'abonos']);
+
     Route::get('/addModdate/{date}',[DeudasController::class, 'addModdate']);
     Route::get('/dateNow',[DeudasController::class, 'dateNow']);
+    Route::get('/searchfactura',[DeudasController::class, 'searchfactura']);
+    Route::get('/deudashow/{id}',[DeudasController::class, 'deudashow']);
     // para ver las notificaciones
 
 

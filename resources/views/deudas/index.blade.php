@@ -19,10 +19,10 @@
     <div class="row mb-2">
         <div class="col-12">
             <div class="btn-group" role="group" aria-label="Basic outlined example">
-                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#nuevo">NUEVO</button>
-                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#notacredito">NOTA DE CRÉDITO</button>
-                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#pagos">PAGOS</button>
-                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#abonos">ABONOS</button>
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#nuevoModal">NUEVO</button>
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#notacreditoModal">NOTA DE CRÉDITO</button>
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#pagosModal">PAGOS</button>
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#abonosModal">ABONOS</button>
               </div>    
         </div>
     </div>
