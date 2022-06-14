@@ -176,6 +176,7 @@ $(function () {
                     AlerSuccess();
                     // AlertConfirmacin(res.message);
                     $("#frmnuevo").trigger("reset");
+                    listdata();
                    // $("#nuevoModal").modal("hide");
                 },
                 error: function (err) {
@@ -201,6 +202,7 @@ $(function () {
                     AlerSuccess();
                     // AlertConfirmacin(res.message);
                     $("#frmNotacredito").trigger("reset");
+                    listdata();
                    // $("#nuevoModal").modal("hide");
                 },
                 error: function (err) {
@@ -226,6 +228,7 @@ $(function () {
                     AlerSuccess();
                     // AlertConfirmacin(res.message);
                     $("#frmpagos").trigger("reset");
+                    listdata();
                    // $("#nuevoModal").modal("hide");
                 },
                 error: function (err) {
@@ -251,6 +254,7 @@ $(function () {
                     AlerSuccess();
                     // AlertConfirmacin(res.message);
                     $("#frmAbonos").trigger("reset");
+                    listdata();
                    // $("#nuevoModal").modal("hide");
                 },
                 error: function (err) {
