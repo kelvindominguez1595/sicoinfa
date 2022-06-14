@@ -39,14 +39,17 @@ class ProductosController extends Controller
             ->select(
                 DB::raw('MAX(id) as idprice'),
                 'producto_id',
-                DB::raw('MAX(created_at) as created_at'))
+                DB::raw('MAX(created_at) as created_at')
+                )
             ->groupBy('producto_id');
 
-        $cansum = DB::table('detalle_products')
+        
+            $cansum = DB::table('detalle_products')
             ->select('id as idsupro', 'branch_offices_id',
                 'stocks_id', DB::raw('SUM(quantity) as cantidadnew'))
             ->groupBy('stocks_id');
 
+    
         $codigo     = $request->codigo;
         $codbarra   = $request->codbarra;
         $categoria  = $request->categoria;
@@ -103,7 +106,7 @@ class ProductosController extends Controller
         !empty($marca) ||
         !empty($nombre) ||
         !empty($almacen) ||
-        !empty($orderby) ||
+        !empty($ordervali) ||
         !empty($estado) ){
           // si hay datos mostramos este filtrado
           $query = DB::table('stocks as sk')

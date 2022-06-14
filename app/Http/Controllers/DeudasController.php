@@ -9,12 +9,14 @@ use App\Models\Documentos;
 use App\Models\FormasPagos;
 use Illuminate\Http\Request;
 use App\Models\DeudasNotaCredito;
-use App\Models\DeudasPagoAbonos;
+use App\Models\DeudasPagos;
+use App\Models\DeudasAbonos;
 use App\Models\CondicionesPagos;
 use Illuminate\Support\Facades\DB;
 
 class DeudasController extends Controller
 {
+
     public function index(Request $request) {
         $formapago      = FormasPagos::all();
         $tipofactura    = Documentos::all();
@@ -35,20 +37,19 @@ class DeudasController extends Controller
 
     public function pagos(Request $request){
         $date = Carbon::now();
-        DeudasPagoAbonos::create([
+        DeudasPagos::create([
             'deudas_id' =>  $request->deudas_idpago,
             'total_pago' =>  $request->totalpagoshow == '' ? 0 : $request->totalpagoshow,
             'numero_recibo' => $request->numeropago,
             'formapago_id' =>  $request->formapago_idpago,
             'numero' => $request->numerochequepago,
             'condicionespago_id' => $request->condicionespago_id,
-            'fecha_abono' => '0000-00-00',
         ]);
         return response()->json(['message' => 'ok'], 200);
     }
 
     public function abonos(Request $request){
-        DeudasPagoAbonos::create([
+        DeudasAbonos::create([
             'deudas_id' =>  $request->deudas_idabonos,
             'total_pago' =>  $request->total_pagoabono == '' ? 0 : $request->total_pagoabono,
             'numero_recibo' => $request->numfactura,
@@ -94,7 +95,113 @@ class DeudasController extends Controller
     }
 
     public function deudashow($id) {
-        $data = Deudas::find($id);
+        $sumaabonos = DB::table('deudas_abonos')
+        ->select(DB::raw('MAX(id) as idabonos'),'deudas_id', DB::raw('SUM(total_pago) as total_abonos'))
+        ->groupBy('deudas_id');
+
+        $sumanotas = DB::table('deudas_notacredito as no')
+        ->select(DB::raw('MAX(id) as idno'),'deudas_id', DB::raw('SUM(total_pago) as total_nota'))
+        ->groupBy('deudas_id');
+
+        $data = DB::table('deudas as de')
+        ->join('documentos as do', 'de.documento_id', 'do.id')
+        ->join('condicionespago as con', 'de.condicionespago_id', 'con.id')
+        ->leftJoinSub($sumaabonos, 'sumabonos', function($join){
+            $join->on('de.id', '=', 'sumabonos.deudas_id');
+        })
+        ->leftJoinSub($sumanotas, 'sumanotas', function($join){
+            $join->on('de.id', '=', 'sumanotas.deudas_id');
+        })
+        ->leftJoin('deudas_abonos as dab', 'sumabonos.idabonos', '=', 'dab.id')
+        ->leftJoin('deudas_notacredito as dno', 'sumanotas.idno', '=', 'dno.id')
+        ->leftJoin('deudas_pagos as dpa', 'de.id', '=', 'dpa.deudas_id')
+        ->leftJoin('formaspagos as frmpaabono', 'frmpaabono.id', '=', 'dab.formapago_id')
+        ->leftJoin('formaspagos as frmpapago', 'frmpapago.id', '=', 'dpa.formapago_id')
+        ->select(
+            'de.id',
+            'de.proveedor_id', 
+            'de.numero_factura', 
+            'de.documento_id', 
+            'do.name as documento',
+            'de.condicionespago_id', 
+            'de.fecha_factura', 
+            'de.fecha_pago', 
+            'de.total_compra',
+            'dno.numero as numnota', 
+            'sumanotas.total_nota as totalpago_nota', 
+            'dno.fecha_notacredito',
+            'sumabonos.total_abonos as totalpago_abono', 
+            'dab.id as idbonodes', 
+            'dab.numero_recibo as numreciboabono', 
+            'frmpaabono.name as formpagoabono', 
+            'dab.numero as numabono', 
+            'dab.fecha_abono',
+            'dpa.total_pago as totalpago_pago', 
+            'dpa.numero_recibo as numrecibopago', 
+            'frmpapago.name as formpago', 
+            'dpa.numero as numpago'
+        )
+        ->groupBy('dab.deudas_id')
+        ->orderBy('dab.id', 'ASC')
+        ->where('de.id','=', $id)
+        ->get();
         return response()->json($data);
+    }
+
+    public function loaddatadeuda(Request $request){
+
+        $sumaabonos = DB::table('deudas_abonos')
+        ->select(DB::raw('MAX(id) as idabonos'),'deudas_id', DB::raw('SUM(total_pago) as total_abonos'))
+        ->groupBy('deudas_id');
+
+        $sumanotas = DB::table('deudas_notacredito as no')
+        ->select(DB::raw('MAX(id) as idno'),'deudas_id', DB::raw('SUM(total_pago) as total_nota'))
+        ->groupBy('deudas_id');
+
+        $data = DB::table('deudas as de')
+        ->join('documentos as do', 'de.documento_id', 'do.id')
+        ->join('condicionespago as con', 'de.condicionespago_id', 'con.id')
+        ->leftJoinSub($sumaabonos, 'sumabonos', function($join){
+            $join->on('de.id', '=', 'sumabonos.deudas_id');
+        })
+        ->leftJoinSub($sumanotas, 'sumanotas', function($join){
+            $join->on('de.id', '=', 'sumanotas.deudas_id');
+        })
+        ->leftJoin('deudas_abonos as dab', 'sumabonos.idabonos', '=', 'dab.id')
+        ->leftJoin('deudas_notacredito as dno', 'sumanotas.idno', '=', 'dno.id')
+        ->leftJoin('deudas_pagos as dpa', 'de.id', '=', 'dpa.deudas_id')
+        ->leftJoin('formaspagos as frmpaabono', 'frmpaabono.id', '=', 'dab.formapago_id')
+        ->leftJoin('formaspagos as frmpapago', 'frmpapago.id', '=', 'dpa.formapago_id')
+        ->select(
+            'de.id',
+            'de.proveedor_id', 
+            'de.numero_factura', 
+            'de.documento_id', 
+            'do.name as documento',
+            'de.condicionespago_id', 
+            'de.fecha_factura', 
+            'de.fecha_pago', 
+            'de.total_compra',
+            'dno.numero as numnota', 
+            'sumanotas.total_nota as totalpago_nota', 
+            'dno.fecha_notacredito',
+            'sumabonos.total_abonos as totalpago_abono', 
+            'dab.id as idbonodes', 
+            'dab.numero_recibo as numreciboabono', 
+            'frmpaabono.name as formpagoabono', 
+            'dab.numero as numabono', 
+            'dab.fecha_abono',
+            'dpa.total_pago as totalpago_pago', 
+            'dpa.numero_recibo as numrecibopago', 
+            'frmpapago.name as formpago', 
+            'dpa.numero as numpago'
+        )
+        ->groupBy('dab.deudas_id')
+        ->orderBy('dab.id', 'ASC')
+        ->get();
+
+        if($request->ajax()){
+            return response()->json(view('deudas.partials.tblabonos', compact('data'))->render());
+        }
     }
 }

@@ -87,10 +87,12 @@ $(function () {
     // para obtener el onchagen 
     $("#deudas_idpago").change(function() {
         $.get('/deudashow/'+$(this).val(), function(res) {
-            $('#totalfactura').val(res.total_compra)
-            $('#totalpagoshow').val(res.total_compra)
-            $('#fechafacturado_pago').val(res.fecha_factura)
-            $('#fechapago_pago').val(res.fecha_pago)
+            let sumadtotal = res[0].total_compra - (res[0].totalpago_abono + res[0].totalpago_nota)
+            console.log(sumadtotal)
+            $('#totalfactura').val(res[0].total_compra)
+            $('#totalpagoshow').val(sumadtotal)
+            $('#fechafacturado_pago').val(res[0].fecha_factura)
+            $('#fechapago_pago').val(res[0].fecha_pago)
         })
     })
 
@@ -109,6 +111,14 @@ $(function () {
             $('#numerochequepago').prop('readonly', true);
         } else {
             $('#numerochequepago').prop('readonly', false);
+        }
+    });
+     // voy a controlar el tipo de abinios
+    $('input[type=radio][name=form_pagoabono]').change(function() {
+        if ($(this).val() == 3) {
+            $('#numcheque_abono').prop('readonly', true);
+        } else {
+            $('#numcheque_abono').prop('readonly', false);
         }
     });
 
@@ -554,8 +564,8 @@ $(function () {
     });
 
     function listdata(){
-        // $.get("/listardeudas", function (res){
-        //     $("#tbcontentdata").html(res);
-        // })
+        $.get("/loaddatadeuda", function (res){
+            $("#tbcontentdata").html(res);
+        })
     }
 

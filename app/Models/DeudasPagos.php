@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DeudasPagoAbonos extends Model
+class DeudasPagos extends Model
 {
     use HasFactory;
 
-    protected $table = 'deudas_pagosabonos';
+    protected $table = 'deudas_pagos';
 
     protected $fillable = [
         'deudas_id', 
@@ -17,9 +17,7 @@ class DeudasPagoAbonos extends Model
         'numero_recibo', 
         'documento_id', 
         'numero', 
-        'condicionespago_id', 
-        'numerocheque', 
-        'fecha_abono',
+        'condicionespago_id',
         'formapago_id'
     ];
 }
