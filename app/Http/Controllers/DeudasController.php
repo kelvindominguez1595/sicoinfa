@@ -252,8 +252,7 @@ class DeudasController extends Controller
             'frmpapago.name as formpago', 
             'dpa.numero as numpago'
         )
-        ->groupBy('dab.deudas_id')
-        ->orderBy('dab.id', 'ASC')
+
         ->get();
         return $data;
     }
