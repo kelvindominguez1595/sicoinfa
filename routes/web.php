@@ -111,6 +111,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::post('/pagos', [DeudasController::class, 'pagos']);
     Route::post('/abonos', [DeudasController::class, 'abonos']);
     Route::get('/loaddatadeuda', [DeudasController::class, 'loaddatadeuda']);
+    Route::get('/showdeudas', [DeudasController::class, 'showdeudas']);
 
     Route::get('/addModdate/{date}',[DeudasController::class, 'addModdate']);
     Route::get('/dateNow',[DeudasController::class, 'dateNow']);
