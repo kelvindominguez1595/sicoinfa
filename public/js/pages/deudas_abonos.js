@@ -60,3 +60,36 @@ $(function () {
                 })       
         });
     });
+
+    $(document).on('click', '#btndeleteAbonos', function (){
+        let id = $(this).val();
+        let deudaid = $('#deuda_idglobal').val();
+        Swal.fire({
+            title: '¿Esta seguro?',
+            text: "¡No podrás revertir esto!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '¡Sí, bórralo!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    data: {
+                        "_token": $("meta[name='csrf-token']").attr("content")
+                    },
+                    url: "destroyabonos/" + id,
+                    type: "DELETE",
+                    dataType: "JSON",
+                    success: function (res) {
+                        findabonos(deudaid);
+                        AlertConfirmacin("El abono se ha borrado Correctamente!");
+                    },
+                    error: function (err) {
+                        erroSwal("¡Algo salió mal!");
+                    }
+                });
+            }
+        });
+    });
+    

@@ -21,7 +21,7 @@
             <input type="text" class="form-control" name="numeroedit" value="{{ $item->numero }}">
         </td>
         <td>
-            <button class="btn btn-danger" type="button"><i class="fa fa-trash"></i></button>
+            <button class="btn btn-danger" id="btndeleteAbonos" value="{{ $item->id }}" type="button"><i class="fa fa-trash"></i></button>
         </td>
     </tr>    
 @endforeach

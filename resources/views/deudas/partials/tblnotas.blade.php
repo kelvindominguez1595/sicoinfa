@@ -11,7 +11,7 @@
             <input type="text" class="form-control" name="total_pagonotaedit" value="{{ $item->total_pago }}">
         </td>
         <td>
-            <button class="btn btn-danger" type="button"><i class="fa fa-trash"></i></button>
+            <button id="btndeletenota" value="{{ $item->id }}" class="btn btn-danger" type="button"><i class="fa fa-trash"></i></button>
         </td>
     </tr>    
 @endforeach
