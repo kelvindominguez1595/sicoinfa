@@ -201,8 +201,7 @@ class DeudasController extends Controller
         return response()->json($data);
     }
 
-    public function loaddatadeuda(Request $request){
-
+    public function loaddatadeuda(Request $request) {
         $sumaabonos = DB::table('deudas_abonos')
         ->select(DB::raw('MAX(id) as idabonos'),'deudas_id', DB::raw('SUM(total_pago) as total_abonos'))
         ->groupBy('deudas_id')
@@ -217,44 +216,14 @@ class DeudasController extends Controller
         ->join('condicionespago as con', 'de.condicionespago_id', 'con.id')
         ->leftJoin('documentos as do', 'de.documento_id', 'do.id')
         ->leftJoin('clientefacturas as cli', 'cli.id', 'de.proveedor_id')
-        ->leftJoinSub($sumaabonos, 'sumabonos', function($join){
-            $join->on('de.id', '=', 'sumabonos.deudas_id');
-        })
-        ->leftJoinSub($sumanotas, 'sumanotas', function($join){
-            $join->on('de.id', '=', 'sumanotas.deudas_id');
-        })
+        ->leftJoinSub($sumaabonos, 'sumabonos', function($join){ $join->on('de.id', '=', 'sumabonos.deudas_id'); })
+        ->leftJoinSub($sumanotas, 'sumanotas', function($join){ $join->on('de.id', '=', 'sumanotas.deudas_id'); })
         ->leftJoin('deudas_abonos as dab', 'sumabonos.idabonos', '=', 'dab.id')
         ->leftJoin('deudas_notacredito as dno', 'sumanotas.idno', '=', 'dno.id')
         ->leftJoin('deudas_pagos as dpa', 'de.id', '=', 'dpa.deudas_id')
         ->leftJoin('formaspagos as frmpaabono', 'frmpaabono.id', '=', 'dab.formapago_id')
         ->leftJoin('formaspagos as frmpapago', 'frmpapago.id', '=', 'dpa.formapago_id')
-        ->select(
-            'de.id',
-            'de.proveedor_id', 
-            'de.numero_factura', 
-            'cli.nombre_comercial',
-            'de.documento_id', 
-            'do.name as documento',
-            'de.condicionespago_id', 
-            'de.fecha_factura', 
-            'de.fecha_pago', 
-            'de.total_compra',
-            'de.deleted_at',
-            'dno.numero as numnota', 
-            'sumanotas.total_nota as totalpago_nota', 
-            'dno.fecha_notacredito',
-            'sumabonos.total_abonos as totalpago_abono', 
-            'dab.id as idbonodes', 
-            'dab.numero_recibo as numreciboabono', 
-            'frmpaabono.name as formpagoabono', 
-            'dab.numero as numabono', 
-            'dab.fecha_abono',
-            'dpa.total_pago as totalpago_pago', 
-            'dpa.numero_recibo as numrecibopago', 
-            'frmpapago.name as formpago', 
-            'dpa.numero as numpago'
-        )
-      //  ->groupBy('dab.deudas_id')
+        ->select('de.id','de.proveedor_id', 'de.numero_factura', 'cli.nombre_comercial','de.documento_id', 'do.name as documento','de.condicionespago_id', 'de.fecha_factura', 'de.fecha_pago', 'de.total_compra','de.deleted_at','dno.numero as numnota', 'sumanotas.total_nota as totalpago_nota', 'dno.fecha_notacredito', 'sumabonos.total_abonos as totalpago_abono', 'dab.id as idbonodes', 'dab.numero_recibo as numreciboabono', 'frmpaabono.name as formpagoabono', 'dab.numero as numabono', 'dab.fecha_abono','dpa.total_pago as totalpago_pago', 'dpa.numero_recibo as numrecibopago', 'frmpapago.name as formpago', 'dpa.numero as numpago')
         ->where('de.deleted_at', '=', null)
         ->orderBy('dab.id', 'ASC')
         ->get();
@@ -333,8 +302,6 @@ class DeudasController extends Controller
        return response()->json([
         "htmlrender" => view('deudas.partials.frmPagoEdit', compact('data', 'formapago'))->render(), 
         'show' => $show]);
-
-        //    return response()->json(['data' => $data], 200);
     }
 
     public function findabonos($id){
@@ -364,22 +331,20 @@ class DeudasController extends Controller
         //
         return response()->json($data);
     }
-    // actualizar deudas
-    // actualizar notas
-    // actualizar nota de credito
-    // borrar nota de credito
     
     public function destroycredito($id){
         $data = DeudasNotaCredito::find($id);
         $data->delete();
         return response()->json(["messages" => true], 200);
     }
+
     // borra abono
     public function destroyabonos($id){
         $data = DeudasAbonos::find($id);
         $data->delete();
         return response()->json(["messages" => true], 200);
     }
+
     // borra Pagos
     public function destroypagos($id){
         $data = DeudasPagos::find($id);
@@ -396,4 +361,5 @@ class DeudasController extends Controller
         $deuda->delete();
         return response()->json(["messages" => true], 200);
     }
+
 }
