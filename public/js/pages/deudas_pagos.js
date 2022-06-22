@@ -95,6 +95,7 @@ $(document).on('click', '#btnborrarpago', function (){
                 success: function (res) {
                     findpagos(id);
                     AlertConfirmacin("El pago se ha borrado Correctamente!");
+                    listdata();
                 },
                 error: function (err) {
                     erroSwal("¡Algo salió mal!");

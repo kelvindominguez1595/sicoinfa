@@ -84,6 +84,7 @@ $(function () {
                     success: function (res) {
                         findabonos(deudaid);
                         AlertConfirmacin("El abono se ha borrado Correctamente!");
+                        listdata();
                     },
                     error: function (err) {
                         erroSwal("¡Algo salió mal!");

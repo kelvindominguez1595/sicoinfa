@@ -205,11 +205,13 @@ class DeudasController extends Controller
 
         $sumaabonos = DB::table('deudas_abonos')
         ->select(DB::raw('MAX(id) as idabonos'),'deudas_id', DB::raw('SUM(total_pago) as total_abonos'))
-        ->groupBy('deudas_id');
+        ->groupBy('deudas_id')
+        ->where('deleted_at', '=', null);
 
         $sumanotas = DB::table('deudas_notacredito as no')
         ->select(DB::raw('MAX(id) as idno'),'deudas_id', DB::raw('SUM(total_pago) as total_nota'))
-        ->groupBy('deudas_id');
+        ->groupBy('deudas_id')
+        ->where('deleted_at', '=', null);
 
         $data = DB::table('deudas as de')
         ->join('condicionespago as con', 'de.condicionespago_id', 'con.id')

@@ -74,6 +74,7 @@ $(function () {
                     success: function (res) {
                         findnotas(deudaid);
                         AlertConfirmacin("La nota se ha borrado Correctamente!");
+                        listdata();
                     },
                     error: function (err) {
                         erroSwal("¡Algo salió mal!");
