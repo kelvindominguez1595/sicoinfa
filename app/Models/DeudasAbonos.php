@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DeudasAbonos extends Model
 {
     use HasFactory;
+    use SoftDeletes;
     protected $table = 'deudas_abonos';
 
     protected $fillable = [
@@ -20,4 +22,5 @@ class DeudasAbonos extends Model
         'fecha_abono',
         'formapago_id'
     ];
+    protected $dates = ['deleted_at'];
 }

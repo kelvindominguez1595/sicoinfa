@@ -8,7 +8,7 @@
         <div class="modal-body">
             <form id="frmpagos">
           <div class="row g-3">
-
+            <input type="hidden" name="condicionespago_id" id="condicionespago_id" value="2">
             <div class="col-12 col-sm- col-md-6 col-lg-6">
                 <label for="fechafacturado" class="form-label fw-bold text-uppercase">número de factura</label>
                 <select class="form-control" id="deudas_idpago" name="deudas_idpago"></select>
@@ -36,16 +36,7 @@
                 <input type="date" class="form-control" id="fechapago_pago" name="fechapago_pago" readonly>
             </div>
 
-            <div class="col-12 col-sm-12 col-md-6 col-lg-6" id="containercondicipago">
-                <label for="" class="form-label fw-bold text-uppercase">Condición de pago</label>
-                <br>
-                @foreach ($pagos as $item)
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="condicionespago_id" id="condicionespago_id{{ $item->id }}" value="{{ $item->id }}" @if($item->name == 'PAGADO') checked @endif>
-                        <label class="form-check-label" for="condicionespago_id{{ $item->id }}">{{ $item->name }}</label>
-                    </div>                                
-                @endforeach                      
-            </div>
+
 
             <div class="col-12 col-sm-12 col-md-6 col-lg-6">
                 <label for="numeropago" class="form-label fw-bold text-uppercase">número de recibo</label>

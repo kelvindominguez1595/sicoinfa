@@ -7,7 +7,7 @@
         </div>
         <div class="modal-body">
             <form id="frmAbonos">
-                <input type="hidden" name="condicionpago_abono" id="condicionpago_abono" value="4">
+                <input type="hidden" name="condicionpago_abono" id="condicionpago_abono" value="3">
                 <div class="row g-3">
     
                     <div class="col-12 col-sm- col-md-6 col-lg-6">

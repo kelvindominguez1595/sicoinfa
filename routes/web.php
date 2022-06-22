@@ -117,6 +117,12 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/dateNow',[DeudasController::class, 'dateNow']);
     Route::get('/searchfactura',[DeudasController::class, 'searchfactura']);
     Route::get('/deudashow/{id}',[DeudasController::class, 'deudashow']);
+    Route::get('/findnotas/{id}',[DeudasController::class, 'findnotas']);
+    Route::get('/findpagos/{id}',[DeudasController::class, 'findpagos']);
+    Route::get('/findabonos/{id}',[DeudasController::class, 'findabonos']);
+    Route::get('/finddeudas/{id}',[DeudasController::class, 'finddeudas']);
+    Route::delete('/deletedeudasall/{id}',[DeudasController::class, 'deletedeudasall']);
+    Route::delete('/destroypagos/{id}',[DeudasController::class, 'destroypagos']);
     // para ver las notificaciones
 
 

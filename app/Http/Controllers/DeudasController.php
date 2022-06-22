@@ -21,12 +21,63 @@ class DeudasController extends Controller
         $formapago      = FormasPagos::all();
         $tipofactura    = Documentos::all();
         $condicion      = CondicionesPagos::orderby('id','asc')->take(2)->get();
-        $pagos          = CondicionesPagos::all()->where('id', 3);
-        return view('deudas.index', compact('formapago', 'tipofactura', 'condicion', 'pagos'));
+        return view('deudas.index', compact('formapago', 'tipofactura', 'condicion'));
     }
 
     public function nuevadeuda(Request $request){
-        Deudas::create($request->all());
+
+        $presentafactura    = $request->presentafactura;
+        $proveedor_id       = $request->proveedor_id;
+
+        $numero_recibo         = $request->numero_recibo;
+        $numero_factura     = $request->numero_factura;
+        $documento_id       = $request->documento_id;
+        $fecha_factura      = $request->fecha_factura;
+        $fecha_pago         = $request->fecha_pago;
+        $total_compra       = $request->total_compra;
+        $condicionespago_id = $request->condicionespago_id;
+        $formpago_nuevo = $request->formpago_nuevo;
+        $numero_recibonuevo = $request->numero_recibonuevo;
+        $numerochequenuevo = $request->numerochequenuevo;
+        
+        $cp = CondicionesPagos::find($condicionespago_id);
+   
+        $paramsDeuda = [
+            'proveedor_id'          => $proveedor_id,
+            'numero_factura'        => $numero_factura,
+            'documento_id'          => $documento_id,
+            'condicionespago_id'    => $condicionespago_id,
+            'fecha_factura'         => $fecha_factura,
+            'fecha_pago'            => $fecha_pago,
+            'total_compra'          => $total_compra
+        ];
+        if($cp->name == 'PAGADO') {
+            $paramsDeuda['estadodeuda'] = 2;
+        } else {
+            $paramsDeuda['estadodeuda'] = 1;
+        }
+ 
+       $deuda = Deudas::create($paramsDeuda);       
+       
+        if($cp->name == 'PAGADO') {
+            $dataPago = [
+                'deudas_id'             => $deuda->id,     
+                'numero_recibo'         => $numero_recibonuevo,
+                'formapago_id'          => $formpago_nuevo,
+                'numero'                => $numerochequenuevo,
+                'condicionespago_id'    => $condicionespago_id,
+                'total_pago'            => $total_compra
+            ];
+
+            if(!empty($presentafactura)){
+                $dataPago['presentafactura'] = 'si';
+            } else {   
+                $dataPago['presentafactura'] = 'no';    
+            }
+
+            DeudasPagos::create($dataPago);
+        }
+        
         return response()->json(['messages' => 'ok'], 200);
     }
     
@@ -106,6 +157,7 @@ class DeudasController extends Controller
         $data = DB::table('deudas as de')
         ->join('documentos as do', 'de.documento_id', 'do.id')
         ->join('condicionespago as con', 'de.condicionespago_id', 'con.id')
+        ->leftJoin('clientefacturas as cli', 'cli.id', 'de.proveedor_id')
         ->leftJoinSub($sumaabonos, 'sumabonos', function($join){
             $join->on('de.id', '=', 'sumabonos.deudas_id');
         })
@@ -121,6 +173,7 @@ class DeudasController extends Controller
             'de.id',
             'de.proveedor_id', 
             'de.numero_factura', 
+            'cli.nombre_comercial', 
             'de.documento_id', 
             'do.name as documento',
             'de.condicionespago_id', 
@@ -141,7 +194,7 @@ class DeudasController extends Controller
             'frmpapago.name as formpago', 
             'dpa.numero as numpago'
         )
-        ->groupBy('dab.deudas_id')
+        //  ->groupBy('dab.deudas_id')
         ->orderBy('dab.id', 'ASC')
         ->where('de.id','=', $id)
         ->get();
@@ -159,8 +212,9 @@ class DeudasController extends Controller
         ->groupBy('deudas_id');
 
         $data = DB::table('deudas as de')
-        ->join('documentos as do', 'de.documento_id', 'do.id')
         ->join('condicionespago as con', 'de.condicionespago_id', 'con.id')
+        ->leftJoin('documentos as do', 'de.documento_id', 'do.id')
+        ->leftJoin('clientefacturas as cli', 'cli.id', 'de.proveedor_id')
         ->leftJoinSub($sumaabonos, 'sumabonos', function($join){
             $join->on('de.id', '=', 'sumabonos.deudas_id');
         })
@@ -176,12 +230,14 @@ class DeudasController extends Controller
             'de.id',
             'de.proveedor_id', 
             'de.numero_factura', 
+            'cli.nombre_comercial',
             'de.documento_id', 
             'do.name as documento',
             'de.condicionespago_id', 
             'de.fecha_factura', 
             'de.fecha_pago', 
             'de.total_compra',
+            'de.deleted_at',
             'dno.numero as numnota', 
             'sumanotas.total_nota as totalpago_nota', 
             'dno.fecha_notacredito',
@@ -197,11 +253,12 @@ class DeudasController extends Controller
             'dpa.numero as numpago'
         )
       //  ->groupBy('dab.deudas_id')
+        ->where('de.deleted_at', '=', null)
         ->orderBy('dab.id', 'ASC')
         ->get();
 
         if($request->ajax()){
-            return response()->json(view('deudas.partials.tblabonos', compact('data'))->render());
+            return response()->json(view('deudas.partials.tbladeudas', compact('data'))->render());
         }
     }
 
@@ -255,5 +312,86 @@ class DeudasController extends Controller
 
         ->get();
         return $data;
+    }
+
+    // listar nota de credito
+    public function findnotas($id){
+       $data = DeudasNotaCredito::where('deudas_id', $id)->get();
+       return response()->json(view('deudas.partials.tblnotas', compact('data'))->render());
+    }
+
+    public function findpagos($id){
+       $data = DeudasPagos::where('deudas_id', $id)->first();
+       $formapago      = FormasPagos::all();
+       if(!empty($data->id)) {
+        $show = true;
+        } else {
+            $show = false;
+        }
+       return response()->json([
+        "htmlrender" => view('deudas.partials.frmPagoEdit', compact('data', 'formapago'))->render(), 
+        'show' => $show]);
+
+        //    return response()->json(['data' => $data], 200);
+    }
+
+    public function findabonos($id){
+      $data = DeudasAbonos::where('deudas_id', $id)->get();
+      $formapago      = FormasPagos::all();
+      return response()->json(view('deudas.partials.tblabonos', compact('data', 'formapago'))->render());
+    }
+
+    // buscar deuda para editar
+    public function finddeudas($id){
+        $data = DB::table('deudas as de')
+        ->leftJoin('clientefacturas as cli', 'cli.id', 'de.proveedor_id')
+        ->select(
+            'de.id',
+            'de.proveedor_id', 
+            'de.numero_factura', 
+            'cli.nombre_comercial',
+            'de.documento_id', 
+            'de.condicionespago_id', 
+            'de.fecha_factura', 
+            'de.fecha_pago', 
+            'de.total_compra'
+        )
+        ->where('de.id', $id)
+        ->first();
+
+        //
+        return response()->json($data);
+    }
+    // actualizar deudas
+    // actualizar notas
+    // actualizar nota de credito
+    // borrar nota de credito
+    
+    public function destroycredito($id){
+        $data = DeudasNotaCredito::find($id);
+        $data->delete();
+        return response()->json(["messages" => true], 200);
+    }
+    // borra abono
+    public function destroyabonos($id){
+        $data = DeudasAbonos::find($id);
+        $data->delete();
+        return response()->json(["messages" => true], 200);
+    }
+    // borra Pagos
+    public function destroypagos($id){
+        $data = DeudasPagos::find($id);
+        $data->delete();
+        return response()->json(["messages" => true], 200);
+    }
+
+    public function deletedeudasall($id){
+        $date = Carbon::now();
+        $deuda = Deudas::find($id); // delete deudas 
+        DB::table('deudas_pagos')->where('deudas_id', '=', $deuda->id)->update(['deleted_at' => $date]);
+        DB::table('deudas_notacredito')->where('deudas_id', '=', $deuda->id)->update(['deleted_at' => $date]);
+        DB::table('deudas_abonos')->where('deudas_id', '=', $deuda->id)->update(['deleted_at' => $date]);
+        $deuda->delete();
+        return response()->json(["messages" => true], 200);
     }
 }
