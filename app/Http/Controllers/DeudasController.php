@@ -4,15 +4,15 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Deudas;
-use App\Models\Clientes;
 use App\Models\Documentos;
 use App\Models\FormasPagos;
-use Illuminate\Http\Request;
-use App\Models\DeudasNotaCredito;
 use App\Models\DeudasPagos;
 use App\Models\DeudasAbonos;
 use App\Models\CondicionesPagos;
+use App\Models\DeudasNotaCredito;
 use Illuminate\Support\Facades\DB;
+
+use Illuminate\Http\Request;
 
 class DeudasController extends Controller
 {
@@ -292,13 +292,13 @@ class DeudasController extends Controller
     }
 
     public function findpagos($id){
-       $data = DeudasPagos::where('deudas_id', $id)->first();
+        $data = DeudasPagos::where('deudas_id', $id)->first();
+        if(!empty($data->id)) {
+             $show = true;
+         } else {
+             $show = false;
+         }
        $formapago      = FormasPagos::all();
-       if(!empty($data->id)) {
-        $show = true;
-        } else {
-            $show = false;
-        }
        return response()->json([
         "htmlrender" => view('deudas.partials.frmPagoEdit', compact('data', 'formapago'))->render(), 
         'show' => $show]);
@@ -362,4 +362,62 @@ class DeudasController extends Controller
         return response()->json(["messages" => true], 200);
     }
 
+    public function updatedDeudas(Request $request) {
+        // item deudas
+        $deuda_idglobal             = $request->deuda_idglobal;
+        $proveedorid_selectedupdate = $request->proveedorid_selectedupdate;
+        $proveedor_idedit           = $request->proveedor_idedit;
+        $numero_facturaupdate       = $request->numero_facturaupdate;
+        $documentoupdate            = $request->documentoupdate;
+        $fecha_facturaupdate        = $request->fecha_facturaupdate;
+        $fecha_pagoupdate           = $request->fecha_pagoupdate;
+        $total_compraupdate         = $request->total_compraupdate;
+        $condicionespago_idupdate   = $request->condicionespago_idupdate;
+        
+   
+        if(empty($proveedor_idedit)) {
+            $proveedorid = $proveedorid_selectedupdate; // proveedor antiguo
+        } else {
+            $proveedorid = $proveedor_idedit; // nuevo proveedor
+        }
+        $deuda = Deudas::find($deuda_idglobal);
+            $deuda->proveedor_id        = $proveedorid;
+            $deuda->numero_factura      = $numero_facturaupdate;
+            $deuda->documento_id        = $documentoupdate;
+            $deuda->condicionespago_id  = $condicionespago_idupdate;
+            $deuda->fecha_factura       = $fecha_facturaupdate;
+            $deuda->fecha_pago          = $fecha_pagoupdate;
+            $deuda->total_compra        = $total_compraupdate;
+        $deuda->save();
+        // item pago
+
+        $pago = DeudasPagos::where('deudas_id', $deuda_idglobal)
+        ->where('deleted_at', null)->exists();
+        if($pago) {
+            // actualizar los datos del pago
+        }else{
+            // crear datos de pago
+        }
+
+        $pagoidedit         = $request->pagoidedit;
+        $numero_reciboedit  = $request->numero_reciboedit;
+        $forma_pagoedit     = $request->forma_pagoedit;
+        $numerochequeedit   = $request->numerochequeedit;
+        // item nota de credito
+        $notacreidedit      = $request->notacreidedit;
+        $numero_notaedit    = $request->numero_notaedit;
+        $fecha_notaedit     = $request->fecha_notaedit;
+        $total_pagonotaedit = $request->total_pagonotaedit;
+        // item datos de abonos
+        $fecha_abonoedit        = $request->fecha_abonoedit;
+        $deudaabonoidedit       = $request->deudaabonoidedit;
+        $numero_reciboedit      = $request->numero_reciboedit;
+        $total_pagoabonoedit    = $request->total_pagoabonoedit;
+        $formapago_idedit       = $request->formapago_idedit;
+        $numeroedit             = $request->numeroedit;
+        Deudas::create([]);
+        DeudasPagos::create([]);
+        DeudasAbonos::create([]);
+        DeudasNotaCredito::create([]);
+    }
 }

@@ -17,6 +17,16 @@ $(function () {
         }
     });
 
+    $('input[type=radio][name=condicionespago_idupdate]').change(function() {
+        alert($(this).val());
+        if ($(this).val() == 2) {
+            $('#contentpagos').removeClass('d-none');
+        } else {
+            $('#contentpagos').addClass('d-none');
+        }
+    });
+
+
     $('input[type=radio][name=condicionespago_id]').change(function() {
         if ($(this).val() == 2) {
             $('#contenedorpagos').removeClass('d-none');
@@ -140,6 +150,36 @@ $(function () {
             AlertError("Los campos marcados en rojo son OBLIGATORIOS");
         }
     });
+
+
+    // actualizar deuda 
+    $("#formDeudasEdit").submit(function (event) {
+        event.preventDefault();   
+        var frm = $(this).serialize();
+        if(validateInput()){
+            $.ajax({
+                url: '/updatedDeudas',
+                type: 'GET',
+                dataType: "JSON",
+                data: frm,
+                success: function (res) {                 
+                    AlerSuccess();                 
+                    listdata();
+                   // $("#nuevoModal").modal("hide");
+                },
+                error: function (err) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: '¡Error algo salio mal!'
+                    });
+                }
+            })       
+        } else {
+            AlertError("Los campos marcados en rojo son OBLIGATORIOS");
+        }
+    });
+
 
     });
 

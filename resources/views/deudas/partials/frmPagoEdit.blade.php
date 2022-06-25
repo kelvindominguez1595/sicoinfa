@@ -1,3 +1,4 @@
+<input type="hidden" name="pagoidedit" id="pagoidedit" value="{{ !empty($data->id) ? $data->id : ''}}">
 <div class="col-12 col-sm-12 col-md-6 col-lg-6">    
     <label for="numero_reciboedit" class="form-label fw-bold text-uppercase">NÚMERO DE RECIBO</label>
     <input type="text" class="form-control"
