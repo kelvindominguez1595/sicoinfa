@@ -78,7 +78,9 @@
                                   DATOS DE PAGO
                                     <button type="button" id="btnborrarpago" class="btn btn-light btn-sm">Borrar Pago</button>
                                 </div>
-                                <div class="card-body row g-3" id="contentpagos"></div>
+                                <div class="card-body row g-3 d-none" id="contentpagos">
+                                    @include('deudas.partials.frmPagoEdit')
+                                </div>
                               </div>
 
                         </div>

@@ -125,6 +125,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::delete('/destroypagos/{id}',[DeudasController::class, 'destroypagos']);
     Route::delete('/destroyabonos/{id}',[DeudasController::class, 'destroyabonos']);
     Route::delete('/destroycredito/{id}',[DeudasController::class, 'destroycredito']);
+    Route::delete('/findpagoopt/{id}',[DeudasController::class, 'findpagoopt']);
     Route::get('/updatedDeudas',[DeudasController::class, 'updatedDeudas']);
     // para ver las notificaciones
 

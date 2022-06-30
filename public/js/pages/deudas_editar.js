@@ -24,6 +24,17 @@ $(function () {
             }
         });
 
+
+        $('#presentafacturaeditpago').on('change', function () {
+            let numrecibo = $('#numero_reciboedit')
+            if($(this).is(':checked')){
+                numrecibo.prop('readonly', false);
+            } else {
+                numrecibo.val('')
+                numrecibo.prop('readonly', true);
+            }
+        });
+
     });
 
 

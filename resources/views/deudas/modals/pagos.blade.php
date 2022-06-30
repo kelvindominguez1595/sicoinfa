@@ -36,12 +36,18 @@
                 <input type="date" class="form-control" id="fechapago_pago" name="fechapago_pago" readonly>
             </div>
 
-
+            <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+                <div class="form-check form-switch">
+                    <label class="form-check-label" for="presentafacturapago">¿Presenta factura?</label>
+                    <input class="form-check-input" type="checkbox" role="switch" id="presentafacturapago" name="presentafacturapago" value="si" checked>
+                </div>
+            </div>
 
             <div class="col-12 col-sm-12 col-md-6 col-lg-6">
                 <label for="numeropago" class="form-label fw-bold text-uppercase">número de recibo</label>
                 <input type="number" min="0"  class="form-control" id="numeropago" name="numeropago">
             </div>
+
 
             <div class="col-12 col-sm-12 col-md-6 col-lg-6" id="contenedorpagofrm">
                 <label class="form-label fw-bold" for="pagado1">FORMA DE PAGO</label>

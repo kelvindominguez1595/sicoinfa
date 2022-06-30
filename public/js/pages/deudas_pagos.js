@@ -71,6 +71,19 @@ $(function () {
             })       
     });
 
+    $('#presentafacturapago').on('change', function () {
+        let numrecibo = $('#numeropago')
+        if($(this).is(':checked')){
+            numrecibo.prop('readonly', false);
+        } else {
+            numrecibo.val('')
+            numrecibo.prop('readonly', true);
+        }
+    });
+
+
+
+
 });
 
 $(document).on('click', '#btnborrarpago', function (){

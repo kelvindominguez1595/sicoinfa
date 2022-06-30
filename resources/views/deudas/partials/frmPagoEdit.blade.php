@@ -1,9 +1,20 @@
-<input type="hidden" name="pagoidedit" id="pagoidedit" value="{{ !empty($data->id) ? $data->id : ''}}">
-<div class="col-12 col-sm-12 col-md-6 col-lg-6">    
+<input type="hidden" name="pagoidedit" id="pagoidedit" value="">
+
+<div class="col-12 col-sm-12 col-md-3 col-lg-3">
+    <div class="form-check form-switch">
+        <label class="form-check-label" for="presentafacturaeditpago">¿Presenta factura?</label>
+        <input class="form-check-input" type="checkbox" role="switch" id="presentafacturaeditpago" name="presentafacturaeditpago" value="si" checked>
+    </div>
+</div>
+
+<div class="col-12 col-sm-12 col-md-9 col-lg-9">    
     <label for="numero_reciboedit" class="form-label fw-bold text-uppercase">NÚMERO DE RECIBO</label>
-    <input type="text" class="form-control"
-     id="numero_reciboedit" name="numero_reciboedit" 
-     value="{{ !empty($data->numero_recibo) ? $data->numero_recibo : '' }}">
+    <input
+        type="text" 
+        class="form-control"
+        id="numero_reciboedit"
+        name="numero_reciboedit" 
+        value="">
 </div>
 
 <div class="col-12 col-sm-12 col-md-6 col-lg-6" id="contenedorpagofrm">
@@ -17,9 +28,6 @@
                 name="forma_pagoedit" 
                 id="forma_pagoedit{{$item->id}}" 
                 value="{{ $item->id }}"
-                @if(!empty($data->formapago_id)) 
-                    @if($data->formapago_id == $item->id) checked @endif
-                @endif
                  >            
             <label class="form-check-label" for="forma_pagoedit{{$item->id}}">{{ $item->name }}</label>
         </div>                                 
@@ -30,6 +38,6 @@
     <label class="form-label fw-bold" for="numerochequeedit">N° CHEQUE/REMESA</label>
     <input type="number" min="0" 
     class="form-control fw-bold" id="numerochequeedit" 
-    value="{{ !empty($data->numero) ? $data->numero : '' }}"
-    name="numerochequeedit" @if (empty($data->numero)) readonly @endif >
+    value=""
+    name="numerochequeedit" readonly  >
 </div>  

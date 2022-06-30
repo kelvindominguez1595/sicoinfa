@@ -89,12 +89,13 @@ class DeudasController extends Controller
     public function pagos(Request $request){
         $date = Carbon::now();
         DeudasPagos::create([
-            'deudas_id' =>  $request->deudas_idpago,
-            'total_pago' =>  $request->totalpagoshow == '' ? 0 : $request->totalpagoshow,
-            'numero_recibo' => $request->numeropago,
-            'formapago_id' =>  $request->formapago_idpago,
-            'numero' => $request->numerochequepago,
-            'condicionespago_id' => $request->condicionespago_id,
+            'deudas_id'             =>  $request->deudas_idpago,
+            'presentafactura'       =>  $request->presentafacturapago,
+            'total_pago'            =>  $request->totalpagoshow == '' ? 0 : $request->totalpagoshow,
+            'numero_recibo'         => $request->numeropago,
+            'formapago_id'          =>  $request->formapago_idpago,
+            'numero'                => $request->numerochequepago,
+            'condicionespago_id'    => $request->condicionespago_id,
         ]);
         return response()->json(['message' => 'ok'], 200);
     }
@@ -299,9 +300,14 @@ class DeudasController extends Controller
              $show = false;
          }
        $formapago      = FormasPagos::all();
-       return response()->json([
-        "htmlrender" => view('deudas.partials.frmPagoEdit', compact('data', 'formapago'))->render(), 
-        'show' => $show]);
+        //    return response()->json([
+        //     "htmlrender" => view('deudas.partials.frmPagoEdit', compact('data', 'formapago'))->render(), 
+        //     'show' => $show]);
+        return response()->json([
+            'data' => $data,
+            'formapago' => $formapago,
+            'show' => $show
+        ]);
     }
 
     public function findabonos($id){
@@ -310,6 +316,12 @@ class DeudasController extends Controller
       return response()->json(view('deudas.partials.tblabonos', compact('data', 'formapago'))->render());
     }
 
+    public function findpagoopt($id) {
+        $datapago = DeudasPagos::where('deudas_id', $id)
+        ->where('deleted_at', null)->exists();
+        if($datapago){ $res = true; } else {$re = false; }
+        return $res;
+    }
     // buscar deuda para editar
     public function finddeudas($id){
         $data = DB::table('deudas as de')
@@ -395,8 +407,13 @@ class DeudasController extends Controller
         ->where('deleted_at', null)->exists();
         if($pago) {
             // actualizar los datos del pago
+            $dbpago = DeudasPagos::where('deudas_id', $deuda_idglobal)
+            ->where('deleted_at', null)->first();
         }else{
             // crear datos de pago
+            $dbpago = DeudasPagos::create([
+                'deudas_id', $deuda_idglobal
+            ]);
         }
 
         $pagoidedit         = $request->pagoidedit;
