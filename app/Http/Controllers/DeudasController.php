@@ -250,7 +250,7 @@ class DeudasController extends Controller
         ->select('de.id','de.proveedor_id', 'de.numero_factura', 'cli.nombre_comercial','de.documento_id', 'do.name as documento','de.condicionespago_id', 'de.fecha_factura', 'de.fecha_pago', 'de.total_compra','de.deleted_at','dno.numero as numnota', 'sumanotas.total_nota as totalpago_nota', 'dno.fecha_notacredito', 'sumabonos.total_abonos as totalpago_abono', 'dab.id as idbonodes', 'dab.numero_recibo as numreciboabono', 'frmpaabono.name as formpagoabono', 'dab.numero as numabono', 'dab.fecha_abono','dpa.total_pago as totalpago_pago', 'dpa.numero_recibo as numrecibopago', 'frmpapago.name as formpago', 'dpa.numero as numpago')
         ->where('de.deleted_at', '=', null)
         ->orderBy('dab.id', 'ASC')
-        ->get();
+        ->paginate(25);
 
         if($request->ajax()){
             return response()->json(view('deudas.partials.tbladeudas', compact('data'))->render());

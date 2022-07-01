@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Proveedores;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -632,7 +633,7 @@ class ReporteController extends Controller
         return $arr;
     }
 
-    public function filter_letra($name, $letraArray){
+    public function filter_letra($name, $letraArray) {
         $letra = '';
         foreach ($letraArray as  $val){
             if($name === $val['name']){
@@ -640,5 +641,81 @@ class ReporteController extends Controller
             }
         }
         return $letra;
+    }
+
+    /** PARA REPORTES DE LAS DEUDAS MAN XD EJEJE */
+    public function deudasreportes() {
+        $type_report = array(
+            array("name" => "POR PROVEEDOR", "val" => "1"),
+            array("name" => "DEUDA GENERAL", "val" => "2")
+        );
+        return view('reportes.deudas', compact('type_report'));
+    }
+
+    public function selectereportedeudas(Request $request) {       
+        
+       
+        if($request->reportetype == 'general') {
+            if($request->tipoprint == 'pdf') {
+
+            } else {
+                
+            }
+            
+        } else {
+            if(!empty($request->proveedor_id)) {
+                if($request->tipoprint == 'pdf') {
+                   return  $this->deudareporteproveedorpdf($request->proveedor_id);
+                } else {
+    
+                }
+            } 
+        }
+    }
+
+
+    public function deudareporteproveedorpdf($proveedorid){
+
+        $proveedor = Proveedores::find($proveedorid);
+        $sumaabonos = DB::table('deudas_abonos')
+        ->select(DB::raw('MAX(id) as idabonos'),'deudas_id', DB::raw('SUM(total_pago) as total_abonos'))
+        ->groupBy('deudas_id')
+        ->where('deleted_at', '=', null);
+
+        $sumanotas = DB::table('deudas_notacredito as no')
+        ->select(DB::raw('MAX(id) as idno'),'deudas_id', DB::raw('SUM(total_pago) as total_nota'))
+        ->groupBy('deudas_id')
+        ->where('deleted_at', '=', null);
+
+        $data = DB::table('deudas as de')
+        ->join('condicionespago as con', 'de.condicionespago_id', 'con.id')
+        ->leftJoin('documentos as do', 'de.documento_id', 'do.id')
+        ->leftJoin('clientefacturas as cli', 'cli.id', 'de.proveedor_id')
+        ->leftJoinSub($sumaabonos, 'sumabonos', function($join){ $join->on('de.id', '=', 'sumabonos.deudas_id'); })
+        ->leftJoinSub($sumanotas, 'sumanotas', function($join){ $join->on('de.id', '=', 'sumanotas.deudas_id'); })
+        ->leftJoin('deudas_abonos as dab', 'sumabonos.idabonos', '=', 'dab.id')
+        ->leftJoin('deudas_notacredito as dno', 'sumanotas.idno', '=', 'dno.id')
+        ->leftJoin('deudas_pagos as dpa', 'de.id', '=', 'dpa.deudas_id')
+        ->leftJoin('formaspagos as frmpaabono', 'frmpaabono.id', '=', 'dab.formapago_id')
+        ->leftJoin('formaspagos as frmpapago', 'frmpapago.id', '=', 'dpa.formapago_id')
+        ->select('de.id','de.proveedor_id', 'de.numero_factura', 'cli.nombre_comercial','de.documento_id', 'do.name as documento','de.condicionespago_id', 'de.fecha_factura', 'de.fecha_pago', 'de.total_compra', 'de.estadodeuda','de.deleted_at','dno.numero as numnota', 'sumanotas.total_nota as totalpago_nota', 'dno.fecha_notacredito', 'sumabonos.total_abonos as totalpago_abono', 'dab.id as idbonodes', 'dab.numero_recibo as numreciboabono', 'frmpaabono.name as formpagoabono', 'dab.numero as numabono', 'dab.fecha_abono','dpa.total_pago as totalpago_pago', 'dpa.numero_recibo as numrecibopago', 'frmpapago.name as formpago', 'dpa.numero as numpago')
+        ->where([
+            ['de.estadodeuda', '=', 1],
+            ['de.deleted_at', '=', null],
+        ])
+        ->where('de.proveedor_id', '=', $proveedorid)
+        ->orderBy('dab.id', 'ASC')
+        ->get();
+
+        $date = date('d-m-Y');
+        $code = generarCodigo(4);
+        $time = date('h.i.s A');
+
+        ini_set("memory_limit", "512M");
+        set_time_limit(300);
+        $pdf = PDF::loadView('reportes.template.deudareporte',
+        compact('data', 'date', 'time', 'code', 'proveedor'))
+        ->setPaper('legal', 'landscape');
+        return $pdf->download('Reporte Proveedor '.$proveedor->nombre_comercial.' - '.$code.' - '.$date.' '.$time.'.pdf');
     }
 }

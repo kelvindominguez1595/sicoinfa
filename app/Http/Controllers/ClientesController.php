@@ -162,4 +162,7 @@ class ClientesController extends Controller
         }
         return view('clientes.index', compact('contribu', 'nombres', 'apellidos', 'dui', 'nit', 'telefono'));
     }
+
+
+    /** AQUI ESTARAN LOS REPORTES EN EXCEL Y PDF */
 }

@@ -308,57 +308,14 @@
                     </tr>
                 @endforeach
             </tbody>
-{{--            <tfoot>--}}
-{{--                <tr>--}}
-{{--                    <td></td>--}}
-{{--                    <td></td>--}}
-{{--                    <td></td>--}}
-{{--                    <td></td>--}}
-{{--                    <td></td>--}}
-{{--                    <td></td>--}}
-{{--                    <td style="">${{ number_format($totalcosto, 2) }}</td>--}}
-{{--                    <td style="">${{ number_format($totalGlobalCompra, 2) }}</td>--}}
-{{--                    <td style="">${{ number_format($totalprecioventa, 2) }}</td>--}}
-{{--                    <td style="">${{ number_format($totalventatotal, 2) }}</td>--}}
-{{--                    <td></td>--}}
-{{--                    <td style="">${{ number_format($totaldiferencia, 2) }}</td>--}}
-{{--                    <td style="">${{ number_format($totalutilidad, 2) }}</td>--}}
-{{--                </tr>--}}
-{{--            </tfoot>--}}
+
         </table>
 
-{{--            @if (showFields('COSTO S/IVA', $campvisibility))--}}
-{{--                {{ showPositionTotal('COSTO S/IVA', $campvisibility) }}--}}
-{{--            @endif <br>--}}
 
-{{--            @if (showFields('TOTAL COSTOS', $campvisibility))--}}
-{{--                {{ showPositionTotal('TOTAL COSTOS', $campvisibility) }}--}}
-{{--            @endif <br>--}}
-
-{{--            @if (showFields('VENTA TOTAL', $campvisibility))--}}
-{{--                {{ showPositionTotal('VENTA TOTAL', $campvisibility) }}--}}
-{{--            @endif <br>--}}
-
-{{--            @if (showFields('TOTAL COMPRA S/IVA', $campvisibility))--}}
-{{--                {{ showPositionTotal('TOTAL COMPRA S/IVA', $campvisibility) }}--}}
-{{--            @endif <br>--}}
-
-{{--            @if (showFields('PRECIO DE VENTA', $campvisibility))--}}
-{{--                {{ showPositionTotal('PRECIO DE VENTA', $campvisibility) }}--}}
-{{--            @endif <br>--}}
-
-{{--            @if (showFields('DIFERENCIA UNITARIA', $campvisibility))--}}
-{{--                {{ showPositionTotal('DIFERENCIA UNITARIA', $campvisibility) }}--}}
-{{--            @endif <br>--}}
-{{--            @if (showFields('UTILIDAD TOTAL', $campvisibility))--}}
-{{--                {{ showPositionTotal('UTILIDAD TOTAL', $campvisibility) }}--}}
-{{--            @endif--}}
 
     </main>
 
-{{--    <div id="footer">--}}
-{{--        <p class="page">Page </p>--}}
-{{--    </div>--}}
+
 </body>
 </html>
 

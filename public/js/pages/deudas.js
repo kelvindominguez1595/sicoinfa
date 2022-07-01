@@ -267,3 +267,18 @@ $(function () {
              })
         })
     }
+
+    // pagination 
+$(document).on('click', '#pagination .pagination a', function (e){
+    e.preventDefault()
+    let page = $(this).attr('href').split('page=')[1];
+    $.ajax({
+        url: '/loaddatadeuda',
+        data: {page: page},
+        type: 'GET',
+        dataType: 'JSON',
+        success: function (data){
+            $("#tbcontentdata").html(data);
+        }
+    })
+});
