@@ -294,15 +294,15 @@ class DeudasController extends Controller
 
     public function findpagos($id){
         $data = DeudasPagos::where('deudas_id', $id)->first();
+
         if(!empty($data->id)) {
              $show = true;
          } else {
              $show = false;
          }
+
        $formapago      = FormasPagos::all();
-        //    return response()->json([
-        //     "htmlrender" => view('deudas.partials.frmPagoEdit', compact('data', 'formapago'))->render(), 
-        //     'show' => $show]);
+
         return response()->json([
             'data' => $data,
             'formapago' => $formapago,
@@ -324,6 +324,18 @@ class DeudasController extends Controller
     }
     // buscar deuda para editar
     public function finddeudas($id){
+
+        // valido que el pago no existe
+        $deudapago = DeudasPagos::where('deleted_at', null)->where('deudas_id', $id)->exists();
+        $statedeuda = Deudas::find($id);
+        if($deudapago){
+            if($statedeuda->condicionespago_id == 1) {
+                $statedeuda->estadodeuda = 2;
+                $statedeuda->condicionespago_id = 2;
+                $statedeuda->save();
+            }
+        } 
+
         $data = DB::table('deudas as de')
         ->leftJoin('clientefacturas as cli', 'cli.id', 'de.proveedor_id')
         ->select(
@@ -340,8 +352,11 @@ class DeudasController extends Controller
         ->where('de.id', $id)
         ->first();
 
-        //
-        return response()->json($data);
+        $tipofactura    = Documentos::all();
+        $condicion      = CondicionesPagos::orderby('id','asc')->take(2)->get();
+        $formapago      = FormasPagos::all();
+        return view('deudas.pagosEdit', compact('data', 'id', 'tipofactura', 'condicion', 'formapago'));
+        // return response()->json($data);
     }
     
     public function destroycredito($id){
