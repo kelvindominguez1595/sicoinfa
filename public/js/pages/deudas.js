@@ -143,33 +143,6 @@ $(function () {
     });
 
 
-    // actualizar deuda 
-    $("#formDeudasEdit").submit(function (event) {
-        event.preventDefault();   
-        var frm = $(this).serialize();
-        if(validateInput()){
-            $.ajax({
-                url: '/updatedDeudas',
-                type: 'GET',
-                dataType: "JSON",
-                data: frm,
-                success: function (res) {                 
-                    AlerSuccess();                 
-                    listdata();
-                   // $("#nuevoModal").modal("hide");
-                },
-                error: function (err) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: '¡Error algo salio mal!'
-                    });
-                }
-            })       
-        } else {
-            AlertError("Los campos marcados en rojo son OBLIGATORIOS");
-        }
-    });
 
 
     });

@@ -140,12 +140,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer d-flex justify-content-between">
+                        <div class="d-flex justify-content-between">
                             <div class="">
                                 <button type="button" id="btndeleteall" class="btn btn-danger">Borrar Deuda</button>
                             </div>
                             <div class="">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                                 <button type="submit" class="btn btn-primary">Guardar</button>
                             </div>
                         </div>

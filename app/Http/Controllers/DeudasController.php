@@ -323,8 +323,7 @@ class DeudasController extends Controller
         return $res;
     }
     // buscar deuda para editar
-    public function finddeudas($id){
-
+    public function finddeudas($id) {
         // valido que el pago no existe
         $deudapago = DeudasPagos::where('deleted_at', null)->where('deudas_id', $id)->exists();
         $statedeuda = Deudas::find($id);
@@ -390,24 +389,37 @@ class DeudasController extends Controller
     }
 
     public function updatedDeudas(Request $request) {
-        // item deudas
-        $deuda_idglobal             = $request->deuda_idglobal;
-        $proveedorid_selectedupdate = $request->proveedorid_selectedupdate;
-        $proveedor_idedit           = $request->proveedor_idedit;
-        $numero_facturaupdate       = $request->numero_facturaupdate;
-        $documentoupdate            = $request->documentoupdate;
-        $fecha_facturaupdate        = $request->fecha_facturaupdate;
-        $fecha_pagoupdate           = $request->fecha_pagoupdate;
-        $total_compraupdate         = $request->total_compraupdate;
-        $condicionespago_idupdate   = $request->condicionespago_idupdate;
-        
-   
-        if(empty($proveedor_idedit)) {
-            $proveedorid = $proveedorid_selectedupdate; // proveedor antiguo
-        } else {
-            $proveedorid = $proveedor_idedit; // nuevo proveedor
+        $deudaabono = DB::table('deudas_abonos')
+        ->select('id as idabono', DB::raw('SUM(total_pago) as total_pago'))
+        ->groupBy('deudas_id')
+        ->first();
+        $pagofrm = 0;
+        if(!empty($request['deudaabonoidedit'])) {
+            foreach ($request['deudaabonoidedit'] as $key => $value) {
+                $pagofrm += $request['total_pagoabonoedit'][$key];
+            }
         }
+        $totalabono = $deudaabono->total_pago + $pagofrm;
+        $deuda_idglobal             = $request->deuda_idglobal;
         $deuda = Deudas::find($deuda_idglobal);
+        if($totalabono <= $deuda->total_compra) {
+            // item deudas          
+            $proveedorid_selectedupdate = $request->proveedorid_selectedupdate;
+            $proveedor_idedit           = $request->proveedor_idedit;
+            $numero_facturaupdate       = $request->numero_facturaupdate;
+            $documentoupdate            = $request->documentoupdate;
+            $fecha_facturaupdate        = $request->fecha_facturaupdate;
+            $fecha_pagoupdate           = $request->fecha_pagoupdate;
+            $total_compraupdate         = $request->total_compraupdate;
+            $condicionespago_idupdate   = $request->condicionespago_idupdate;
+            
+       
+            if(empty($proveedor_idedit)) {
+                $proveedorid = $proveedorid_selectedupdate; // proveedor antiguo
+            } else {
+                $proveedorid = $proveedor_idedit; // nuevo proveedor
+            }
+    
             $deuda->proveedor_id        = $proveedorid;
             $deuda->numero_factura      = $numero_facturaupdate;
             $deuda->documento_id        = $documentoupdate;
@@ -415,41 +427,76 @@ class DeudasController extends Controller
             $deuda->fecha_factura       = $fecha_facturaupdate;
             $deuda->fecha_pago          = $fecha_pagoupdate;
             $deuda->total_compra        = $total_compraupdate;
-        $deuda->save();
-        // item pago
-
-        $pago = DeudasPagos::where('deudas_id', $deuda_idglobal)
-        ->where('deleted_at', null)->exists();
-        if($pago) {
-            // actualizar los datos del pago
-            $dbpago = DeudasPagos::where('deudas_id', $deuda_idglobal)
-            ->where('deleted_at', null)->first();
-        }else{
-            // crear datos de pago
-            $dbpago = DeudasPagos::create([
-                'deudas_id', $deuda_idglobal
-            ]);
+            $deuda->save();
+            // item pago        
+            $pagoidedit                 = $request->pagoidedit;
+            $presentafacturaeditpago    = $request->presentafacturaeditpago;
+            $numero_reciboeditpago          = $request->numero_reciboeditpago;
+            $forma_pagoedit             = $request->forma_pagoedit;
+            $numerochequeedit           = $request->numerochequeedit;
+    
+            $pago = DeudasPagos::where('id', $pagoidedit)
+            ->where('deleted_at', null)->exists();
+            if($pago) {
+                // actualizar los datos del pago
+                $dbpago = DeudasPagos::find($pagoidedit);
+                $dbpago->presentafactura    = $presentafacturaeditpago;
+                $dbpago->numero_recibo      = $numero_reciboeditpago;
+                $dbpago->formapago_id       = $forma_pagoedit;
+                $dbpago->numero             = $numerochequeedit;
+                $dbpago->total_pago         = $total_compraupdate;
+                $dbpago->save();
+    
+                $deudaPago = Deudas::find($deuda_idglobal);
+                $deudaPago->estadodeuda         = 2;
+                $deudaPago->condicionespago_id  = 2;
+                $deudaPago->save();
+            }else{
+                // crear datos de pago
+                $dbpago = DeudasPagos::create([
+                    'deudas_id'         => $deuda_idglobal, 
+                    'presentafactura'   => $presentafacturaeditpago,
+                    'numero_recibo'     => $numero_reciboeditpago, 
+                    'formapago_id'      => $forma_pagoedit,
+                    'numero'            => $numerochequeedit,  
+                    'total_pago'        => $total_compraupdate
+                ]);
+                $deudaPago = Deudas::find($deuda_idglobal);
+                $deudaPago->estadodeuda         = 2;
+                $deudaPago->condicionespago_id  = 2;
+                $deudaPago->save();
+            }
+            // item nota de credito
+            if(!empty($request['notacreidedit'])) {
+                foreach ($request['notacreidedit'] as $key => $value) {
+                    $dnc = DeudasNotaCredito::find($request['notacreidedit'][$key]);
+                    $dnc->numero            = $request['numero_notaedit'][$key];
+                    $dnc->fecha_notacredito = $request['fecha_notaedit'][$key];
+                    $dnc->total_pago        = $request['total_pagonotaedit'][$key];
+                    $dnc->save();
+                }
+            }
+            // item datos de abonos
+            if(!empty($request['deudaabonoidedit'])) {
+                foreach ($request['deudaabonoidedit'] as $key => $value) {
+                    $da = DeudasAbonos::find($request['deudaabonoidedit'][$key]);
+                    $da->total_pago             = $request['total_pagoabonoedit'][$key];
+                    $da->documento_id           = 0;
+                    $da->numero_recibo          = $request['numero_reciboedit'][$key];
+                    $da->numero                 = $request['numeroedit'][$key];
+                    $da->condicionespago_id     = 3;
+                    $da->fecha_abono            = $request['fecha_abonoedit'][$key];
+                    $da->formapago_id           = $request['formapago_idedit'][$key];
+                    $da->save();
+                }
+            }
+            return response()->json([
+                "message" => "Actualizado"
+            ], 200);
+        } else {
+            return response()->json([
+                "message" => "El Abono no debe ser mayor al pago total"
+            ], 400);
         }
-
-        $pagoidedit         = $request->pagoidedit;
-        $numero_reciboedit  = $request->numero_reciboedit;
-        $forma_pagoedit     = $request->forma_pagoedit;
-        $numerochequeedit   = $request->numerochequeedit;
-        // item nota de credito
-        $notacreidedit      = $request->notacreidedit;
-        $numero_notaedit    = $request->numero_notaedit;
-        $fecha_notaedit     = $request->fecha_notaedit;
-        $total_pagonotaedit = $request->total_pagonotaedit;
-        // item datos de abonos
-        $fecha_abonoedit        = $request->fecha_abonoedit;
-        $deudaabonoidedit       = $request->deudaabonoidedit;
-        $numero_reciboedit      = $request->numero_reciboedit;
-        $total_pagoabonoedit    = $request->total_pagoabonoedit;
-        $formapago_idedit       = $request->formapago_idedit;
-        $numeroedit             = $request->numeroedit;
-        Deudas::create([]);
-        DeudasPagos::create([]);
-        DeudasAbonos::create([]);
-        DeudasNotaCredito::create([]);
     }
 }

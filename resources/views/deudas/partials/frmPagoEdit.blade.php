@@ -8,12 +8,12 @@
 </div>
 
 <div class="col-12 col-sm-12 col-md-9 col-lg-9">    
-    <label for="numero_reciboedit" class="form-label fw-bold text-uppercase">NÚMERO DE RECIBO</label>
+    <label for="numero_reciboeditpago" class="form-label fw-bold text-uppercase">NÚMERO DE RECIBO</label>
     <input
         type="text" 
         class="form-control"
-        id="numero_reciboedit"
-        name="numero_reciboedit" 
+        id="numero_reciboeditpago"
+        name="numero_reciboeditpago" 
         value="">
 </div>
 

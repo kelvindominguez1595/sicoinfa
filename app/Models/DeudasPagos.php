@@ -13,7 +13,13 @@ class DeudasPagos extends Model
     protected $table = 'deudas_pagos';
 
     protected $fillable = [
-        'deudas_id', 'presentafactura', 'numero_recibo',  'formapago_id', 'numero',  'condicionespago_id', 'total_pago'
+        'deudas_id', 
+        'presentafactura',
+        'numero_recibo', 
+        'formapago_id',
+        'numero',  
+        'condicionespago_id', 
+        'total_pago'
     ];
     protected $dates = ['deleted_at'];
 }

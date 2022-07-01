@@ -54,8 +54,6 @@ $(function () {
         }
     });
     
-
-
     $('#presentafacturaeditpago').on('change', function () {
         let numrecibo = $('#numero_reciboedit')
         if($(this).is(':checked')){
@@ -66,7 +64,33 @@ $(function () {
         }
     });
 
-    });
+
+        // actualizar deuda 
+        $("#formDeudasEdit").submit(function (event) {
+            event.preventDefault();   
+            var frm = $(this).serialize();          
+            $.ajax({
+                url: '/updatedDeudas',
+                type: 'GET',
+                dataType: "JSON",
+                data: frm,
+                success: function (res) {                 
+                    AlerSuccess();                 
+                    location.href = "/deudas";
+                },
+                error: function (err) {
+                    console.log(err)
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: '¡Error algo salio mal!'
+                    });
+                }
+            })
+        });
+    
+
+});
 
 
     $(document).on('click', '#btndeleteall', function (){
@@ -119,8 +143,7 @@ $(function () {
 
     function findpagos(id) {
 
-        $.get('/findpagos/' + id, function(res) {
-  
+        $.get('/findpagos/' + id, function(res) {  
             if(res.show) {
                 $("#contentpagos").removeClass('d-none');
                 let datares = res.data
@@ -182,4 +205,29 @@ $(function () {
             });
       
         
+    }
+
+    function validateInput(){
+        let proveedor_id = false, numero_factura = false;
+
+        if($('#proveedor_id').val() !== ''){
+            proveedor_id = true;
+            $('#proveedor_id').removeClass('is-invalid');
+        } else {
+            proveedor_id = false;
+            $('#proveedor_id').addClass('is-invalid');
+        }
+        if($('#numero_factura').val() !== ''){
+            numero_factura = true;
+            $('#numero_factura').removeClass('is-invalid');
+        } else {
+            numero_factura = false;
+            $('#numero_factura').addClass('is-invalid');
+        }
+
+        if(proveedor_id && numero_factura) {
+            return true;
+        } else {
+            return false;
+        }
     }
