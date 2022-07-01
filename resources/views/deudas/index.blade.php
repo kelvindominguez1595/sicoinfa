@@ -9,7 +9,6 @@
     <script src="{{ asset('js/select2/select2.min.js') }}"></script>
     <script src="{{ asset('js/jquery.inputmask.js') }}"></script>
     <script src="{{ asset('js/pages/deudas.js') }}"></script>
-    <script src="{{ asset('js/pages/deudas_editar.js') }}"></script>
     <script src="{{ asset('js/pages/deudas_pagos.js') }}"></script>
     <script src="{{ asset('js/pages/deudas_abonos.js') }}"></script>
     <script src="{{ asset('js/pages/deudas_notacredito.js') }}"></script>

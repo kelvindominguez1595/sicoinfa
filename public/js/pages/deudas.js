@@ -17,29 +17,6 @@ $(function () {
         }
     });
     
-    $('input[type=radio][name=condicionespago_idupdate]').change(function() {
-        let res; let accept;
-        let idglobal = $("#deuda_idglobal").val()
-        if ($(this).val() == 2) {
-            $('#contentpagos').removeClass('d-none');
-        } else {
-            res = $.get('findpagoopt/'+idglobal, function (data) { 
-                return data;
-             })
-             if(res){
-                accept = deletePagochangeoptione(idglobal);
-                if(accept){
-                    $('#contentpagos').addClass('d-none');
-                } else {
-                    $(this).val() == 2 ?? $(this).prop('checked', true)
-                    $('#contentpagos').removeClass('d-none');
-                }
-             } else {
-                 $('#contentpagos').addClass('d-none');
-             }
-        }
-    });
-
 
     $('input[type=radio][name=condicionespago_id]').change(function() {
         if ($(this).val() == 2) {

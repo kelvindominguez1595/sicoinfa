@@ -17,9 +17,9 @@
                    $deuda = 0;
                }
            @endphp
-               <tr onclick="myFunction({{$item->id}})" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $item->nombre_comercial }}">
+               <tr  data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $item->nombre_comercial }}">
                     <td class="size-font-medium-small">{{ date('d/m/Y', strtotime($item->fecha_factura)) }}</td>
-                    <td class="size-font-medium-small">{{ $item->numero_factura }}</td>
+                    <td class="size-font-medium-small"><a href="{{ url('/finddeudas', $item->id) }}">{{ $item->numero_factura }}</a></td>
                     <td class="size-font-medium-small">{{ $item->documento }}</td>
                     <td class="size-font-medium-small">${{ number_format($item->total_compra, 2) }}</td>
 
