@@ -88,15 +88,38 @@ class DeudasController extends Controller
 
     public function pagos(Request $request){
         $date = Carbon::now();
-        DeudasPagos::create([
-            'deudas_id'             =>  $request->deudas_idpago,
-            'presentafactura'       =>  $request->presentafacturapago,
-            'total_pago'            =>  $request->totalpagoshow == '' ? 0 : $request->totalpagoshow,
-            'numero_recibo'         => $request->numeropago,
-            'formapago_id'          =>  $request->formapago_idpago,
-            'numero'                => $request->numerochequepago,
-            'condicionespago_id'    => $request->condicionespago_id,
-        ]);
+        $deudapago = DeudasPagos::where('deudas_id', $request->deudas_idpago)
+        ->where('deleted_at', null)->exists();
+        $statedeuda = Deudas::find($request->deudas_idpago);      
+
+        if($deudapago) {
+            if($statedeuda->condicionespago_id == 1) {
+                $statedeuda->estadodeuda = 2;
+                $statedeuda->condicionespago_id = 2;
+                $statedeuda->save();
+            }
+            $dpago = DeudasPagos::where('deudas_id', $request->deudas_idpago)
+            ->where('deleted_at', null)->first();
+            $udpago = DeudasPagos::find($dpago->id);       
+            $udpago->presentafactura    = $request->presentafacturapago;
+            $udpago->total_pago         = $request->totalpagoshow == '' ? 0 : $request->totalpagoshow;
+            $udpago->numero_recibo      = $request->numeropago;
+            $udpago->formapago_id       = $request->formapago_idpago;
+            $udpago->numero             = $request->numerochequepago;
+            $udpago->condicionespago_id = $request->condicionespago_id;
+            $udpago->save();
+
+        } else {
+            DeudasPagos::create([
+                'deudas_id'             =>  $request->deudas_idpago,
+                'presentafactura'       =>  $request->presentafacturapago,
+                'total_pago'            =>  $request->totalpagoshow == '' ? 0 : $request->totalpagoshow,
+                'numero_recibo'         => $request->numeropago,
+                'formapago_id'          =>  $request->formapago_idpago,
+                'numero'                => $request->numerochequepago,
+                'condicionespago_id'    => $request->condicionespago_id,
+            ]);
+        }
         return response()->json(['message' => 'ok'], 200);
     }
 
@@ -389,20 +412,24 @@ class DeudasController extends Controller
     }
 
     public function updatedDeudas(Request $request) {
-        $deudaabono = DB::table('deudas_abonos')
-        ->select('id as idabono', DB::raw('SUM(total_pago) as total_pago'))
-        ->groupBy('deudas_id')
-        ->first();
-        $pagofrm = 0;
+
+        $pagoabonofrm = 0;
         if(!empty($request['deudaabonoidedit'])) {
             foreach ($request['deudaabonoidedit'] as $key => $value) {
-                $pagofrm += $request['total_pagoabonoedit'][$key];
+                $pagoabonofrm += $request['total_pagoabonoedit'][$key];
             }
         }
-        $totalabono = $deudaabono->total_pago + $pagofrm;
+
+        $pagonotafrm = 0;
+        if(!empty($request['notacreidedit'])) {
+            foreach ($request['notacreidedit'] as $key => $value) {
+                $pagonotafrm += $request['total_pagonotaedit'][$key];
+            }
+        }
+   
         $deuda_idglobal             = $request->deuda_idglobal;
         $deuda = Deudas::find($deuda_idglobal);
-        if($totalabono <= $deuda->total_compra) {
+        if($pagoabonofrm <= $deuda->total_compra) {
             // item deudas          
             $proveedorid_selectedupdate = $request->proveedorid_selectedupdate;
             $proveedor_idedit           = $request->proveedor_idedit;
@@ -433,18 +460,20 @@ class DeudasController extends Controller
             $presentafacturaeditpago    = $request->presentafacturaeditpago;
             $numero_reciboeditpago          = $request->numero_reciboeditpago;
             $forma_pagoedit             = $request->forma_pagoedit;
-            $numerochequeedit           = $request->numerochequeedit;
+            $numerochequeeditpago           = $request->numerochequeeditpago;
     
             $pago = DeudasPagos::where('id', $pagoidedit)
             ->where('deleted_at', null)->exists();
             if($pago) {
+                 $pagofinal = $total_compraupdate - ($pagoabonofrm + $pagonotafrm);
+
                 // actualizar los datos del pago
                 $dbpago = DeudasPagos::find($pagoidedit);
                 $dbpago->presentafactura    = $presentafacturaeditpago;
                 $dbpago->numero_recibo      = $numero_reciboeditpago;
                 $dbpago->formapago_id       = $forma_pagoedit;
-                $dbpago->numero             = $numerochequeedit;
-                $dbpago->total_pago         = $total_compraupdate;
+                $dbpago->numero             = $numerochequeeditpago;
+                $dbpago->total_pago         = abs($pagofinal);
                 $dbpago->save();
     
                 $deudaPago = Deudas::find($deuda_idglobal);
@@ -452,14 +481,15 @@ class DeudasController extends Controller
                 $deudaPago->condicionespago_id  = 2;
                 $deudaPago->save();
             }else{
+                $pagofinal = $total_compraupdate - ($pagoabonofrm + $pagonotafrm);
                 // crear datos de pago
                 $dbpago = DeudasPagos::create([
                     'deudas_id'         => $deuda_idglobal, 
                     'presentafactura'   => $presentafacturaeditpago,
                     'numero_recibo'     => $numero_reciboeditpago, 
                     'formapago_id'      => $forma_pagoedit,
-                    'numero'            => $numerochequeedit,  
-                    'total_pago'        => $total_compraupdate
+                    'numero'            => $numerochequeeditpago,  
+                    'total_pago'        => abs($pagofinal)
                 ]);
                 $deudaPago = Deudas::find($deuda_idglobal);
                 $deudaPago->estadodeuda         = 2;

@@ -23,6 +23,7 @@ $(function () {
                 cache: true
             }
         });
+        
         $("#frmNotacredito").submit(function (event) {
             var frm = $(this).serialize();
             event.preventDefault();   

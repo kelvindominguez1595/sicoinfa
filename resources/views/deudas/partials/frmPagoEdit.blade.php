@@ -35,9 +35,9 @@
 </div>
 
 <div class="col-12 col-sm-12 col-md-6 col-lg-6">
-    <label class="form-label fw-bold" for="numerochequeedit">N° CHEQUE/REMESA</label>
+    <label class="form-label fw-bold" for="numerochequeeditpago">N° CHEQUE/REMESA</label>
     <input type="number" min="0" 
-    class="form-control fw-bold" id="numerochequeedit" 
+    class="form-control fw-bold" id="numerochequeeditpago" 
     value=""
-    name="numerochequeedit" readonly  >
+    name="numerochequeeditpago" readonly  >
 </div>  

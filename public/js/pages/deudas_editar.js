@@ -30,6 +30,13 @@ $(function () {
         }
     });
 
+    $('input[type=radio][name=forma_pagoedit]').change(function() {
+        if ($(this).val() == 3) {
+            $('#numerochequeeditpago').prop('readonly', true);
+        } else {
+            $('#numerochequeeditpago').prop('readonly', false);
+        }
+    });
 
     $('input[type=radio][name=condicionespago_idupdate]').change(function() {
         let res; let accept;

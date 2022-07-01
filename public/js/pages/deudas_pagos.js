@@ -29,7 +29,6 @@ $(function () {
     $("#deudas_idpago").change(function() {
         $.get('/deudashow/'+$(this).val(), function(res) {
             let sumadtotal = res[0].total_compra - (res[0].totalpago_abono + res[0].totalpago_nota)
-            console.log(sumadtotal)
             $('#totalfactura').val(res[0].total_compra)
             $('#totalpagoshow').val(sumadtotal)
             $('#fechafacturado_pago').val(res[0].fecha_factura)

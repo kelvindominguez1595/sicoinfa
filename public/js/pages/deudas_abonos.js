@@ -25,6 +25,12 @@ $(function () {
         }
     });
 
+    // $("#deudas_idabonos").change(function() {
+    //     $.get('/deudashow/'+$(this).val(), function(res) {
+    //         let sumadtotal = res[0].total_compra - (res[0].totalpago_abono + res[0].totalpago_nota)
+
+    //     })
+    // })
          // voy a controlar el tipo de abinios
          $('input[type=radio][name=form_pagoabono]').change(function() {
             if ($(this).val() == 3) {
