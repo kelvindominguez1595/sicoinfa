@@ -101,13 +101,14 @@
                    <img src="{{ public_path('images/logoFerreteria.jpg') }}" width="60px" height="50px">
                 </td>
 
-                <td style=" width: 50%; ">
+                <td style="text-align: center; width: 50%; ">
                     <strong>ARCO IRIS</strong>
                     <br>
                     FABRICACIÓN DE PRODUCTOS DE CEMENTO Y FERRETERIA
                     <br>
 
                     <strong>REPORTE DEUDAD POR PROVEEDOR</strong>
+                    <br>
                     {{$proveedor->nombre_comercial}} 
                 </td>
 
@@ -135,29 +136,34 @@
                 <th>FECHA DE FAC.</th>
                 <th>N. DE FACTURA</th>
                 <th>TIPO DE DOC.</th>
-                <th>COMPRA TOTAL</th>                    
+                <th>COMPRA TOTAL</th> 
+
                 <th>ABONOS</th>
-                <th>FECHA</th>
-                <th>FORMA DE PAGO</th>
+                {{-- <th>FECHA</th> --}}
+                {{-- <th>FORMA DE PAGO</th> --}}
                 <th># DE RECIBO</th>
-                <th># DOCUMENTO DE PAGO</th>                    
+                {{-- <th># DOCUMENTO DE PAGO</th> --}}
+
                 <th># NOTA DE CRÉDITO</th>
                 <th>VALOR NOTA DE CRÉDITO</th>
-                <th>APLICADO A CFF:</th>
-                <th>FECHA</th>                    
-                <th>IMPORTE PENDIENTE</th>                    
+
+                {{-- <th>APLICADO A CFF:</th>
+                <th>FECHA</th>             --}}
+                
+                
+                <th>IMPORTE PENDIENTE</th>               
                 <th># DE FACTURA</th>
                 <th>FECHA DE PAGO</th>
                 <th>PAGO APLICADO</th>
                 <th># DE RECIBO</th>
-                <th>FORMA DE PAGO</th>
-                <th># DE DOCUMENTO DE PAGO</th>
+                {{-- <th>FORMA DE PAGO</th>
+                <th># DE DOCUMENTO DE PAGO</th> --}}
                 <th>DEUDA</th>
             </thead>
 
             <tbody>
 
-                @php $abono = 0; $notacredito = 0; $deuda = 0; @endphp
+                @php $abono = 0; $notacredito = 0; $deuda = 0; $totalfinalCompratotal = 0; $totalfinaldeudatodo = 0; @endphp
                 @foreach ($data as $item)
                 @php
                     if(isset($item->totalpago_abono)) {
@@ -175,6 +181,8 @@
                      } else {
                         $deuda = 0;
                     }
+                    $totalfinalCompratotal += $item->total_compra;
+                    
                 @endphp
                     <tr >
                          <td >{{ date('d/m/Y', strtotime($item->fecha_factura)) }}</td>
@@ -185,27 +193,30 @@
                          <td > 
                              @isset($item->totalpago_abono) ${{ number_format($item->totalpago_abono, 2) }}  @endisset
                          </td>
-                         <td >
-                             @isset($item->fecha_abono) {{ date('d/m/Y', strtotime($item->fecha_abono)) }}  @endisset                        
-                         </td>
-                         <td >{{ $item->formpagoabono }}</td>
                          <td >{{ $item->numreciboabono }}</td>
-                         <td >{{ $item->numabono }}</td>
+                         {{--                          
+                            <td >
+                                @isset($item->fecha_abono) {{ date('d/m/Y', strtotime($item->fecha_abono)) }}  @endisset                        
+                            </td>
+                         <td >{{ $item->formpagoabono }}</td>
+                         <td >{{ $item->numabono }}</td> --}}
      
                          <td >{{ $item->numnota }}</td>
                          <td >
                              @isset($item->totalpago_nota) ${{ number_format($item->totalpago_nota, 2) }}  @endisset
                          </td>
-                         <td >
+
+                         {{-- <td >
                              @isset($item->totalpago_nota) {{ $item->numero_factura }}  @endisset
                          </td>
                          <td >
                              @isset($item->fecha_notacredito) {{ date('d/m/Y', strtotime($item->fecha_notacredito)) }}  @endisset
-                         </td>
+                         </td> --}}
                          <td >
                              @php
                                  $totalimporta =$item->total_compra - ($abono + $notacredito);
                                  $deudafinal = $totalimporta - $deuda;
+                                 $totalfinaldeudatodo += $deudafinal;
                              @endphp
                              ${{ number_format($totalimporta, 2) }}
                          </td>
@@ -216,8 +227,8 @@
                              @isset($item->totalpago_pago) ${{ number_format($item->totalpago_pago, 2) }}  @endisset
                          </td>
                          <td >{{ $item->numrecibopago }}</td>
-                         <td >{{ $item->formpago }}</td>
-                         <td >{{ $item->numpago }}</td>
+                         {{-- <td >{{ $item->formpago }}</td>
+                         <td >{{ $item->numpago }}</td> --}}
                          <td >
                              ${{ number_format($deudafinal, 2) }}
                          </td>
@@ -225,7 +236,18 @@
                 @endforeach
     
             </tbody>
-
+            <tfoot>
+                <tr>
+                    <td style="text-align: right;" colspan="3">
+                        TOTAL
+                    </td>
+                    <td>
+                        ${{ number_format($totalfinalCompratotal, 2) }}
+                    </td>
+                    <td colspan="9"  style="text-align: right;">DEUDA TOTAL</td>
+                    <td>${{ number_format($totalfinaldeudatodo, 2) }} </td>
+                </tr>
+            </tfoot>
         </table>
 
 

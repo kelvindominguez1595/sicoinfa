@@ -192,17 +192,12 @@ class ReporteController extends Controller
         $date = date('d-m-Y');
         $code = generarCodigo(4);
         $time = date('h.i.s A');
-
-    //    return view('reportes.template.reportePDF',
-    //        compact('data', 'date', 'campvisibility', 'tipo_de_reporte', 'time', 'code'));
-   // $pdf = PDF::loadHTML('<h1>Test</h1>');
-
-   ini_set("memory_limit", "512M");
-   set_time_limit(300);
-       $pdf = PDF::loadView('reportes.template.reportePDF',
-            compact('data', 'date', 'campvisibility', 'tipo_de_reporte', 'time', 'code'))
-            ->setPaper('legal', 'landscape');
-            return $pdf->download( $tipo_de_reporte.' - '.$code.' - '.$date.' '.$time.'.pdf');
+        ini_set("memory_limit", "512M");
+        set_time_limit(300);
+        $pdf = PDF::loadView('reportes.template.reportePDF',
+        compact('data', 'date', 'campvisibility', 'tipo_de_reporte', 'time', 'code'))
+        ->setPaper('legal', 'landscape');
+        return $pdf->download( $tipo_de_reporte.' - '.$code.' - '.$date.' '.$time.'.pdf');
 
     }
 
@@ -652,41 +647,29 @@ class ReporteController extends Controller
         return view('reportes.deudas', compact('type_report'));
     }
 
-    public function selectereportedeudas(Request $request) {       
-        
-       
+    public function selectereportedeudas(Request $request) {     
         if($request->reportetype == 'general') {
-            if($request->tipoprint == 'pdf') {
-
-            } else {
-                
-            }
-            
+            return $this->selectedreportedeudageneral($request->tipoprint);            
         } else {
-            if(!empty($request->proveedor_id)) {
-                if($request->tipoprint == 'pdf') {
-                   return  $this->deudareporteproveedorpdf($request->proveedor_id);
-                } else {
-    
-                }
+            if(!empty($request->proveedor_id)) {                
+              return $this->selectedreportedeudaporproveedor($request->tipoprint, $request->proveedor_id);
             } 
         }
     }
 
 
-    public function deudareporteproveedorpdf($proveedorid){
-
-        $proveedor = Proveedores::find($proveedorid);
+    public function selectedreportedeudaporproveedor($typo, $proveedor) {
+   
         $sumaabonos = DB::table('deudas_abonos')
         ->select(DB::raw('MAX(id) as idabonos'),'deudas_id', DB::raw('SUM(total_pago) as total_abonos'))
         ->groupBy('deudas_id')
         ->where('deleted_at', '=', null);
-
+        
         $sumanotas = DB::table('deudas_notacredito as no')
         ->select(DB::raw('MAX(id) as idno'),'deudas_id', DB::raw('SUM(total_pago) as total_nota'))
         ->groupBy('deudas_id')
         ->where('deleted_at', '=', null);
-
+        
         $data = DB::table('deudas as de')
         ->join('condicionespago as con', 'de.condicionespago_id', 'con.id')
         ->leftJoin('documentos as do', 'de.documento_id', 'do.id')
@@ -702,11 +685,21 @@ class ReporteController extends Controller
         ->where([
             ['de.estadodeuda', '=', 1],
             ['de.deleted_at', '=', null],
-        ])
-        ->where('de.proveedor_id', '=', $proveedorid)
+            ])
+        ->where('de.proveedor_id', '=', $proveedor)
         ->orderBy('dab.id', 'ASC')
         ->get();
 
+        if($typo == 'pdf') {
+            return  $this->deudareporteproveedorpdf($proveedor, $data);
+         } else {
+            return $this->deudareporteproveedorexcel($proveedor, $data);
+         }
+
+    }
+
+    public function deudareporteproveedorpdf($proveedorid, $data){    
+        $proveedor = Proveedores::find($proveedorid);
         $date = date('d-m-Y');
         $code = generarCodigo(4);
         $time = date('h.i.s A');
@@ -718,4 +711,206 @@ class ReporteController extends Controller
         ->setPaper('legal', 'landscape');
         return $pdf->download('Reporte Proveedor '.$proveedor->nombre_comercial.' - '.$code.' - '.$date.' '.$time.'.pdf');
     }
+
+    public function deudareporteproveedorexcel($proveedorid, $data){
+        $proveedor = Proveedores::find($proveedorid);
+        $username = Auth::user()->name;       
+
+        $spreadsheet = new Spreadsheet();
+        $write = new Xlsx($spreadsheet);
+
+        $spreadsheet->setActiveSheetIndex(0);
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $spreadsheet->getProperties()
+            ->setCreator(dataTitlesExcel()['creador'])
+            ->setLastModifiedBy($username)
+            ->setTitle(dataTitlesExcel()['titlerepordeudasP'])
+            ->setSubject(dataTitlesExcel()['titlerepordeudasP'])
+            ->setDescription(dataTitlesExcel()['descripciondedudaP'])
+            ->setKeywords('Reportes')
+            ->setCategory(dataTitlesExcel()['titlerepordeudasP']);
+
+            $sheet->setCellValue('A1', 'FECHA DE FAC.');
+            $sheet->setCellValue('B1', 'N. DE FACTURA');
+            $sheet->setCellValue('C1', 'TIPO DE DOC.');
+            $sheet->setCellValue('D1', 'COMPRA TOTAL');
+            $sheet->setCellValue('E1', 'ABONOS');
+            $sheet->setCellValue('F1', '# DE RECIBO');
+            $sheet->setCellValue('G1', '# NOTA DE CRÉDITO');
+            $sheet->setCellValue('H1', 'VALOR NOTA DE CRÉDITO');
+            $sheet->setCellValue('I1', 'IMPORTE PENDIENTE');
+            $sheet->setCellValue('J1', '# DE FACTURA');
+            $sheet->setCellValue('K1', 'FECHA DE PAGO');
+            $sheet->setCellValue('L1', 'PAGO APLICADO');
+            $sheet->setCellValue('M1', '# DE RECIBO');
+            $sheet->setCellValue('N1', 'DEUDA');
+
+            
+        $date = date('d-m-Y');
+        $time = date('h.i.s A');
+        $code = generarCodigo(4);
+        $filename = 'Reporte Proveedor '.$proveedor->nombre_comercial.' - '.$code.' - '.$date.' '.$time.'.xlsx';
+
+        /** CODE FOR XLS */
+
+        $abono = 0; $notacredito = 0; $deuda = 0; $totalfinalCompratotal = 0; $totalfinaldeudatodo = 0;
+        $i = 2;
+        foreach ($data as $item) {
+            if(isset($item->totalpago_abono)) {
+                $abono = $item->totalpago_abono;
+             } else {
+                 $abono = 0;
+             }
+            if(isset($item->totalpago_nota)) {
+                $notacredito = $item->totalpago_nota;
+             } else {
+                 $notacredito = 0;
+            }
+            if(isset($item->totalpago_pago)) {
+                $deuda = $item->totalpago_pago;
+             } else {
+                $deuda = 0;
+            }
+            $totalfinalCompratotal += $item->total_compra;
+
+            $totalimporta =$item->total_compra - ($abono + $notacredito);
+            $deudafinal = $totalimporta - $deuda;
+            $totalfinaldeudatodo += $deudafinal;
+
+            $sheet->setCellValue('A'.$i, date('d/m/Y', strtotime($item->fecha_factura)));
+            $sheet->setCellValue('B'.$i, $item->numero_factura);
+            $sheet->setCellValue('C'.$i, $item->documento);
+            $sheet->setCellValue('D'.$i, number_format($item->total_compra, 2));        
+            $sheet->setCellValue('E'.$i, number_format($item->totalpago_abono, 2));
+            $sheet->setCellValue('F'.$i, $item->numreciboabono);
+            $sheet->setCellValue('G'.$i, $item->numnota);
+            $sheet->setCellValue('H'.$i, number_format($item->totalpago_nota, 2));
+            $sheet->setCellValue('I'.$i, number_format($totalimporta, 2));
+            $sheet->setCellValue('J'.$i, $item->numero_factura );
+            $sheet->setCellValue('K'.$i, date('d/m/Y', strtotime($item->fecha_pago)));
+            $sheet->setCellValue('L'.$i, number_format($item->totalpago_pago, 2));
+            $sheet->setCellValue('M'.$i, $item->numrecibopago );
+            $sheet->setCellValue('N'.$i, number_format($deudafinal, 2));
+            $i++;
+        }
+
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename='. $filename);
+        header('Cache-Control: max-age=0');
+
+        $write->save('php://output');
+        exit();
+
+    }
+
+    public function selectedreportedeudageneral($typo) {
+           
+        $sumaabonos = DB::table('deudas_abonos')
+        ->select(DB::raw('MAX(id) as idabonos'),'deudas_id', DB::raw('SUM(total_pago) as total_abonos'))
+        ->groupBy('deudas_id')
+        ->where('deleted_at', '=', null);
+        
+        $sumanotas = DB::table('deudas_notacredito as no')
+        ->select(DB::raw('MAX(id) as idno'),'deudas_id', DB::raw('SUM(total_pago) as total_nota'))
+        ->groupBy('deudas_id')
+        ->where('deleted_at', '=', null);
+        
+        $data = DB::table('deudas as de')
+        ->leftJoin('clientefacturas as cli', 'cli.id', 'de.proveedor_id')
+        ->leftJoinSub($sumaabonos, 'sumabonos', function($join){ $join->on('de.id', '=', 'sumabonos.deudas_id'); })
+        ->leftJoinSub($sumanotas, 'sumanotas', function($join){ $join->on('de.id', '=', 'sumanotas.deudas_id'); })
+        ->select(
+            'de.id',
+            'de.proveedor_id',
+            'de.numero_factura', 
+            'cli.id as clienteid',
+            'cli.nombre_comercial',
+            'de.documento_id',
+            'de.condicionespago_id',
+            'de.fecha_factura', 
+            'de.fecha_pago', 
+            'de.total_compra',
+            'de.estadodeuda',
+            'de.deleted_at',
+            'sumanotas.total_nota as totalpago_nota', 
+            'sumabonos.total_abonos as totalpago_abono', 
+            DB::raw('SUM(de.total_compra) as totaldeudaproveedor')
+           )
+        ->groupBy('cli.id')
+        ->where([
+            ['de.estadodeuda', '=', 1],
+            ['de.deleted_at', '=', null],
+            ])
+        ->get();
+        // print_r($data);
+      //  return response()->json($data, 200);
+
+        if($typo == 'pdf') {
+            return  $this->deudareportegeneralpdf($data);
+        } else {
+             return  $this->deudareporteGeneralexcel($data);
+         }
+    }
+
+     public function deudareportegeneralpdf($data) {
+        $date = date('d-m-Y');
+        $code = generarCodigo(4);
+        $time = date('h.i.s A');
+
+        ini_set("memory_limit", "512M");
+        set_time_limit(300);
+        $pdf = PDF::loadView('reportes.template.deudareportegeneral',
+        compact('data', 'date', 'time', 'code'))
+        ->setPaper('letter', 'portrait');
+        return $pdf->download('Reporte Deuda General - '.$code.' - '.$date.' '.$time.'.pdf');
+     }
+
+     public function deudareporteGeneralexcel($data) {
+        $username = Auth::user()->name;       
+
+        $spreadsheet = new Spreadsheet();
+        $write = new Xlsx($spreadsheet);
+
+        $spreadsheet->setActiveSheetIndex(0);
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $spreadsheet->getProperties()
+            ->setCreator(dataTitlesExcel()['creador'])
+            ->setLastModifiedBy($username)
+            ->setTitle(dataTitlesExcel()['titlerepordeudasG'])
+            ->setSubject(dataTitlesExcel()['titlerepordeudasG'])
+            ->setDescription(dataTitlesExcel()['descripciondedudaG'])
+            ->setKeywords('Reportes')
+            ->setCategory(dataTitlesExcel()['titlerepordeudasG']);
+
+            $sheet->setCellValue('A1', 'PROVEEDOR');
+            $sheet->setCellValue('B1', 'TOTAL');
+            
+        $date = date('d-m-Y');
+        $time = date('h.i.s A');
+        $code = generarCodigo(4);
+        $filename = 'Reporte General de Deuda - '.$code.' - '.$date.' '.$time.'.xlsx';
+
+        /** CODE FOR XLS */
+
+         $totalfinaldeudatodo = 0;
+        $i = 2;
+        foreach ($data as $item) {  
+            $totalfinaldeudatodo += $item->totaldeudaproveedor;
+            $sheet->setCellValue('A'.$i, $item->nombre_comercial);
+            $sheet->setCellValue('B'.$i, number_format($item->totaldeudaproveedor,2) );
+            $i++;
+        }
+        $sheet->setCellValue('A'.$i, "DEUDA TOTAL");
+        $sheet->setCellValue('B'.$i, number_format($totalfinaldeudatodo, 2));
+
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename='. $filename);
+        header('Cache-Control: max-age=0');
+
+        $write->save('php://output');
+        exit();
+     }
+
 }

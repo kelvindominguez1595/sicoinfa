@@ -55,10 +55,14 @@ function dataTitlesExcel(){
         "titlereportedet" => "Reporte Anual DET",
         "titlereportepor" => "Reporte de Producto",
         "titlereporteren" => "Rendimiento",
+        "titlerepordeudasP" => "Reporte de Deuda Por Proveedor",
+        "titlerepordeudasG" => "Reporte de Deuda General",
         "descripcionpro" => "Histórico de compra de productos",
         "descripciondet" => "Reporte anual DET",
         "descripcionpor" => "Reporte de producto",
         "descripcionren" => "Reporte de rendimiento de ventas",
+        "descripciondedudaP" => "Reporte de deudas filtrado por proveedor",
+        "descripciondedudaG" => "Reporte de deudas general",
     ];
     return $data;
 }
