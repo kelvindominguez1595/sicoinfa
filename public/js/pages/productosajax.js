@@ -207,10 +207,16 @@ $(function () {
         });
     })
 
+    $("#btnresetall").on('click', function(){
+        loaddata();
+    })
+
 });
 
 function loaddata() {
-    $.get("/loadproducts", function(res){
+    let path = $("#routepath").val();
+    console.log(path)
+    $.get(path, function(res){
         $("#tblproductscontent").html(res.data)
         $("#contenpagination").html(res.pagination)
     })

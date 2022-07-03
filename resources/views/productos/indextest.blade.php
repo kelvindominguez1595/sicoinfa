@@ -11,6 +11,8 @@
 
 @section('content')
     <div class="row mb-2">
+        <input type="hidden" name="routepath" id="routepath" value="{{ Auth::user()->hasRole('Admin') ? 'loadproducts' : 'loadproductsclient' }}">
+
         {{-- columna 1  --}}
         <div class="col-xs-12 co-sm-12 col-md-3 col-lg-3 col-xl-3">
             <div class="card mb-4 border-primary">
@@ -18,7 +20,6 @@
                     Filtros de búsqueda
                 </div>
                 <div class="card-body">
-
                                 <form  id="frmbusquedaproduct">
                                     @csrf
                                     <div class="mb-3 d-flex justify-content-center">
