@@ -110,6 +110,19 @@
                     <strong>REPORTE DEUDAD POR PROVEEDOR</strong>
                     <br>
                     {{$proveedor->nombre_comercial}} 
+                    <br>
+                    @if (!empty($estadodeuda))
+                        @if ($estadodeuda == 1)
+                         ESTADO  CRÉDITO                            
+                        @else
+                         ESTADO  PAGADO                            
+                        @endif
+                
+                    @endif
+                    <br>
+                    @if(!empty($desde) && !empty($hasta))
+                        Desde:{{  date('d/m/Y', strtotime($desde)) }} Hasta: {{ date('d/m/Y', strtotime($hasta)) }}
+                    @endif
                 </td>
 
                 <td style=" width: 15%; font-size:12px; text-align: left;">
@@ -129,6 +142,8 @@
     <p></p>
     <p></p>
     <p></p>
+    <p></p>
+
     <main>
 
         <table class="table2">
@@ -185,7 +200,7 @@
                     
                 @endphp
                     <tr >
-                         <td >{{ date('d/m/Y', strtotime($item->fecha_factura)) }}</td>
+                         <td >{{ date('d/m/Y', strtotime($item->fecha_factura)) }} </td>
                          <td >{{ $item->numero_factura }}</td>
                          <td >{{ $item->documento }}</td>
                          <td >${{ number_format($item->total_compra, 2) }}</td>
@@ -214,7 +229,7 @@
                          </td> --}}
                          <td >
                              @php
-                                 $totalimporta =$item->total_compra - ($abono + $notacredito);
+                                 $totalimporta = $item->total_compra - ($abono + $notacredito);
                                  $deudafinal = $totalimporta - $deuda;
                                  $totalfinaldeudatodo += $deudafinal;
                              @endphp

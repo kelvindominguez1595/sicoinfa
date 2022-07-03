@@ -108,8 +108,19 @@
                     <br>
 
                     <strong>REPORTE DEUDAD GENERAL</strong>
+                    <br>              
+                    @if (!empty($estadodeuda))
+                        @if ($estadodeuda == 1)
+                         ESTADO  CRÉDITO                            
+                        @else
+                         ESTADO  PAGADO                            
+                        @endif
+                
+                    @endif
                     <br>
-             
+                    @if(!empty($desde) && !empty($hasta))
+                        Desde:{{  date('d/m/Y', strtotime($desde)) }} Hasta: {{ date('d/m/Y', strtotime($hasta)) }}
+                    @endif
                 </td>
 
                 <td style=" width: 15%; font-size:11px; text-align: left;">

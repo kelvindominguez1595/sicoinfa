@@ -647,18 +647,25 @@ class ReporteController extends Controller
         return view('reportes.deudas', compact('type_report'));
     }
 
-    public function selectereportedeudas(Request $request) {     
-        if($request->reportetype == 'general') {
-            return $this->selectedreportedeudageneral($request->tipoprint);            
+    public function selectereportedeudas(Request $request) {   
+        $desde              = $request->desde;
+        $hasta              = $request->hasta;
+        $estadodeuda        = $request->estadodeuda;
+        $tipoprint          = $request->tipoprint;
+        $proveedor_id       = $request->proveedor_id;
+        $reportetype        = $request->reportetype;
+
+        if($reportetype == 'general') {
+              return $this->selectedreportedeudageneral($tipoprint, $desde, $hasta, $estadodeuda);            
         } else {
-            if(!empty($request->proveedor_id)) {                
-              return $this->selectedreportedeudaporproveedor($request->tipoprint, $request->proveedor_id);
+            if(!empty($proveedor_id)) {                
+              return $this->selectedreportedeudaporproveedor($tipoprint, $proveedor_id, $desde, $hasta, $estadodeuda);
             } 
         }
     }
 
 
-    public function selectedreportedeudaporproveedor($typo, $proveedor) {
+    public function selectedreportedeudaporproveedor($typo, $proveedor, $desde, $hasta, $estadodeuda) {
    
         $sumaabonos = DB::table('deudas_abonos')
         ->select(DB::raw('MAX(id) as idabonos'),'deudas_id', DB::raw('SUM(total_pago) as total_abonos'))
@@ -670,7 +677,7 @@ class ReporteController extends Controller
         ->groupBy('deudas_id')
         ->where('deleted_at', '=', null);
         
-        $data = DB::table('deudas as de')
+        $query= DB::table('deudas as de')
         ->join('condicionespago as con', 'de.condicionespago_id', 'con.id')
         ->leftJoin('documentos as do', 'de.documento_id', 'do.id')
         ->leftJoin('clientefacturas as cli', 'cli.id', 'de.proveedor_id')
@@ -681,24 +688,33 @@ class ReporteController extends Controller
         ->leftJoin('deudas_pagos as dpa', 'de.id', '=', 'dpa.deudas_id')
         ->leftJoin('formaspagos as frmpaabono', 'frmpaabono.id', '=', 'dab.formapago_id')
         ->leftJoin('formaspagos as frmpapago', 'frmpapago.id', '=', 'dpa.formapago_id')
-        ->select('de.id','de.proveedor_id', 'de.numero_factura', 'cli.nombre_comercial','de.documento_id', 'do.name as documento','de.condicionespago_id', 'de.fecha_factura', 'de.fecha_pago', 'de.total_compra', 'de.estadodeuda','de.deleted_at','dno.numero as numnota', 'sumanotas.total_nota as totalpago_nota', 'dno.fecha_notacredito', 'sumabonos.total_abonos as totalpago_abono', 'dab.id as idbonodes', 'dab.numero_recibo as numreciboabono', 'frmpaabono.name as formpagoabono', 'dab.numero as numabono', 'dab.fecha_abono','dpa.total_pago as totalpago_pago', 'dpa.numero_recibo as numrecibopago', 'frmpapago.name as formpago', 'dpa.numero as numpago')
-        ->where([
-            ['de.estadodeuda', '=', 1],
-            ['de.deleted_at', '=', null],
-            ])
-        ->where('de.proveedor_id', '=', $proveedor)
-        ->orderBy('dab.id', 'ASC')
-        ->get();
+        ->select('de.id','de.proveedor_id', 'de.numero_factura', 'cli.nombre_comercial','de.documento_id', 'do.name as documento','de.condicionespago_id', 'de.fecha_factura', 'de.fecha_pago', 'de.total_compra', 'de.estadodeuda', 'de.created_at', 'de.updated_at','de.deleted_at','dno.numero as numnota', 'sumanotas.total_nota as totalpago_nota', 'dno.fecha_notacredito', 'sumabonos.total_abonos as totalpago_abono', 'dab.id as idbonodes', 'dab.numero_recibo as numreciboabono', 'frmpaabono.name as formpagoabono', 'dab.numero as numabono', 'dab.fecha_abono','dpa.total_pago as totalpago_pago', 'dpa.numero_recibo as numrecibopago', 'frmpapago.name as formpago', 'dpa.numero as numpago');
+        
+        $query->where('de.deleted_at', '=', null);
+        if(!empty($estadodeuda)) {
+            $query->where('de.estadodeuda', '=', $estadodeuda);
+         } else {
+            $query->where('de.estadodeuda', '=', 1);
+         }
+
+        $query->where('de.proveedor_id', '=', $proveedor);
+        $query->orderBy('dab.id', 'ASC');
+        
+        if(!empty($desde) && !empty($hasta)){
+            $query->whereBetween('de.created_at', [$desde, $hasta]);
+        }
+
+        $data = $query->get();
 
         if($typo == 'pdf') {
-            return  $this->deudareporteproveedorpdf($proveedor, $data);
+            return  $this->deudareporteproveedorpdf($proveedor, $data, $desde, $hasta, $estadodeuda);
          } else {
-            return $this->deudareporteproveedorexcel($proveedor, $data);
+            return $this->deudareporteproveedorexcel($proveedor, $data, $desde, $hasta, $estadodeuda);
          }
 
     }
 
-    public function deudareporteproveedorpdf($proveedorid, $data){    
+    public function deudareporteproveedorpdf($proveedorid, $data, $desde, $hasta, $estadodeuda){    
         $proveedor = Proveedores::find($proveedorid);
         $date = date('d-m-Y');
         $code = generarCodigo(4);
@@ -707,12 +723,12 @@ class ReporteController extends Controller
         ini_set("memory_limit", "512M");
         set_time_limit(300);
         $pdf = PDF::loadView('reportes.template.deudareporte',
-        compact('data', 'date', 'time', 'code', 'proveedor'))
+        compact('data', 'date', 'time', 'code', 'proveedor', 'desde', 'hasta', 'estadodeuda'))
         ->setPaper('legal', 'landscape');
         return $pdf->download('Reporte Proveedor '.$proveedor->nombre_comercial.' - '.$code.' - '.$date.' '.$time.'.pdf');
     }
 
-    public function deudareporteproveedorexcel($proveedorid, $data){
+    public function deudareporteproveedorexcel($proveedorid, $data, $desde, $hasta, $estadodeuda){
         $proveedor = Proveedores::find($proveedorid);
         $username = Auth::user()->name;       
 
@@ -804,7 +820,7 @@ class ReporteController extends Controller
 
     }
 
-    public function selectedreportedeudageneral($typo) {
+    public function selectedreportedeudageneral($typo, $desde, $hasta, $estadodeuda) {
            
         $sumaabonos = DB::table('deudas_abonos')
         ->select(DB::raw('MAX(id) as idabonos'),'deudas_id', DB::raw('SUM(total_pago) as total_abonos'))
@@ -816,7 +832,7 @@ class ReporteController extends Controller
         ->groupBy('deudas_id')
         ->where('deleted_at', '=', null);
         
-        $data = DB::table('deudas as de')
+        $query = DB::table('deudas as de')
         ->leftJoin('clientefacturas as cli', 'cli.id', 'de.proveedor_id')
         ->leftJoinSub($sumaabonos, 'sumabonos', function($join){ $join->on('de.id', '=', 'sumabonos.deudas_id'); })
         ->leftJoinSub($sumanotas, 'sumanotas', function($join){ $join->on('de.id', '=', 'sumanotas.deudas_id'); })
@@ -832,28 +848,34 @@ class ReporteController extends Controller
             'de.fecha_pago', 
             'de.total_compra',
             'de.estadodeuda',
+            'de.created_at',
             'de.deleted_at',
             'sumanotas.total_nota as totalpago_nota', 
             'sumabonos.total_abonos as totalpago_abono', 
             DB::raw('SUM(de.total_compra) as totaldeudaproveedor')
            )
-        ->groupBy('cli.id')
-        ->where([
-            ['de.estadodeuda', '=', 1],
-            ['de.deleted_at', '=', null],
-            ])
-        ->get();
-        // print_r($data);
-      //  return response()->json($data, 200);
+        ->groupBy('cli.id');
+        $query->where('de.deleted_at', '=', null);
+        if(!empty($estadodeuda)) {
+            $query->where('de.estadodeuda', '=', $estadodeuda);
+         } else {
+            $query->where('de.estadodeuda', '=', 1);
+         } 
+        
+        if(!empty($desde) && !empty($hasta)){
+            $query->whereBetween('de.created_at', [$desde, $hasta]);
+        }
+        $query->orderBy('de.created_at', 'ASC');
+        $data = $query->get();
 
         if($typo == 'pdf') {
-            return  $this->deudareportegeneralpdf($data);
+            return  $this->deudareportegeneralpdf($data, $desde, $hasta, $estadodeuda);
         } else {
              return  $this->deudareporteGeneralexcel($data);
          }
     }
 
-     public function deudareportegeneralpdf($data) {
+     public function deudareportegeneralpdf($data, $desde, $hasta, $estadodeuda) {
         $date = date('d-m-Y');
         $code = generarCodigo(4);
         $time = date('h.i.s A');
@@ -861,7 +883,7 @@ class ReporteController extends Controller
         ini_set("memory_limit", "512M");
         set_time_limit(300);
         $pdf = PDF::loadView('reportes.template.deudareportegeneral',
-        compact('data', 'date', 'time', 'code'))
+        compact('data', 'date', 'time', 'code', 'desde', 'hasta', 'estadodeuda' ))
         ->setPaper('letter', 'portrait');
         return $pdf->download('Reporte Deuda General - '.$code.' - '.$date.' '.$time.'.pdf');
      }

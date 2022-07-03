@@ -22,4 +22,13 @@ $(function () {
             cache: true
         }
     });
+
+
+    $('input[type=radio][name=reportetype]').change(function() {
+        if ($(this).val() == 'general') {
+            $('#contentproveedor').addClass('d-none');
+        } else {
+            $('#contentproveedor').removeClass('d-none');
+        }
+    });
 });
