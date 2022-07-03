@@ -142,10 +142,34 @@ $(function () {
         }
     });
 
-
-
+    $("#frmbusquedadeuda").submit(function (event) {
+        event.preventDefault();   
+        var frm = $(this).serialize();
+            $.ajax({
+                url: '/loaddatadeuda',
+                type: 'GET',
+                dataType: "JSON",
+                data: frm,
+                success: function (res) {
+                    $("#tbcontentdata").html(res);
+                },
+                error: function (err) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: '¡Error algo salio mal!'
+                    });
+                }
+            })       
 
     });
+
+    $("#mostrartododeuda").on('click', function(){
+        listdata();
+    })
+
+
+});
 
     function validateInput(){
         let proveedor_id = false, numero_factura = false;
@@ -269,16 +293,30 @@ $(function () {
     }
 
     // pagination 
-$(document).on('click', '#pagination .pagination a', function (e){
-    e.preventDefault()
-    let page = $(this).attr('href').split('page=')[1];
-    $.ajax({
-        url: '/loaddatadeuda',
-        data: {page: page},
-        type: 'GET',
-        dataType: 'JSON',
-        success: function (data){
-            $("#tbcontentdata").html(data);
+    $(document).on('click', '#pagination .pagination a', function (e){
+        e.preventDefault()
+        let page = $(this).attr('href').split('page=')[1];
+        let data = $('#numfacturabuscar').val();
+        let data2 = $('#estadofacturadeuda').val();
+        $.ajax({
+            url: '/loaddatadeuda',
+            data: {page: page, numfacturabuscar: data, estadofacturadeuda: data2},
+            type: 'GET',
+            dataType: 'JSON',
+            success: function (data){
+                $("#tbcontentdata").html(data);
+            }
+        })
+    });
+
+    $(document).on('click', '#rowtable', function (){
+        let deudaid = $(this).data("deudaid");
+        let estadodeuda = $(this).data("estadodeuda");
+        $("#id").val(deudaid)
+        if(estadodeuda == 1) {
+            $("#txtshowestado").text("CRÉDITO");
+        } else {
+            $("#txtshowestado").text("PAGADO");
         }
-    })
-});
+        $("#showselecteditem").modal('show')
+    });

@@ -226,6 +226,10 @@ class DeudasController extends Controller
     }
 
     public function loaddatadeuda(Request $request) {
+        $estadodeuda = $request->estadofacturadeuda;
+        $numseafactura = $request->numfacturabuscar;
+
+    
         $sumaabonos = DB::table('deudas_abonos')
         ->select(DB::raw('MAX(id) as idabonos'),'deudas_id', DB::raw('SUM(total_pago) as total_abonos'))
         ->groupBy('deudas_id')
@@ -236,7 +240,7 @@ class DeudasController extends Controller
         ->groupBy('deudas_id')
         ->where('deleted_at', '=', null);
 
-        $data = DB::table('deudas as de')
+        $query = DB::table('deudas as de')
         ->join('condicionespago as con', 'de.condicionespago_id', 'con.id')
         ->leftJoin('documentos as do', 'de.documento_id', 'do.id')
         ->leftJoin('clientefacturas as cli', 'cli.id', 'de.proveedor_id')
@@ -247,10 +251,51 @@ class DeudasController extends Controller
         ->leftJoin('deudas_pagos as dpa', 'de.id', '=', 'dpa.deudas_id')
         ->leftJoin('formaspagos as frmpaabono', 'frmpaabono.id', '=', 'dab.formapago_id')
         ->leftJoin('formaspagos as frmpapago', 'frmpapago.id', '=', 'dpa.formapago_id')
-        ->select('de.id','de.proveedor_id', 'de.numero_factura', 'cli.nombre_comercial','de.documento_id', 'do.name as documento','de.condicionespago_id', 'de.fecha_factura', 'de.fecha_pago', 'de.total_compra','de.deleted_at','dno.numero as numnota', 'sumanotas.total_nota as totalpago_nota', 'dno.fecha_notacredito', 'sumabonos.total_abonos as totalpago_abono', 'dab.id as idbonodes', 'dab.numero_recibo as numreciboabono', 'frmpaabono.name as formpagoabono', 'dab.numero as numabono', 'dab.fecha_abono','dpa.total_pago as totalpago_pago', 'dpa.numero_recibo as numrecibopago', 'frmpapago.name as formpago', 'dpa.numero as numpago')
-        ->where('de.deleted_at', '=', null)
-        ->orderBy('dab.id', 'ASC')
-        ->paginate(25);
+        ->select(
+            'de.id',
+            'de.proveedor_id', 
+            'de.numero_factura',
+            'cli.nombre_comercial',
+            'de.documento_id', 
+            'do.name as documento',
+            'de.condicionespago_id', 
+            'de.fecha_factura',
+            'de.fecha_pago', 
+            'de.total_compra',
+            'de.estadodeuda',
+            'de.deleted_at',
+            'dno.numero as numnota', 
+            'sumanotas.total_nota as totalpago_nota', 
+            'dno.fecha_notacredito', 
+            'sumabonos.total_abonos as totalpago_abono', 
+            'dab.id as idbonodes', 
+            'dab.numero_recibo as numreciboabono', 
+            'frmpaabono.name as formpagoabono', 
+            'dab.numero as numabono',
+            'dab.fecha_abono',
+            'dpa.total_pago as totalpago_pago', 
+            'dpa.numero_recibo as numrecibopago', 
+            'frmpapago.name as formpago',
+            'dpa.numero as numpago'
+        );
+        $query->where('de.deleted_at', '=', null);
+        if(!empty($estadodeuda)) {
+            $query->where('de.estadodeuda', '=', $estadodeuda);
+         } else {
+            $query->where('de.estadodeuda', '=', 1);
+         }
+
+        if(!empty($numseafactura)){          
+            $query->where('de.numero_factura', 'LIKE', '%' . $numseafactura . '%');
+        }
+        $query->orderBy('dab.id', 'ASC');
+        $data = $query->paginate(25);
+
+        // return response()->json([
+        //     'data' => $data,
+        //     'factura' => $numseafactura,
+        //     'estado' => $estadodeuda
+        // ], 200,);
 
         if($request->ajax()){
             return response()->json(view('deudas.partials.tbladeudas', compact('data'))->render());
@@ -346,7 +391,8 @@ class DeudasController extends Controller
         return $res;
     }
     // buscar deuda para editar
-    public function finddeudas($id) {
+    public function finddeudas(Request $request) {
+        $id = $request->id;
         // valido que el pago no existe
         $deudapago = DeudasPagos::where('deleted_at', null)->where('deudas_id', $id)->exists();
         $statedeuda = Deudas::find($id);

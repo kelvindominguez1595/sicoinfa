@@ -20,6 +20,7 @@
     @include('deudas.modals.nuevo')
     @include('deudas.modals.pagos')
     @include('deudas.modals.edit')
+    @include('deudas.modals.showitem')
     <div class="row mb-2">
         <div class="d-flex justify-content-between">
             <div class="btn-group" role="group" aria-label="Basic outlined example">
@@ -41,7 +42,36 @@
                 <div class="card-header bg-primary text-white d-flex justify-content-between">
                    Deudas
                 </div>
-                <div class="card-body" id="tbcontentdata"></div>
+                <div class="card-body">
+                    <div class="row mb-2 ">                 
+
+                            <form id="frmbusquedadeuda" class="row d-flex justify-content-end ">
+                                <div class="col-3">
+                                    <label for="">N° Factura</label>
+                                    <input type="text" name="numfacturabuscar" id="numfacturabuscar" class="form-control">
+                                </div>
+
+                                <div class="col-2">
+                                    <label for="">Estado de Deuda</label>
+                                    <select name="estadofacturadeuda" id="estadofacturadeuda" class="form-select">
+                                        <option value="1">CRÉDITO</option>
+                                        <option value="2">PAGADO</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-1 d-flex align-items-center">
+                                    <button class="btn btn-primary" type="submit">Buscar Deuda</button>
+                                </div>
+                                <div class="col-1 d-flex align-items-center">
+                                    <button class="btn btn-primary" id="mostrartododeuda" type="button">Mostrar Todo</button>
+                                </div>
+                            </form>
+                     
+                    </div>
+                    <div class="row">
+                        <div  id="tbcontentdata"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

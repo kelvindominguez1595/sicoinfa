@@ -45,33 +45,40 @@
                     $deuda = 0;
                 }
             @endphp
-                <tr  data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $item->nombre_comercial }}">
-                     <td class="size-font-medium-small">{{ date('d/m/Y', strtotime($item->fecha_factura)) }}</td>
-                     <td class="size-font-medium-small"><a href="{{ url('/finddeudas', $item->id) }}">{{ $item->numero_factura }}</a></td>
-                     <td class="size-font-medium-small">{{ $item->documento }}</td>
-                     <td class="size-font-medium-small">${{ number_format($item->total_compra, 2) }}</td>
+                <tr  
+                     data-bs-toggle="tooltip" 
+                     data-bs-placement="top"
+                     title="{{ $item->nombre_comercial }}" 
+                     id="rowtable" 
+                     data-deudaid="{{$item->id}}"
+                     data-estadodeuda="{{$item->estadodeuda}}"
+                >
+                     <td class="size-font-medium-small  bg-deudauno">{{ date('d/m/Y', strtotime($item->fecha_factura)) }}</td>
+                     <td class="size-font-medium-small  bg-deudauno">{{ $item->numero_factura }}</td>
+                     <td class="size-font-medium-small  bg-deudauno">{{ $item->documento }}</td>
+                     <td class="size-font-medium-small  bg-deudauno fw-bold">${{ number_format($item->total_compra, 2) }}</td>
  
-                     <td class="size-font-medium-small"> 
+                     <td class="size-font-medium-small bg-deudados fw-bold">
                          @isset($item->totalpago_abono) ${{ number_format($item->totalpago_abono, 2) }}  @endisset
                      </td>
-                     <td class="size-font-medium-small">
+                     <td class="size-font-medium-small bg-deudados">
                          @isset($item->fecha_abono) {{ date('d/m/Y', strtotime($item->fecha_abono)) }}  @endisset                        
                      </td>
-                     <td class="size-font-medium-small">{{ $item->formpagoabono }}</td>
-                     <td class="size-font-medium-small">{{ $item->numreciboabono }}</td>
-                     <td class="size-font-medium-small">{{ $item->numabono }}</td>
+                     <td class="size-font-medium-small bg-deudados">{{ $item->formpagoabono }}</td>
+                     <td class="size-font-medium-small bg-deudados">{{ $item->numreciboabono }}</td>
+                     <td class="size-font-medium-small bg-deudados">{{ $item->numabono }}</td>
  
-                     <td class="size-font-medium-small">{{ $item->numnota }}</td>
-                     <td class="size-font-medium-small">
+                     <td class="size-font-medium-small bg-deudatres">{{ $item->numnota }}</td>
+                     <td class="size-font-medium-small bg-deudatres fw-bold">
                          @isset($item->totalpago_nota) ${{ number_format($item->totalpago_nota, 2) }}  @endisset
                      </td>
-                     <td class="size-font-medium-small">
+                     <td class="size-font-medium-small bg-deudatres">
                          @isset($item->totalpago_nota) {{ $item->numero_factura }}  @endisset
                      </td>
-                     <td class="size-font-medium-small">
+                     <td class="size-font-medium-small bg-deudatres">
                          @isset($item->fecha_notacredito) {{ date('d/m/Y', strtotime($item->fecha_notacredito)) }}  @endisset
                      </td>
-                     <td class="size-font-medium-small">
+                     <td class="size-font-medium-small bg-deudacuatro fw-bold">
                          @php
                              $totalimporta =$item->total_compra - ($abono + $notacredito);
                              $deudafinal = $totalimporta - $deuda;
@@ -79,15 +86,15 @@
                          ${{ number_format($totalimporta, 2) }}
                      </td>
  
-                     <td class="size-font-medium-small">{{ $item->numero_factura }}</td>
-                     <td class="size-font-medium-small">{{ date('d/m/Y', strtotime($item->fecha_pago)) }}</td>
-                     <td class="size-font-medium-small">
+                     <td class="size-font-medium-small bg-deudacinco">{{ $item->numero_factura }}</td>
+                     <td class="size-font-medium-small bg-deudacinco">{{ date('d/m/Y', strtotime($item->fecha_pago)) }}</td>
+                     <td class="size-font-medium-small bg-deudacinco">
                          @isset($item->totalpago_pago) ${{ number_format($item->totalpago_pago, 2) }}  @endisset
                      </td>
-                     <td class="size-font-medium-small">{{ $item->numrecibopago }}</td>
-                     <td class="size-font-medium-small">{{ $item->formpago }}</td>
-                     <td class="size-font-medium-small">{{ $item->numpago }}</td>
-                     <td class="size-font-medium-small">
+                     <td class="size-font-medium-small bg-deudacinco">{{ $item->numrecibopago }}</td>
+                     <td class="size-font-medium-small bg-deudacinco">{{ $item->formpago }}</td>
+                     <td class="size-font-medium-small bg-deudacinco">{{ $item->numpago }}</td>
+                     <td class="size-font-medium-small bg-deudacinco fw-bold">
                          ${{ number_format($deudafinal, 2) }}
                      </td>
                 </tr>

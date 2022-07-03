@@ -120,7 +120,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/findnotas/{id}',[DeudasController::class, 'findnotas']);
     Route::get('/findpagos/{id}',[DeudasController::class, 'findpagos']);
     Route::get('/findabonos/{id}',[DeudasController::class, 'findabonos']);
-    Route::get('/finddeudas/{id}',[DeudasController::class, 'finddeudas']);
+    Route::get('/finddeudas/',[DeudasController::class, 'finddeudas']);
     Route::delete('/deletedeudasall/{id}',[DeudasController::class, 'deletedeudasall']);
     Route::delete('/destroypagos/{id}',[DeudasController::class, 'destroypagos']);
     Route::delete('/destroyabonos/{id}',[DeudasController::class, 'destroyabonos']);
