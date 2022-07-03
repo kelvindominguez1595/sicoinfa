@@ -12,6 +12,7 @@
 @section('content')
     <div class="row mb-2">
         <input type="hidden" name="routepath" id="routepath" value="{{ Auth::user()->hasRole('Admin') ? 'loadproducts' : 'loadproductsclient' }}">
+        <input type="hidden" name="routerlast" id="routerlast" value="{{ Auth::user()->hasRole('Admin') ? 'loadlastproduct' : 'no' }}">
         @include('productos.modals.images')
         {{-- columna 1  --}}
         <div class="col-xs-12 co-sm-12 col-md-3 col-lg-3 col-xl-3">

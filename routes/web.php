@@ -143,7 +143,7 @@ Route::group(['middleware' => ['auth', 'user']], function () {
     // Route::get('/inventarios', [ProductosController::class, 'index']);
     Route::get('inventarios', [ProductosAJAXController::class, 'index']);
     Route::get('loadproductsclient', [ProductosAJAXController::class, 'loadproducts']);
-    Route::get('loadlastproduct', [ProductosAJAXController::class, 'loadlastproduct']);
+ //   Route::get('loadlastproduct', [ProductosAJAXController::class, 'loadlastproduct']);
 
     Route::get('/list_marcasempleado', [ProductosController::class, 'marcas']);
     Route::get('/list_categoriasempleado', [ProductosController::class, 'categorias']);

@@ -194,8 +194,9 @@ $( document ).ready(function() {
     $("#frmbusquedaproduct").submit(function(event){
         event.preventDefault();
         let frm = $(this).serialize();
+        let path = $("#routepath").val();
         $.ajax({
-            url: "/loadproducts",
+            url: path,
             type: "GET",
             dataType: "JSON",
             data: frm,
@@ -255,9 +256,12 @@ function loaddata() {
 }
 
 function loadlastdata() {
-    $.get("/loadlastproduct", function(res){
-        $("#bodylast").html(res)
-    })
+    let routerlast = $("#routerlast").val();
+    if(routerlast !== "no"){
+        $.get("/loadlastproduct", function(res){
+            $("#bodylast").html(res)
+        })
+    }
 }
 
 function filterdataproduct(orderby, router, nameorder, codigo, codbarra, categoria, marca, nombre, almacen, pages, estado){
@@ -317,9 +321,9 @@ function filterdataproduct(orderby, router, nameorder, codigo, codbarra, categor
     let almacen     = $('#almacen').val()
     let pages       = $('#pages').val()
     let estado      = $('#estado').val()
-
+    let path = $("#routepath").val();
     $.ajax({
-        url: '/loadproducts',
+        url: path,
         data: {
             page:       page,
             nameorder: nameorder,
