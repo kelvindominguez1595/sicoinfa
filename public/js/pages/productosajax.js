@@ -202,6 +202,18 @@ $( document ).ready(function() {
             success: function (res){
                 $("#tblproductscontent").html(res.data)
                 $("#contenpagination").html(res.pagination)
+                var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+                var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+                    return new bootstrap.Popover(popoverTriggerEl)
+                })
+
+                $('.imgzoom').popover({
+                    html: true,
+                    trigger: 'hover',
+                    content: function () {
+                        return '<img src="'+$(this).attr('src') + '" width="250" height="250" class="img-fluid" />';
+                    }
+                });
             },
             error: function (err) {
                 console.log(err)
