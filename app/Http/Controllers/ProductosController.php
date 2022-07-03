@@ -43,13 +43,13 @@ class ProductosController extends Controller
                 )
             ->groupBy('producto_id');
 
-        
+
             $cansum = DB::table('detalle_products')
             ->select('id as idsupro', 'branch_offices_id',
                 'stocks_id', DB::raw('SUM(quantity) as cantidadnew'))
             ->groupBy('stocks_id');
 
-    
+
         $codigo     = $request->codigo;
         $codbarra   = $request->codbarra;
         $categoria  = $request->categoria;
