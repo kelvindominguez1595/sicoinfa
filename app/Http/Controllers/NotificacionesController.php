@@ -159,8 +159,12 @@ class NotificacionesController extends Controller
     $image =  $data->image;
     $pathrouter = $ruta.$image;
     $exist = false;
-    if(file_exists($pathrouter)){
-        $exist = true;
+    if(!empty($image)){
+        if(file_exists($pathrouter)){
+            $exist = true;
+        } else {
+            $exist = false;
+        }
     } else {
         $exist = false;
     }
