@@ -5,8 +5,8 @@ $( document ).ready(function() {
         }
     });
 
-
     loaddata();
+    loadlastdata();
 
     // order title
     $('#codetitle').on('click', function(e){
@@ -214,6 +214,7 @@ $( document ).ready(function() {
                         return '<img src="'+$(this).attr('src') + '" width="250" height="250" class="img-fluid" />';
                     }
                 });
+                loadlastdata();
             },
             error: function (err) {
                 console.log(err)
@@ -223,6 +224,7 @@ $( document ).ready(function() {
 
     $("#btnresetall").on('click', function(){
         loaddata();
+        loadlastdata();
     })
 
 
@@ -250,6 +252,12 @@ function loaddata() {
             // para que cambie la imagen y ver la vista previa
     })
 
+}
+
+function loadlastdata() {
+    $.get("/loadlastproduct", function(res){
+        $("#bodylast").html(res)
+    })
 }
 
 function filterdataproduct(orderby, router, nameorder, codigo, codbarra, categoria, marca, nombre, almacen, pages, estado){
@@ -284,6 +292,7 @@ function filterdataproduct(orderby, router, nameorder, codigo, codbarra, categor
                     return '<img src="'+$(this).attr('src') + '" width="250" height="250" class="img-fluid" />';
                 }
             });
+            loadlastdata();
         },
         error: function (err) {
             console.log(err)
@@ -341,6 +350,7 @@ function filterdataproduct(orderby, router, nameorder, codigo, codbarra, categor
                     return '<img src="'+$(this).attr('src') + '" width="250" height="250" class="img-fluid" />';
                 }
             });
+            loadlastdata();
         }
     })
 });

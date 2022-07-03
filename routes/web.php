@@ -133,13 +133,18 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/deudasreportes', [ReporteController::class, 'deudasreportes']);
     Route::get('/selectereportedeudas', [ReporteController::class, 'selectereportedeudas']);
     /** PRUEBA DE LA NUEVA BUSQUEDA */
-    Route::get('productosearchajax', [ProductosAJAXController::class, 'index']);
+    Route::get('listadodeproductos', [ProductosAJAXController::class, 'index']);
     Route::get('loadproducts', [ProductosAJAXController::class, 'loadproducts']);
+    Route::get('loadlastproduct', [ProductosAJAXController::class, 'loadlastproduct']);
 
 });
 
 Route::group(['middleware' => ['auth', 'user']], function () {
-    Route::get('/inventarios', [ProductosController::class, 'index']);
+    // Route::get('/inventarios', [ProductosController::class, 'index']);
+    Route::get('inventarios', [ProductosAJAXController::class, 'index']);
+    Route::get('loadproductsclient', [ProductosAJAXController::class, 'loadproducts']);
+    Route::get('loadlastproduct', [ProductosAJAXController::class, 'loadlastproduct']);
+
     Route::get('/list_marcasempleado', [ProductosController::class, 'marcas']);
     Route::get('/list_categoriasempleado', [ProductosController::class, 'categorias']);
     Route::get('/marcasidemp/{id}', [ProductosController::class, 'marcasid']);

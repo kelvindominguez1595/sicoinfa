@@ -118,4 +118,33 @@
     </div>
 
 
+    @if(Auth::user()->hasRole('Admin'))
+    <div class="row mb-3">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+            <div class="card mb-4 border-primary">
+                <div class="card-header bg-primary text-white">
+                    Últimos ingresos
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered" id="table-utlimo-registro">
+                            <thead>
+                            <tr>
+                                <th>N° Factura</th>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unitario</th>
+                                <th>Fecha</th>
+                            </tr>
+                            </thead>
+                            <tbody id="bodylast">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
+
 @endsection
