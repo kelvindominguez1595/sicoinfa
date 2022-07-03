@@ -3,12 +3,9 @@
     <a href="{{ url('/bandejaNotificaciones?notificacion_id='.$item->id) }}"
        style="text-decoration: none; color: #000000;" >
 
-        <div class="card border-bottom shadow-sm mb-2
-        @if($notyid == $item->id)
-        bg-secondary text-white
-        @endif
-         @if(verifiedCountState($item->id) == "VISTO")
-         @else fw-bold bg-primary bg-opacity-25 @endif"
+      <div class="card border-bottom shadow-sm mb-2
+            @if($notyid == $item->id) bg-secondary text-white @endif
+            @if(verifiedCountState($item->id) == "VISTO") @else fw-bold bg-primary bg-opacity-25 @endif"
         >
             <div class="card-body">
 
@@ -29,6 +26,7 @@
                         {{  $item->comentario ?? 'Hay Productos con nuevos Precios' }}
                     </div>
                 </div>
+                
             </div>
         </div>
     </a>

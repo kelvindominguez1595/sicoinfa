@@ -96,14 +96,14 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/listsubcursal', [SucursalesController::class, 'listsubcursal']);
     /** REPORTES */
     Route::get('/Reportes', [ReporteController::class, 'reportes']);
-    
+
     Route::get('/promedio', [ReporteController::class, 'promedio']);
     Route::get('/rendimiento', [ReporteController::class, 'rendimiento']);
     Route::get('/porcentajereporte', [ReporteController::class, 'porcentajereporte']);
-    
+
     Route::get('/detView', [ReporteController::class, 'detView']);
     Route::get('/reporteDET', [ReporteController::class, 'reporteDET']);
-    
+
     /** RUTAS PARA DEUDAS */
     Route::get('/deudas', [DeudasController::class, 'index']);
     Route::post('/nuevadeuda', [DeudasController::class, 'nuevadeuda']);
@@ -112,7 +112,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::post('/abonos', [DeudasController::class, 'abonos']);
     Route::get('/loaddatadeuda', [DeudasController::class, 'loaddatadeuda']);
     Route::get('/showdeudas', [DeudasController::class, 'showdeudas']);
-    
+
     Route::get('/addModdate/{date}',[DeudasController::class, 'addModdate']);
     Route::get('/dateNow',[DeudasController::class, 'dateNow']);
     Route::get('/searchfactura',[DeudasController::class, 'searchfactura']);
@@ -131,7 +131,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     // para reportes de deudas
     Route::get('/deudasreportes', [ReporteController::class, 'deudasreportes']);
     Route::get('/selectereportedeudas', [ReporteController::class, 'selectereportedeudas']);
-    
+
 });
 
 Route::group(['middleware' => ['auth', 'user']], function () {
@@ -144,4 +144,5 @@ Route::group(['middleware' => ['auth', 'user']], function () {
 /** rutas tanto para administradore y otros usuarios **/
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/bandejaNotificaciones',[NotificacionesController::class, 'notify']);
+    Route::get('/detalleProductoNotificaction/{id}',[NotificacionesController::class, 'detalleProductoNotificaction']);
 });

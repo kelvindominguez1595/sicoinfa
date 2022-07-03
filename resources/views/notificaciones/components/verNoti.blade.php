@@ -8,7 +8,7 @@
             <th class="text-center">UNIDAD DE MEDIDAD</th>
             <th class="text-center">CANTIDAD</th>
             <th class="text-center">PRECIO VENTA</th>
-            <th class="text-center">ESTADO</th>
+            <th class="text-center">VER</th>
             </thead>
             <tbody>
             @foreach($data as $item)
@@ -20,13 +20,13 @@
                     <td class="text-center">{{ $item->quantity }}</td>
                     <td class="text-center">$ {{ number_format($item->precioventa, 2) }}</td>
                     <td class="text-center">
-                        @if($item->cambio == "subio")
-                            <i class="text-success fas fa-arrow-up" ></i>
-                        @elseif($item->cambio == "mantiene")
-                            <i class="fas fa-equals"></i>
-                        @else
-                            <i class="text-danger fas fa-arrow-down"></i>
-                        @endif
+                        <button
+                            type="button"
+                            class="btn btn-outline-primary"
+                            id="btnverdetalle"
+                            data-productoid="{{ $item->id }}">
+                             <span class="fas fa-eye"  ></span>
+                        </button>
 
                     </td>
                 </tr>
