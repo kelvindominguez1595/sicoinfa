@@ -291,12 +291,6 @@ class DeudasController extends Controller
         $query->orderBy('dab.id', 'ASC');
         $data = $query->paginate(25);
 
-        // return response()->json([
-        //     'data' => $data,
-        //     'factura' => $numseafactura,
-        //     'estado' => $estadodeuda
-        // ], 200,);
-
         if($request->ajax()){
             return response()->json(view('deudas.partials.tbladeudas', compact('data'))->render());
         }
