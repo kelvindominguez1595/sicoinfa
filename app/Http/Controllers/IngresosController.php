@@ -88,7 +88,7 @@ class IngresosController extends Controller
         Notificaciones::create([
             'tipo' => $res,
             'registro_id' => $dataingre->id,
-            'comentario' => "Actualización de producto: ".$respro->name,
+            'comentario' => $respro->name,
             'estado' => "NO VISTO"
         ]);
         // respondemos
@@ -803,7 +803,7 @@ class IngresosController extends Controller
             Notificaciones::create([
                 'tipo' => "muchos",
                 'registro_id' => $request->factura,
-                'comentario' => "Uno o Varios Productos han actualizado su cantidad y precio",
+                'comentario' => "Existe uno o varios productos que se ha realizado un nuevo ingreso.",
                 'estado' => "NO VISTO"
             ]);
         return response()->json(["message" => "Precio de venta Actualizados"], 200);

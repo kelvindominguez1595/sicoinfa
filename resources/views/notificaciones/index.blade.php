@@ -8,7 +8,7 @@
 @endsection
 @section('content')
     <div class="row mb-2">
-        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 border-end">
+        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 border-end">
             <div class="row mb-2">
                <div class="col-12">
                    {{ $listNoti->links() }}

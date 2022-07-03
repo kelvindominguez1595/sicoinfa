@@ -70,6 +70,7 @@
             </a>
         </li>
     @endif
+    
     <li class="nav-item dropdown dropdown-pull-right">
         <a class="nav-link" href="#" id="showNotifications" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <div class="badge rounded-pill bg-primary position-relative">
