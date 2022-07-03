@@ -224,13 +224,14 @@ $( document ).ready(function() {
     })
 
     $("#btnresetall").on('click', function(){
+        $('#codigo').val('')
+        $('#codbarra').val('')
+        $('#categoria').val('')
+        $('#marca').val('')
+        $('#nombre').val('')
         loaddata();
         loadlastdata();
     })
-
-
-
-
 });
 
 function loaddata() {
