@@ -219,8 +219,6 @@ $( document ).ready(function() {
 });
 
 function loaddata() {
-
-
     let path = $("#routepath").val();
     $.get(path, function(res){
         $("#tblproductscontent").html(res.data)
@@ -238,9 +236,7 @@ function loaddata() {
             }
         });
             // para que cambie la imagen y ver la vista previa
-
     })
-
 
 }
 
@@ -311,4 +307,14 @@ function filterdataproduct(orderby, router, nameorder, codigo, codbarra, categor
             $("#contenpagination").html(res.pagination)
         }
     })
+});
+
+
+$(document).on('click', '#imgzoom', function (){
+    // let id = $(this).val();
+  console.log("hola mundo ")
+
+    var imgsrc = $(this).data('pathimage');
+    $('#my_image').attr('src',imgsrc);
+    $("#showimagen").modal("show")
 });
