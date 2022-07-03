@@ -5,58 +5,10 @@ $(document).ready(function () {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
-
-    // esto me sirve para cargar los listado de select2 con paginacion de 10
-   /* $('#categoria').select2({
-        theme: "bootstrap-5",
-        placeholder: 'Seleccione...',
-        allowClear: true,
-        ajax: {
-            url: '/list_categorias',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return {
-                    term: params.term || '',
-                    page: params.page || 1
-                }
-            },
-            cache: true
-        }
-    });
-
-    $('#marca').select2({
-        theme: "bootstrap-5",
-        placeholder: 'Seleccione...',
-        allowClear: true,
-        ajax: {
-            url: '/list_marcas',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return {
-                    term: params.term || '',
-                    page: params.page || 1
-                }
-            },
-            cache: true
-        }
-    }); */
-
-    // para obtener el registro buscado
-   /* let categoria = document.querySelector('#categoria').dataset.categoria;
-    let marca = document.querySelector('#marca').dataset.marca;
-
-    if(categoria !== ''){
-        $.get('categoriasid/'+categoria, function (res) {
-            $('#categoria').append('<option value="'+res.id+'" selected="selected">'+res.name+'</option>');
-        });
-    }
-    if(marca !== ''){
-        $.get('marcasid/'+marca, function (res) {
-            $('#marca').append('<option value="'+res.id+'" selected="selected">'+res.name+'</option>');
-        });
-    } */
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl)
+        })
 
     $('.imgzoom').popover({
         html: true,
