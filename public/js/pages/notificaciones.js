@@ -19,14 +19,10 @@ $(function () {
             $('#detallestxt').html(res.data.description);
             let precioventafinal = res.data.precioventa.toFixed(2)
             $('#precioventafinaltxt').text("$"+precioventafinal);
-
-
-
             if(res.existimage) {
               let  pathroute = res.image;
                 $('#contentimage').html('<img class="img-fluid" src="'+ pathroute +'" width=150 height=150 alt="Hello Image" />');
             }
-
             $("#shownoti").modal("show")
         })
     });

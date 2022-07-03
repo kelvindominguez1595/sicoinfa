@@ -14,6 +14,7 @@ use App\Http\Controllers\SucursalesController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\DeudasController;
 use App\Http\Controllers\NotificacionesController;
+use App\Http\Controllers\ProductosAJAXController;
 
 /*
 |--------------------------------------------------------------------------
@@ -120,7 +121,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/findnotas/{id}',[DeudasController::class, 'findnotas']);
     Route::get('/findpagos/{id}',[DeudasController::class, 'findpagos']);
     Route::get('/findabonos/{id}',[DeudasController::class, 'findabonos']);
-    Route::get('/finddeudas/',[DeudasController::class, 'finddeudas']);
+    Route::get('/finddeudas',[DeudasController::class, 'finddeudas']);
     Route::delete('/deletedeudasall/{id}',[DeudasController::class, 'deletedeudasall']);
     Route::delete('/destroypagos/{id}',[DeudasController::class, 'destroypagos']);
     Route::delete('/destroyabonos/{id}',[DeudasController::class, 'destroyabonos']);
@@ -131,6 +132,9 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     // para reportes de deudas
     Route::get('/deudasreportes', [ReporteController::class, 'deudasreportes']);
     Route::get('/selectereportedeudas', [ReporteController::class, 'selectereportedeudas']);
+    /** PRUEBA DE LA NUEVA BUSQUEDA */
+    Route::get('productosearchajax', [ProductosAJAXController::class, 'index']);
+    Route::get('loadproducts', [ProductosAJAXController::class, 'loadproducts']);
 
 });
 

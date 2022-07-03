@@ -6,6 +6,11 @@
     </li>
     @if(Auth::user()->hasRole('admin'))
         <li class="nav-item">
+            <a class="nav-link " aria-current="page" href="{{ url('/productosearchajax') }}">
+                <i class="fas fa-cash-register"></i> Productos AJAX
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link " aria-current="page" href="">
                 <i class="fas fa-cash-register"></i> Facturar
             </a>
@@ -70,7 +75,7 @@
             </a>
         </li>
     @endif
-    
+
     <li class="nav-item dropdown dropdown-pull-right">
         <a class="nav-link" href="#" id="showNotifications" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <div class="badge rounded-pill bg-primary position-relative">
