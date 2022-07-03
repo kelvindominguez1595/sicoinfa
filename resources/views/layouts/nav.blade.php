@@ -5,11 +5,11 @@
         </a>
     </li>
     @if(Auth::user()->hasRole('admin'))
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link " aria-current="page" href="{{ url('/productosearchajax') }}">
                 <i class="fas fa-cash-register"></i> Productos AJAX
             </a>
-        </li>
+        </li> --}}
         <li class="nav-item">
             <a class="nav-link " aria-current="page" href="">
                 <i class="fas fa-cash-register"></i> Facturar
