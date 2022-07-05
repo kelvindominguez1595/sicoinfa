@@ -104,9 +104,14 @@
                 </td>
                 @if(Auth::user()->hasRole('Admin'))
                     <td>
-                        <input type="hidden" name="idProducto[]" value="{{ $item->id }}"><input
-                            type="number" name="update_quantity[]" id="update_quantity"
-                            class="cantidad" style="width: 70px">
+                        <input type="hidden" name="idProducto[]" value="{{ $item->id }}">
+                        <input
+                            type="number"
+                            name="update_quantity[]"
+                            id="update_quantity"
+                            class="cantidad"
+                            style="width: 70px"
+                        >
                     </td>
                 @endif
             </tr>

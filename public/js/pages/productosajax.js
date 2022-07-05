@@ -216,6 +216,7 @@ $( document ).ready(function() {
                     }
                 });
                 loadlastdata();
+                metodoArreglarProducto()
             },
             error: function (err) {
                 console.log(err)
@@ -231,6 +232,7 @@ $( document ).ready(function() {
         $('#nombre').val('')
         loaddata();
         loadlastdata();
+        metodoArreglarProducto()
     })
 });
 
@@ -252,6 +254,7 @@ function loaddata() {
             }
         });
             // para que cambie la imagen y ver la vista previa
+            metodoArreglarProducto()
     })
 
 }
@@ -298,6 +301,7 @@ function filterdataproduct(orderby, router, nameorder, codigo, codbarra, categor
                 }
             });
             loadlastdata();
+            metodoArreglarProducto()
         },
         error: function (err) {
             console.log(err)
@@ -356,6 +360,7 @@ function filterdataproduct(orderby, router, nameorder, codigo, codbarra, categor
                 }
             });
             loadlastdata();
+            metodoArreglarProducto()
         }
     })
 });
@@ -366,3 +371,48 @@ $(document).on('click', '#imgzoom', function () {
     $('#my_image').attr('src',imgsrc);
     $("#showimagen").modal("show");
 });
+
+
+function metodoArreglarProducto(){
+        /// para modificar las cantidades en existencias
+        $(document).on('keyup', '.cantidad', function (event) {
+            if (event.keyCode === 13) {
+                $("#Updated_canti").click();
+            }
+        });
+
+
+
+        $("#Updated_canti").on('click', function () {
+            let newFrm = [];
+            var idProducto = $("input[name='idProducto[]']");
+            for (var i = 0; i < idProducto.length; i++) {
+                newFrm.push({ name: 'idProducto[]', value: $(idProducto[i]).val() });
+            }
+            var update_quantity = $("input[name='update_quantity[]']");
+            for (var i = 0; i < update_quantity.length; i++) {
+                newFrm.push({ name: 'update_quantity[]', value: $(update_quantity[i]).val() });
+            }
+            //console.log($.param(newFrm + '<br>'));
+            $.ajax({
+                data: $.param(newFrm),
+                url: "/ajusteproducto",
+                type: "POST",
+                dataType: 'JSON',
+                success: function (data) {
+                    if (data.detalle_producto) {
+                        AlertConfirmacin('Cantidad actualizado correctamente');
+                        location.reload();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: '¡Error algo salio mal!'
+                        });
+                    }
+
+                }
+            });
+        });
+
+}

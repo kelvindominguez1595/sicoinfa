@@ -16,7 +16,7 @@ $(function () {
             numrecibo.prop('readonly', true);
         }
     });
-    
+
 
     $('input[type=radio][name=condicionespago_id]').change(function() {
         if ($(this).val() == 2) {
@@ -34,7 +34,7 @@ $(function () {
         }
     });
 
-    // buscar proveedores 
+    // buscar proveedores
     $('#proveedor_id').select2({
         theme: "bootstrap-5",
         dropdownParent: $('#nuevoModal'),
@@ -105,7 +105,7 @@ $(function () {
 
     // crear deuda nueva
     $("#frmnuevo").submit(function (event) {
-        event.preventDefault();   
+        event.preventDefault();
         var frm = $(this).serialize();
         if(validateInput()){
             $.ajax({
@@ -120,7 +120,7 @@ $(function () {
                     $("#frmnuevo").trigger("reset");
 
                     let numrecibo = $('#numero_recibonuevo')
-                    numrecibo.prop('readonly', true);        
+                    numrecibo.prop('readonly', true);
                     if ($('input[type=radio][name=condicionespago_id]').val() == 2) {
                         $('#contenedorpagos').removeClass('d-none');
                     } else {
@@ -130,20 +130,21 @@ $(function () {
                    // $("#nuevoModal").modal("hide");
                 },
                 error: function (err) {
+                    console.log()
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
-                        text: '¡Error algo salio mal!'
+                        text: err.responseJSON.errors.numero_factura[0]
                     });
                 }
-            })       
+            })
         } else {
             AlertError("Los campos marcados en rojo son OBLIGATORIOS");
         }
     });
 
     $("#frmbusquedadeuda").submit(function (event) {
-        event.preventDefault();   
+        event.preventDefault();
         var frm = $(this).serialize();
             $.ajax({
                 url: '/loaddatadeuda',
@@ -160,7 +161,7 @@ $(function () {
                         text: '¡Error algo salio mal!'
                     });
                 }
-            })       
+            })
 
     });
 
@@ -278,7 +279,7 @@ $(function () {
            $("#numero_facturaupdate").val(res.numero_factura);
            $('[name="documentoupdate"]').each(function(){
                if($(this).val() == res.documento_id) {
-                   $(this).prop('checked', true) 
+                   $(this).prop('checked', true)
                 }
             })
             $("#fecha_facturaupdate").val(res.fecha_factura);
@@ -286,13 +287,13 @@ $(function () {
             $("#total_compraupdate").val(res.total_compra);
             $('[name="condicionespago_idupdate"]').each(function(){
                 if($(this).val() == res.condicionespago_id) {
-                    $(this).prop('checked', true) 
+                    $(this).prop('checked', true)
                  }
              })
         })
     }
 
-    // pagination 
+    // pagination
     $(document).on('click', '#pagination .pagination a', function (e){
         e.preventDefault()
         let page = $(this).attr('href').split('page=')[1];

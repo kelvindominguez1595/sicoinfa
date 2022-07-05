@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Deudas;
 use App\Models\Documentos;
@@ -11,8 +12,9 @@ use App\Models\DeudasAbonos;
 use App\Models\CondicionesPagos;
 use App\Models\DeudasNotaCredito;
 use Illuminate\Support\Facades\DB;
+// use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\DeudasPostRequest;
 
-use Illuminate\Http\Request;
 
 class DeudasController extends Controller
 {
@@ -24,12 +26,12 @@ class DeudasController extends Controller
         return view('deudas.index', compact('formapago', 'tipofactura', 'condicion'));
     }
 
-    public function nuevadeuda(Request $request){
+    public function nuevadeuda(DeudasPostRequest $request){
 
         $presentafactura    = $request->presentafactura;
         $proveedor_id       = $request->proveedor_id;
 
-        $numero_recibo         = $request->numero_recibo;
+        $numero_recibo      = $request->numero_recibo;
         $numero_factura     = $request->numero_factura;
         $documento_id       = $request->documento_id;
         $fecha_factura      = $request->fecha_factura;
@@ -39,9 +41,9 @@ class DeudasController extends Controller
         $formpago_nuevo = $request->formpago_nuevo;
         $numero_recibonuevo = $request->numero_recibonuevo;
         $numerochequenuevo = $request->numerochequenuevo;
-        
+
         $cp = CondicionesPagos::find($condicionespago_id);
-   
+
         $paramsDeuda = [
             'proveedor_id'          => $proveedor_id,
             'numero_factura'        => $numero_factura,
@@ -56,12 +58,12 @@ class DeudasController extends Controller
         } else {
             $paramsDeuda['estadodeuda'] = 1;
         }
- 
-       $deuda = Deudas::create($paramsDeuda);       
-       
+
+       $deuda = Deudas::create($paramsDeuda);
+
         if($cp->name == 'PAGADO') {
             $dataPago = [
-                'deudas_id'             => $deuda->id,     
+                'deudas_id'             => $deuda->id,
                 'numero_recibo'         => $numero_recibonuevo,
                 'formapago_id'          => $formpago_nuevo,
                 'numero'                => $numerochequenuevo,
@@ -71,16 +73,16 @@ class DeudasController extends Controller
 
             if(!empty($presentafactura)){
                 $dataPago['presentafactura'] = 'si';
-            } else {   
-                $dataPago['presentafactura'] = 'no';    
+            } else {
+                $dataPago['presentafactura'] = 'no';
             }
 
             DeudasPagos::create($dataPago);
         }
-        
+
         return response()->json(['messages' => 'ok'], 200);
     }
-    
+
     public function notacredito(Request $request){
         DeudasNotaCredito::create($request->all());
         return response()->json(['messages' => 'ok'], 200);
@@ -90,7 +92,7 @@ class DeudasController extends Controller
         $date = Carbon::now();
         $deudapago = DeudasPagos::where('deudas_id', $request->deudas_idpago)
         ->where('deleted_at', null)->exists();
-        $statedeuda = Deudas::find($request->deudas_idpago);      
+        $statedeuda = Deudas::find($request->deudas_idpago);
 
         if($deudapago) {
             if($statedeuda->condicionespago_id == 1) {
@@ -100,7 +102,7 @@ class DeudasController extends Controller
             }
             $dpago = DeudasPagos::where('deudas_id', $request->deudas_idpago)
             ->where('deleted_at', null)->first();
-            $udpago = DeudasPagos::find($dpago->id);       
+            $udpago = DeudasPagos::find($dpago->id);
             $udpago->presentafactura    = $request->presentafacturapago;
             $udpago->total_pago         = $request->totalpagoshow == '' ? 0 : $request->totalpagoshow;
             $udpago->numero_recibo      = $request->numeropago;
@@ -195,27 +197,27 @@ class DeudasController extends Controller
         ->leftJoin('formaspagos as frmpapago', 'frmpapago.id', '=', 'dpa.formapago_id')
         ->select(
             'de.id',
-            'de.proveedor_id', 
-            'de.numero_factura', 
-            'cli.nombre_comercial', 
-            'de.documento_id', 
+            'de.proveedor_id',
+            'de.numero_factura',
+            'cli.nombre_comercial',
+            'de.documento_id',
             'do.name as documento',
-            'de.condicionespago_id', 
-            'de.fecha_factura', 
-            'de.fecha_pago', 
+            'de.condicionespago_id',
+            'de.fecha_factura',
+            'de.fecha_pago',
             'de.total_compra',
-            'dno.numero as numnota', 
-            'sumanotas.total_nota as totalpago_nota', 
+            'dno.numero as numnota',
+            'sumanotas.total_nota as totalpago_nota',
             'dno.fecha_notacredito',
-            'sumabonos.total_abonos as totalpago_abono', 
-            'dab.id as idbonodes', 
-            'dab.numero_recibo as numreciboabono', 
-            'frmpaabono.name as formpagoabono', 
-            'dab.numero as numabono', 
+            'sumabonos.total_abonos as totalpago_abono',
+            'dab.id as idbonodes',
+            'dab.numero_recibo as numreciboabono',
+            'frmpaabono.name as formpagoabono',
+            'dab.numero as numabono',
             'dab.fecha_abono',
-            'dpa.total_pago as totalpago_pago', 
-            'dpa.numero_recibo as numrecibopago', 
-            'frmpapago.name as formpago', 
+            'dpa.total_pago as totalpago_pago',
+            'dpa.numero_recibo as numrecibopago',
+            'frmpapago.name as formpago',
             'dpa.numero as numpago'
         )
         //  ->groupBy('dab.deudas_id')
@@ -229,7 +231,7 @@ class DeudasController extends Controller
         $estadodeuda = $request->estadofacturadeuda;
         $numseafactura = $request->numfacturabuscar;
 
-    
+
         $sumaabonos = DB::table('deudas_abonos')
         ->select(DB::raw('MAX(id) as idabonos'),'deudas_id', DB::raw('SUM(total_pago) as total_abonos'))
         ->groupBy('deudas_id')
@@ -253,28 +255,28 @@ class DeudasController extends Controller
         ->leftJoin('formaspagos as frmpapago', 'frmpapago.id', '=', 'dpa.formapago_id')
         ->select(
             'de.id',
-            'de.proveedor_id', 
+            'de.proveedor_id',
             'de.numero_factura',
             'cli.nombre_comercial',
-            'de.documento_id', 
+            'de.documento_id',
             'do.name as documento',
-            'de.condicionespago_id', 
+            'de.condicionespago_id',
             'de.fecha_factura',
-            'de.fecha_pago', 
+            'de.fecha_pago',
             'de.total_compra',
             'de.estadodeuda',
             'de.deleted_at',
-            'dno.numero as numnota', 
-            'sumanotas.total_nota as totalpago_nota', 
-            'dno.fecha_notacredito', 
-            'sumabonos.total_abonos as totalpago_abono', 
-            'dab.id as idbonodes', 
-            'dab.numero_recibo as numreciboabono', 
-            'frmpaabono.name as formpagoabono', 
+            'dno.numero as numnota',
+            'sumanotas.total_nota as totalpago_nota',
+            'dno.fecha_notacredito',
+            'sumabonos.total_abonos as totalpago_abono',
+            'dab.id as idbonodes',
+            'dab.numero_recibo as numreciboabono',
+            'frmpaabono.name as formpagoabono',
             'dab.numero as numabono',
             'dab.fecha_abono',
-            'dpa.total_pago as totalpago_pago', 
-            'dpa.numero_recibo as numrecibopago', 
+            'dpa.total_pago as totalpago_pago',
+            'dpa.numero_recibo as numrecibopago',
             'frmpapago.name as formpago',
             'dpa.numero as numpago'
         );
@@ -285,7 +287,7 @@ class DeudasController extends Controller
             $query->where('de.estadodeuda', '=', 1);
          }
 
-        if(!empty($numseafactura)){          
+        if(!empty($numseafactura)){
             $query->where('de.numero_factura', 'LIKE', '%' . $numseafactura . '%');
         }
         $query->orderBy('dab.id', 'ASC');
@@ -321,26 +323,26 @@ class DeudasController extends Controller
         ->leftJoin('formaspagos as frmpapago', 'frmpapago.id', '=', 'dpa.formapago_id')
         ->select(
             'de.id',
-            'de.proveedor_id', 
-            'de.numero_factura', 
-            'de.documento_id', 
+            'de.proveedor_id',
+            'de.numero_factura',
+            'de.documento_id',
             'do.name as documento',
-            'de.condicionespago_id', 
-            'de.fecha_factura', 
-            'de.fecha_pago', 
+            'de.condicionespago_id',
+            'de.fecha_factura',
+            'de.fecha_pago',
             'de.total_compra',
-            'dno.numero as numnota', 
-            'sumanotas.total_nota as totalpago_nota', 
+            'dno.numero as numnota',
+            'sumanotas.total_nota as totalpago_nota',
             'dno.fecha_notacredito',
-            'sumabonos.total_abonos as totalpago_abono', 
-            'dab.id as idbonodes', 
-            'dab.numero_recibo as numreciboabono', 
-            'frmpaabono.name as formpagoabono', 
-            'dab.numero as numabono', 
+            'sumabonos.total_abonos as totalpago_abono',
+            'dab.id as idbonodes',
+            'dab.numero_recibo as numreciboabono',
+            'frmpaabono.name as formpagoabono',
+            'dab.numero as numabono',
             'dab.fecha_abono',
-            'dpa.total_pago as totalpago_pago', 
-            'dpa.numero_recibo as numrecibopago', 
-            'frmpapago.name as formpago', 
+            'dpa.total_pago as totalpago_pago',
+            'dpa.numero_recibo as numrecibopago',
+            'frmpapago.name as formpago',
             'dpa.numero as numpago'
         )
 
@@ -396,19 +398,19 @@ class DeudasController extends Controller
                 $statedeuda->condicionespago_id = 2;
                 $statedeuda->save();
             }
-        } 
+        }
 
         $data = DB::table('deudas as de')
         ->leftJoin('clientefacturas as cli', 'cli.id', 'de.proveedor_id')
         ->select(
             'de.id',
-            'de.proveedor_id', 
-            'de.numero_factura', 
+            'de.proveedor_id',
+            'de.numero_factura',
             'cli.nombre_comercial',
-            'de.documento_id', 
-            'de.condicionespago_id', 
-            'de.fecha_factura', 
-            'de.fecha_pago', 
+            'de.documento_id',
+            'de.condicionespago_id',
+            'de.fecha_factura',
+            'de.fecha_pago',
             'de.total_compra'
         )
         ->where('de.id', $id)
@@ -420,7 +422,7 @@ class DeudasController extends Controller
         return view('deudas.pagosEdit', compact('data', 'id', 'tipofactura', 'condicion', 'formapago'));
         // return response()->json($data);
     }
-    
+
     public function destroycredito($id){
         $data = DeudasNotaCredito::find($id);
         $data->delete();
@@ -443,7 +445,7 @@ class DeudasController extends Controller
 
     public function deletedeudasall($id){
         $date = Carbon::now();
-        $deuda = Deudas::find($id); // delete deudas 
+        $deuda = Deudas::find($id); // delete deudas
         DB::table('deudas_pagos')->where('deudas_id', '=', $deuda->id)->update(['deleted_at' => $date]);
         DB::table('deudas_notacredito')->where('deudas_id', '=', $deuda->id)->update(['deleted_at' => $date]);
         DB::table('deudas_abonos')->where('deudas_id', '=', $deuda->id)->update(['deleted_at' => $date]);
@@ -466,11 +468,11 @@ class DeudasController extends Controller
                 $pagonotafrm += $request['total_pagonotaedit'][$key];
             }
         }
-   
+
         $deuda_idglobal             = $request->deuda_idglobal;
         $deuda = Deudas::find($deuda_idglobal);
         if($pagoabonofrm <= $deuda->total_compra) {
-            // item deudas          
+            // item deudas
             $proveedorid_selectedupdate = $request->proveedorid_selectedupdate;
             $proveedor_idedit           = $request->proveedor_idedit;
             $numero_facturaupdate       = $request->numero_facturaupdate;
@@ -479,14 +481,14 @@ class DeudasController extends Controller
             $fecha_pagoupdate           = $request->fecha_pagoupdate;
             $total_compraupdate         = $request->total_compraupdate;
             $condicionespago_idupdate   = $request->condicionespago_idupdate;
-            
-       
+
+
             if(empty($proveedor_idedit)) {
                 $proveedorid = $proveedorid_selectedupdate; // proveedor antiguo
             } else {
                 $proveedorid = $proveedor_idedit; // nuevo proveedor
             }
-    
+
             $deuda->proveedor_id        = $proveedorid;
             $deuda->numero_factura      = $numero_facturaupdate;
             $deuda->documento_id        = $documentoupdate;
@@ -495,13 +497,13 @@ class DeudasController extends Controller
             $deuda->fecha_pago          = $fecha_pagoupdate;
             $deuda->total_compra        = $total_compraupdate;
             $deuda->save();
-            // item pago        
+            // item pago
             $pagoidedit                 = $request->pagoidedit;
             $presentafacturaeditpago    = $request->presentafacturaeditpago;
             $numero_reciboeditpago          = $request->numero_reciboeditpago;
             $forma_pagoedit             = $request->forma_pagoedit;
             $numerochequeeditpago           = $request->numerochequeeditpago;
-    
+
             $pago = DeudasPagos::where('id', $pagoidedit)
             ->where('deleted_at', null)->exists();
             if($pago) {
@@ -515,7 +517,7 @@ class DeudasController extends Controller
                 $dbpago->numero             = $numerochequeeditpago;
                 $dbpago->total_pago         = abs($pagofinal);
                 $dbpago->save();
-    
+
                 $deudaPago = Deudas::find($deuda_idglobal);
                 $deudaPago->estadodeuda         = 2;
                 $deudaPago->condicionespago_id  = 2;
@@ -524,11 +526,11 @@ class DeudasController extends Controller
                 $pagofinal = $total_compraupdate - ($pagoabonofrm + $pagonotafrm);
                 // crear datos de pago
                 $dbpago = DeudasPagos::create([
-                    'deudas_id'         => $deuda_idglobal, 
+                    'deudas_id'         => $deuda_idglobal,
                     'presentafactura'   => $presentafacturaeditpago,
-                    'numero_recibo'     => $numero_reciboeditpago, 
+                    'numero_recibo'     => $numero_reciboeditpago,
                     'formapago_id'      => $forma_pagoedit,
-                    'numero'            => $numerochequeeditpago,  
+                    'numero'            => $numerochequeeditpago,
                     'total_pago'        => abs($pagofinal)
                 ]);
                 $deudaPago = Deudas::find($deuda_idglobal);
