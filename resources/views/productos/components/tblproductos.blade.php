@@ -2,8 +2,8 @@
     <td colspan="11">No hay resultados</td>
 </tr>
 @else
-    <form id="form-updated" method="post" name="formulario1">
-        @csrf
+    {{-- <form id="form-updated" method="post" name="formulario1"> --}}
+
         @foreach ($data as $item)
             <tr>
                 <td class="small">{{ $item->code }}</td>
@@ -104,18 +104,21 @@
                 </td>
                 @if(Auth::user()->hasRole('Admin'))
                     <td>
-                        <input type="hidden" name="idProducto[]" value="{{ $item->id }}">
-                        <input
-                            type="number"
-                            name="update_quantity[]"
-                            id="update_quantity"
-                            class="cantidad"
-                            style="width: 70px"
-                        >
+                        <form id="frmajuste">
+                            @csrf
+                            <input type="hidden" name="idProducto" value="{{ $item->id }}">
+                            <input
+                                type="number"
+                                name="update_quantity"
+                                id="update_quantity"
+                                class="cantidad"
+                                style="width: 70px"
+                            >
+                        </form>
                     </td>
                 @endif
             </tr>
         @endforeach
-        <button type="button" id="Updated_canti" class="d-none"></button>
-    </form>
+        {{-- <button type="button" id="Updated_canti" class="d-none"></button>
+    </form> --}}
 @endif

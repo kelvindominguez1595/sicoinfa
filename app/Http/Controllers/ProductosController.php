@@ -785,24 +785,23 @@ class ProductosController extends Controller
     public function ajusteproducto(Request $request)
     {
         $detalle_producto = '';
-        foreach ($request['update_quantity'] as $key => $value) {
-            if (is_null($request['update_quantity'][$key])) {
-                # code...
-            } else {
+        // foreach ($request['update_quantity'] as $key => $value) {
+        //     if (is_null($request['update_quantity'][$key])) {
+        //         # code...
+        //     } else {
                 $quantity = 0;
                 $valor = 0;
-                $detalle_pro = Almacenes::where('stocks_id', $request['idProducto'][$key])->first();
+                $detalle_pro = Almacenes::where('stocks_id', $request['idProducto'])->first();
 
-                $valor = $request['update_quantity'][$key];
+                $valor = $request['update_quantity'];
                 $quantity = $detalle_pro->quantity + $valor;
 
-                //dd($quantity);
                 $detalle_producto =  Almacenes::find($detalle_pro->id);
                 $detalle_producto->quantity = $quantity;
                 $detalle_producto->save();
-            }
-        }
-        return response()->json(['detalle_producto' => $detalle_producto]);
+        //     }
+        // }
+        return response()->json(['detalle_producto' => $request['update_quantity']]);
     }
 
     // para ver el historial de compras realizadas recientemente

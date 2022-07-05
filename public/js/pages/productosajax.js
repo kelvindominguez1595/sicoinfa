@@ -216,7 +216,7 @@ $( document ).ready(function() {
                     }
                 });
                 loadlastdata();
-                metodoArreglarProducto()
+               // metodoArreglarProducto()
             },
             error: function (err) {
                 console.log(err)
@@ -232,7 +232,7 @@ $( document ).ready(function() {
         $('#nombre').val('')
         loaddata();
         loadlastdata();
-        metodoArreglarProducto()
+        //metodoArreglarProducto()
     })
 });
 
@@ -254,7 +254,7 @@ function loaddata() {
             }
         });
             // para que cambie la imagen y ver la vista previa
-            metodoArreglarProducto()
+           // metodoArreglarProducto()
     })
 
 }
@@ -301,7 +301,7 @@ function filterdataproduct(orderby, router, nameorder, codigo, codbarra, categor
                 }
             });
             loadlastdata();
-            metodoArreglarProducto()
+           // metodoArreglarProducto()
         },
         error: function (err) {
             console.log(err)
@@ -360,7 +360,7 @@ function filterdataproduct(orderby, router, nameorder, codigo, codbarra, categor
                 }
             });
             loadlastdata();
-            metodoArreglarProducto()
+           // metodoArreglarProducto()
         }
     })
 });
@@ -381,8 +381,6 @@ function metodoArreglarProducto(){
             }
         });
 
-
-
         $("#Updated_canti").on('click', function () {
             let newFrm = [];
             var idProducto = $("input[name='idProducto[]']");
@@ -402,7 +400,7 @@ function metodoArreglarProducto(){
                 success: function (data) {
                     if (data.detalle_producto) {
                         AlertConfirmacin('Cantidad actualizado correctamente');
-                        location.reload();
+                        verdatadespuestade()
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -416,3 +414,73 @@ function metodoArreglarProducto(){
         });
 
 }
+
+
+function verdatadespuestade() {
+    let orderby = $('#orderglobapagination').val();
+    let nameorder = $('#nameorderglobal').val();
+
+    let codigo      = $('#codigo').val()
+    let codbarra    = $('#codbarra').val()
+    let categoria   = $('#categoria').val()
+    let marca       = $('#marca').val()
+    let nombre      = $('#nombre').val()
+    let almacen     = $('#almacen').val()
+    let pages       = $('#pages').val()
+    let estado      = $('#estado').val()
+    let path = $("#routepath").val();
+    $.ajax({
+        url: path,
+        data: {
+            nameorder: nameorder,
+            orderby:    orderby,
+            codigo:     codigo,
+            codbarra:   codbarra,
+            categoria:  categoria,
+            marca:      marca,
+            nombre:     nombre,
+            almacen:    almacen,
+            pages:      pages,
+            estado:     estado
+        },
+        type: 'GET',
+        dataType: 'JSON',
+        success: function (res){
+            $("#tblproductscontent").html(res.data)
+            $("#contenpagination").html(res.pagination)
+            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+            var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+                return new bootstrap.Popover(popoverTriggerEl)
+            })
+
+            $('.imgzoom').popover({
+                html: true,
+                trigger: 'hover',
+                content: function () {
+                    return '<img src="'+$(this).attr('src') + '" width="250" height="250" class="img-fluid" />';
+                }
+            });
+            loadlastdata();
+            //metodoArreglarProducto()
+        }
+    })
+}
+
+
+  // ajustes
+  $(document).on('submit', '#frmajuste', function (e){
+    e.preventDefault()
+    let frm = $(this).serialize();
+
+    $.ajax({
+        url: "/ajusteproducto",
+        data: frm,
+        type: "POST",
+        dataType: 'JSON',
+        success: function (res){
+            $("#frmajuste #update_quantity").val('')
+            // console.log(res)
+            verdatadespuestade();
+        }
+    })
+});
