@@ -11,11 +11,14 @@
 
 @section('content')
     <div class="row mb-2">
+        @include('productos.modals.images')
+        @include('productos.modals.detailsclient')
         {{-- columna 1  --}}
         <div class="col-xs-12 co-sm-12 col-md-3 col-lg-3 col-xl-3">
             <div class="card mb-4 border-primary">
                 <div class="card-header bg-primary text-white">
                     Filtros de búsqueda
+
                 </div>
                 <div class="card-body">
                             @if(Auth::user()->hasRole('Admin'))
@@ -205,17 +208,19 @@
                                                 @endisset
                                             </td>
                                             <td width="20px">
-                                                @php
-                                                    $imagen='';
-                                                    if ($item->image) {
-                                                    $imagen = '<img class="imgzoom" src="/images/productos/' . $item->image . '" width="20px"
-                                                        height="20px" />';
-                                                    } else {
-                                                    $imagen = '<div class="masonry-thumbs grid-container grid-5" data-big="2"
-                                                        data-lightbox="gallery"></div>';
-                                                    }
-                                                @endphp
-                                                {!! $imagen !!}
+                                                @if (!empty($item->image))
+                                                <img
+                                                    class="imgzoom"
+                                                    id="imgzoom"
+                                                    src="/images/productos/{{$item->image}}"
+                                                    width="20px"
+                                                    height="20px"
+                                                    data-pathimage="/images/productos/{{$item->image}}"
+                                                    />
+                                                @else
+                                                <div class="masonry-thumbs grid-container grid-5" data-big="2"
+                                                data-lightbox="gallery"></div>
+                                                @endif
 
                                             </td>
                                             @if(Auth::user()->hasRole('Admin'))

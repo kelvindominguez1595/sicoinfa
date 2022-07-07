@@ -58,3 +58,10 @@ $(document).ready(function () {
         });
     });
 })
+
+// para mostrar la iamgen
+$(document).on('click', '#imgzoom', function () {
+    var imgsrc = $(this).data('pathimage');
+    $('#my_image').attr('src',imgsrc);
+    $("#showimagen").modal("show");
+});

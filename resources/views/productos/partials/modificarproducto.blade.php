@@ -4,7 +4,7 @@
         Modifica un producto
     </div>
     <div class="card-body">
-    <!-- <form action="{{route('productos.update',[$id])}}" id="frmupdate" method="POST" enctype="multipart/form-data"> -->
+
         <form  id="frmupdate" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
@@ -82,9 +82,9 @@
                     <div class="" id="imagecontainer">
                         <div class="d-flex justify-content-center mb-2" id="addimagen">
                             @if (!empty($stock->image))
-                                <img src="{{asset("images/productos/{$stock->image}")}}" class=" img-thumbnail" width="100px" height="100px" id="imagenmuestra">
+                                <img src="{{asset("images/productos/{$stock->image}")}}" class="img-thumbnail" width="10%"  id="imagenmuestra"  data-pathiamge="{{asset("images/productos/{$stock->image}")}}">
                             @else
-                                <img src="{{asset('images/logoFerreteria.png')}}" class=" img-thumbnail" width="100px" height="100px" id="imagenmuestra">
+                                <img src="{{asset('images/logoFerreteria.png')}}" class="img-thumbnail" width="10%"  id="noimage">
                             @endif
                         </div>
                         <input class="form-control"  type="file" name="imagen" id="imagen"  accept=".jpg, .jpeg, .png">

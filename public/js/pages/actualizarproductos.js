@@ -381,6 +381,15 @@ $(function () {
         }
         event.preventDefault();
     })
+
+    $('#imagenmuestra').popover({
+        html: true,
+        trigger: 'hover',
+        content: function () {
+            return '<img src="'+$(this).attr('src') + '" width="300" height="300" class="img-fluid" />';
+        }
+    });
+
 });
 
 function listarExistencia(id){
@@ -520,10 +529,8 @@ function getSelectUnidad(id){
     });
 
 }
-// datos de ingreso
-function getSelectProveedor(id){}
-function getSelectSucursal(id){}
-
-
-
-
+$(document).on('click', '#imagenmuestra', function () {
+    var imgsrc = $(this).data('pathiamge');
+    $('#my_image').attr('src',imgsrc);
+    $("#showimagen").modal("show");
+});

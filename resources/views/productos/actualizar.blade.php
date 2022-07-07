@@ -8,6 +8,7 @@
 @endsection
 
 @section('content')
+@include('productos.modals.images')
     <div class="row mb-3">
         <div class="col-12">
             @include('productos.partials.modificarproducto')

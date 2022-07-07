@@ -41,7 +41,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::group(['middleware' => ['auth', 'admin']], function () {
     /** TODO ESTO ES PARA HACER UN INGRESO Y FILTRO DE PRODUCTOS */
     Route::resource('/productos', ProductosController::class);
-    Route::get('/productosold', [ProductosController::class, 'productosold']);
+
     Route::resource('/ingresos', IngresosController::class);
 
     Route::get('/actualizaringresos/{id}/{sucursalid}', [ProductosController::class, 'edit']);
@@ -140,10 +140,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 });
 
 Route::group(['middleware' => ['auth', 'user']], function () {
-    // Route::get('/inventarios', [ProductosController::class, 'index']);
-    Route::get('inventarios', [ProductosAJAXController::class, 'index']);
-    Route::get('loadproductsclient', [ProductosAJAXController::class, 'loadproducts']);
- //   Route::get('loadlastproduct', [ProductosAJAXController::class, 'loadlastproduct']);
+    Route::get('/inventarios', [ProductosController::class, 'index']);
 
     Route::get('/list_marcasempleado', [ProductosController::class, 'marcas']);
     Route::get('/list_categoriasempleado', [ProductosController::class, 'categorias']);

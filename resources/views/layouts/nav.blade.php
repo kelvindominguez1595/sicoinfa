@@ -27,7 +27,7 @@
                 <li><a class="dropdown-item" href="{{ url('medidas') }}"><i class="fas fa-ruler"></i> Medidas</a></li>
                 <li><a class="dropdown-item" href="{{ url('proveedores') }}"><i class="fas fa-user-tag"></i> Proveedores</a></li>
                 <li><a class="dropdown-item" href="{{ route('productos.create') }}"><i class="fas fa-plus"></i> Nuevo producto</a></li>
-                <li><a class="dropdown-item" href="{{ url('listadodeproductos') }}"><i class="fas fa-store-alt"></i> Productos</a></li>
+                <li><a class="dropdown-item" href="{{ url('productos') }}"><i class="fas fa-store-alt"></i> Productos</a></li>
                 <li><a class="dropdown-item" href="{{ url('historialcompras') }}"><i class="fas fa-list"></i> Históricos de Compra</a></li>
 
             </ul>

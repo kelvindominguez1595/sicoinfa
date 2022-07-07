@@ -28,7 +28,197 @@ class ProductosController extends Controller
      */
     public function index(Request $request)
     {
-        return redirect('/listadodeproductos');
+        $orderby    = $request->orderby;
+        $nameorder = $request->nameorder;
+        // FRM
+        $codigo     = $request->codigo;
+        $codbarra   = $request->codbarra;
+        $categoria  = $request->categoria;
+        $marca      = $request->marca;
+        $nombre     = $request->nombre;
+        $almacen    = $request->almacen;
+        $estado     = $request->estado;
+        $ordertitleres = '';
+
+        if (!empty($request->pages)) {
+            $pages = $request->pages;
+        } else {
+            $pages = 25;
+        }
+
+        $oldprice = DB::table('detalle_stock')
+        ->select( DB::raw('MAX(id) as iddstock'), 'stocks_id', DB::raw('MAX(created_at) as created_at'))
+        ->groupBy('stocks_id');
+
+        $precionew = DB::table('precios')
+        ->select(DB::raw('MAX(id) as idprice'), 'producto_id', DB::raw('MAX(created_at) as created_at'))
+        ->groupBy('producto_id');
+
+        $cansum = DB::table('detalle_products')
+        ->select('id as idsupro', 'branch_offices_id', 'stocks_id', DB::raw('SUM(quantity) as cantidadnew'))
+        ->groupBy('stocks_id');
+
+        $query = DB::table('stocks as sk')
+        ->join('categories as c', 'sk.category_id', 'c.id')
+        ->join('manufacturers as man', 'sk.manufacturer_id', 'man.id')
+        ->join('measures as me', 'sk.measures_id', 'me.id')
+        ->leftJoinSub($oldprice, 'detallestock', function($join){
+            $join->on('sk.id', '=', 'detallestock.stocks_id');
+        })
+        ->leftJoin('detalle_stock as detsto', 'detallestock.iddstock', 'detsto.id')
+        ->leftJoin('detalle_price as dp', 'detallestock.iddstock', 'dp.detalle_stock_id')
+        ->leftJoinSub($precionew, 'precio', function($join){
+            $join->on('sk.id', '=', 'precio.producto_id');
+        })
+        ->leftJoin('precios as price', 'precio.idprice', 'price.id')
+        ->leftJoinSub($cansum, 'canprodu', function($join){
+            $join->on('sk.id', '=', 'canprodu.stocks_id');
+        })
+        ->select(
+            'sk.id',
+            'sk.image',
+            'sk.code',
+            'sk.barcode',
+            'sk.name',
+            'sk.exempt_iva',
+            'sk.stock_min',
+            'sk.state',
+            'sk.description',
+            'c.name as category_name',
+            'man.name as marca_name',
+            'me.name as medida_name',
+            'sk.category_id',
+            'sk.manufacturer_id',
+            'detsto.created_at as dtellastock',
+            'detsto.id as iddstock',
+            'detsto.stocks_id as idsproducto',
+            'detsto.invoice_number as numfactura',
+            'detsto.invoice_date as fechafactura',
+            'detsto.created_at as fechaingreso',
+            'dp.cost_s_iva',
+            'dp.cost_c_iva',
+            'dp.sale_price',
+            'dp.state as estateoldprice',
+            'price.costosiniva',
+            'price.costoconiva',
+            'price.ganancia',
+            'price.porcentaje',
+            'price.precioventa',
+            'price.cambio',
+            'canprodu.cantidadnew',
+        );
+
+        // busqueda por codigo
+        if(!empty($codigo)){
+            $query->where('sk.code', 'LIKE', '%' . $codigo . '%');
+        }
+        // busqueda por codigo de barra
+        if(!empty($codbarra)){
+            $query->where('sk.barcode', 'LIKE', '%'.$codbarra.'%');
+        }
+        // busqueda por categoria
+        if(!empty($categoria)){
+            $query->where('c.name', 'LIKE', '%'.$categoria.'%');
+        }
+        // busqueda por marca
+        if(!empty($marca)){
+            $query->where('man.name', 'LIKE', '%'.$marca.'%');
+        }
+        // busqueda por codigo
+        if(!empty($nombre)){
+            $query->where('sk.name', 'LIKE', '%'.$nombre.'%');
+        }
+        // por estados de productos
+
+        if(empty($estado)) {
+            $query->where('sk.state', '=', 1);
+        } else {
+            if($estado == "activos"){
+                $query->where('sk.state', '=', 1);
+            } else {
+                $query->where('sk.state', '=', 0);
+            }
+        }
+
+        // busqueda por almacen
+        if(empty($almacen) || $almacen === "todos" ){ // esta vacio si lo esta debe agrupar todo
+            $query->groupBy('sk.id');
+        } else {
+            $query->where('dp.branch_offices_id', '=', $almacen);
+            $query->groupBy(
+                'sk.id',
+                'sk.image',
+                'sk.code',
+                'sk.barcode',
+                'sk.name',
+                'sk.exempt_iva',
+                'sk.stock_min',
+                'sk.description',
+                'dp.quantity',
+                'dp.branch_offices_id',
+                'c.name',
+                'man.name',
+                'me.name',
+                'sk.category_id',
+                'sk.manufacturer_id');
+        }
+
+        if( empty($orderby) && empty($nameorder) ) {
+            $query->orderBy("sk.code", "ASC");
+        } else {
+            if($orderby === 'ASC'){
+                $ordertitleres = 'DESC';
+            } else {
+                $ordertitleres = 'ASC';
+            }
+            $query->orderBy($nameorder, $orderby);
+        }
+        $data = $query->paginate($pages);
+
+        // obtenemos los ultiumos 5 productos registrados
+        $ultimoPro = DB::table('stocks as sk')
+        ->leftJoinSub($oldprice, 'detallestock', function($join){
+            $join->on('sk.id', '=', 'detallestock.stocks_id');
+        })
+        ->leftJoin('detalle_stock as detsto', 'detallestock.iddstock', 'detsto.id')
+        ->leftJoinSub($precionew, 'precio', function($join){
+            $join->on('sk.id', '=', 'precio.producto_id');
+        })
+        ->leftJoin('precios as price', 'precio.idprice', 'price.id')
+        ->leftJoinSub($cansum, 'canprodu', function($join){
+            $join->on('sk.id', '=', 'canprodu.stocks_id');
+        })
+        ->select(
+            'sk.id',
+            'sk.name',
+            'sk.category_id',
+            'sk.manufacturer_id',
+            'detsto.invoice_number',
+            'detsto.updated_at',
+            'price.costosiniva',
+            'canprodu.cantidadnew',)
+        ->where('sk.state','=', 1)
+        ->orderBy('sk.updated_at', 'DESC')
+        ->take(5)
+        ->get();
+
+        $almaceneslist = Sucursales::all();
+        return view('productos.index', compact(
+        'data',
+        'estado',
+        'codigo',
+        'codbarra',
+        'categoria',
+        'marca',
+        'nombre',
+        'almacen',
+        'pages',
+        'almaceneslist',
+        'ultimoPro',
+        'orderby',
+        'nameorder',
+        'ordertitleres'
+        ));
     }
 
     /**
@@ -478,330 +668,26 @@ class ProductosController extends Controller
 
     }
 
-    public function productosold(Request $request){
-        // para filtrar por paginas
-        $pages = 25;
-        $estado = "activos";
-
-        $codigo = $request->codigo;
-        $codbarra = $request->codbarra;
-        $categoria = $request->categoria;
-        $marca = $request->marca;
-        $nombre = $request->nombre;
-        $almacen = $request->almacen;
-        $orderby = $request->orderby;
-
-        if (!empty($request->pages)) {
-            $pages = $request->pages;
-        } else {
-            $pages = 25;
-        }
-        if(
-            !empty($codigo) OR
-            !empty($codbarra) OR
-            !empty($categoria) OR
-            !empty($marca) OR
-            !empty($nombre) OR
-            !empty($almacen) OR
-            !empty($request->estado) OR
-            !empty($request->orderby)){
-            $query = DB::table('stocks as sk')
-                ->leftJoin('categories as c', 'sk.category_id', 'c.id')
-                ->leftJoin('manufacturers as man', 'sk.manufacturer_id', 'man.id')
-                ->leftJoin('measures as me', 'sk.measures_id', 'me.id')
-                ->leftJoin('detalle_products as dp', 'sk.id', 'dp.stocks_id')
-                ->select(
-                    'sk.id',
-                    'sk.image',
-                    'sk.code',
-                    'sk.barcode',
-                    'sk.name',
-                    'sk.exempt_iva',
-                    'sk.stock_min',
-                    'sk.description',
-                    'dp.quantity',
-                    'dp.branch_offices_id',
-                    'c.name as category_name',
-                    'man.name as marca_name',
-                    'me.name as medida_name',
-                    'sk.category_id',
-                    'sk.manufacturer_id',
-                    DB::raw('SUM(dp.quantity) as cantidadnew'),
-                    DB::raw('(SELECT ds.id  FROM detalle_stock AS ds WHERE ds.stocks_id = sk.id  ORDER BY ds.created_at DESC LIMIT 1) as iddetalllestock'),
-                    DB::raw('(SELECT dp.cost_c_iva  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as costosiniva'),
-                    DB::raw('(SELECT dp.sale_price  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as precioventa'),
-                    DB::raw('(SELECT p.costoconiva  FROM precios AS p WHERE p.producto_id = sk.id ORDER BY p.created_at DESC LIMIT 1) as costonuevo'),
-                    DB::raw('(SELECT p.precioventa  FROM precios AS p WHERE p.producto_id = sk.id ORDER BY p.created_at DESC LIMIT 1) as precionuevo'),
-                );
-            /** buscar por parametros especificos */
-            // busqueda por codigo
-            if(!empty($codigo)){
-                $query->where('sk.code', 'LIKE', '%' . $codigo . '%');
-            }
-            // busqueda por codigo de barra
-            if(!empty($codbarra)){
-                $query->where('sk.barcode', 'LIKE', '%'.$codbarra.'%');
-            }
-            // busqueda por categoria
-            if(!empty($categoria)){
-                $query->where('c.name', 'LIKE', '%'.$categoria.'%');
-            }
-            // busqueda por marca
-            if(!empty($marca)){
-                $query->where('man.name', 'LIKE', '%'.$marca.'%');
-            }
-            // busqueda por codigo
-            if(!empty($nombre)){
-                $query->where('sk.name', 'LIKE', '%'.$nombre.'%');
-            }
-            // por estados de productos
-            if (!empty($request->estado)) {
-                $estado = $request->estado;
-                if($estado == "activos"){
-                    $query->where('sk.state', '=', 1);
-                } else {
-                    $query->where('sk.state', '=', 0);
-                }
-            }
-            // busqueda por almacen
-            if(empty($almacen)){ // esta vacio si lo esta debe agrupar todo
-                $query->groupBy('sk.id');
-            } else {
-                if($almacen =="todos"){
-                    // se mostraran todos los productos del almacen
-                    $query->groupBy('sk.id');
-                } else {
-                    $query->where('dp.branch_offices_id', '=', $almacen);
-                    $query->groupBy('sk.id', 'sk.image', 'sk.code',  'sk.barcode',
-                        'sk.name',
-                        'sk.exempt_iva',
-                        'sk.stock_min',
-                        'sk.description',
-                        'dp.quantity',
-                        'dp.branch_offices_id', 'c.name','man.name', 'me.name','sk.category_id', 'sk.manufacturer_id');
-                }
-            }
-            // aqui pondria la logica para ordernar los productos
-            if(!empty($orderby)){
-                $query->orderBy('precioventa', $orderby);
-            } else {
-                $query->orderBy('sk.code', 'ASC');
-            }
-            $data = $query->paginate($pages);
-        } else {
-            $data = DB::table('stocks as sk')
-                ->leftJoin('categories as c', 'sk.category_id', 'c.id')
-                ->leftJoin('manufacturers as man', 'sk.manufacturer_id', 'man.id')
-                ->leftJoin('measures as me', 'sk.measures_id', 'me.id')
-                ->leftJoin('detalle_products as dp', 'sk.id', 'dp.stocks_id')
-                ->select(
-                    'sk.id',
-                    'sk.image',
-                    'sk.code',
-                    'sk.barcode',
-                    'sk.name',
-                    'sk.exempt_iva',
-                    'sk.stock_min',
-                    'sk.description',
-
-                    'dp.branch_offices_id',
-                    'c.name as category_name',
-                    'man.name as marca_name',
-                    'me.name as medida_name',
-                    DB::raw('SUM(dp.quantity) as cantidadnew'),
-                    DB::raw('(SELECT ds.id  FROM detalle_stock AS ds WHERE ds.stocks_id = sk.id  ORDER BY ds.created_at DESC LIMIT 1) as iddetalllestock'),
-                    DB::raw('(SELECT dp.cost_c_iva  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as costosiniva'),
-                    DB::raw('(SELECT dp.sale_price  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as precioventa'),
-                    DB::raw('(SELECT p.costoconiva  FROM precios AS p WHERE p.producto_id = sk.id ORDER BY p.created_at DESC LIMIT 1) as costonuevo'),
-                    DB::raw('(SELECT p.precioventa  FROM precios AS p WHERE p.producto_id = sk.id ORDER BY p.created_at DESC LIMIT 1) as precionuevo'),
-
-                )
-                ->where('sk.state', '=', 1)
-                ->groupBy('sk.id')
-                ->orderBy('sk.code', 'ASC')
-                ->paginate($pages);
-        }
-
-        // para ver los ultimos registro  de ingresos
-        $ultimoPro = DB::table('stocks as s')
-            ->leftJoin('detalle_stock as ds', 's.id', 'ds.stocks_id')
-            ->leftJoin('detalle_price as dprice', 'ds.id', 'dprice.detalle_stock_id')
-            ->select('dprice.sale_price', 'dprice.state', 'dprice.created_at', 'dprice.updated_at', 'ds.unit_price', 'ds.quantity', 'ds.invoice_number', 'ds.state', 's.state', 's.name', 'ds.register_date', 'ds.created_at')
-            ->where('ds.state', '=', 1)
-            ->orderBy('dprice.updated_at', 'DESC')
-            ->take(5)
-            ->get();
-        // ver los almacenes
-        $almaceneslist = Sucursales::all();
-        return view('productos.indexold', compact('data','orderby', 'estado', 'codigo', 'codbarra', 'categoria', 'marca', 'nombre', 'almacen', 'pages', 'ultimoPro', 'almaceneslist'));
-    }
-
-    public function inventariosold(Request $request) {
-        // para filtrar por paginas
-        $pages = 25;
-        $estado = "activos";
-        $codigo = $request->codigo;
-        $codbarra = $request->codbarra;
-        $categoria = $request->categoria;
-        $marca = $request->marca;
-        $nombre = $request->nombre;
-        $almacen = $request->almacen;
-
-        if (!empty($request->pages)) {
-            $pages = $request->pages;
-        } else {
-            $pages = 25;
-        }
-        // si hay algun dato en una de las viarbales realizar la busqueda
-        if(
-            !empty($codigo) OR
-            !empty($codbarra) OR
-            !empty($categoria) OR
-            !empty($marca) OR
-            !empty($nombre) OR
-            !empty($almacen) OR
-            !empty($request->estado)){
-            $query = DB::table('stocks as sk')
-                ->leftJoin('categories as c', 'sk.category_id', 'c.id')
-                ->leftJoin('manufacturers as man', 'sk.manufacturer_id', 'man.id')
-                ->leftJoin('measures as me', 'sk.measures_id', 'me.id')
-                ->leftJoin('detalle_products as dp', 'sk.id', 'dp.stocks_id')
-                ->select(
-                    'sk.id',
-                    'sk.image',
-                    'sk.code',
-                    'sk.barcode',
-                    'sk.name',
-                    'sk.exempt_iva',
-                    'sk.stock_min',
-                    'sk.description',
-                    'dp.quantity',
-                    'dp.branch_offices_id',
-                    'c.name as category_name',
-                    'man.name as marca_name',
-                    'me.name as medida_name',
-                    'sk.category_id',
-                    'sk.manufacturer_id',
-                    DB::raw('SUM(dp.quantity) as cantidadnew'),
-                    DB::raw('(SELECT ds.id  FROM detalle_stock AS ds WHERE ds.stocks_id = sk.id  ORDER BY ds.created_at DESC LIMIT 1) as iddetalllestock'),
-                    DB::raw('(SELECT dp.cost_c_iva  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as costosiniva'),
-                    DB::raw('(SELECT dp.sale_price  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as precioventa'),
-                    DB::raw('(SELECT p.costoconiva  FROM precios AS p WHERE p.producto_id = sk.id ORDER BY p.created_at DESC LIMIT 1) as costonuevo'),
-                    DB::raw('(SELECT p.precioventa  FROM precios AS p WHERE p.producto_id = sk.id ORDER BY p.created_at DESC LIMIT 1) as precionuevo'),
-                );
-            /** buscar por parametros especificos */
-            // busqueda por codigo
-            if(!empty($codigo)){
-                $query->where('sk.code', 'LIKE', '%' . $codigo . '%');
-            }
-            // busqueda por codigo de barra
-            if(!empty($codbarra)){
-                $query->where('sk.barcode', 'LIKE', '%'.$codbarra.'%');
-            }
-            // busqueda por categoria
-            if(!empty($categoria)){
-                $query->where('c.name', 'LIKE', '%'.$categoria.'%');
-            }
-            // busqueda por marca
-            if(!empty($marca)){
-                $query->where('man.name', 'LIKE', '%'.$marca.'%');
-            }
-            // busqueda por codigo
-            if(!empty($nombre)){
-                $query->where('sk.name', 'LIKE', '%'.$nombre.'%');
-            }
-            // por estados de productos
-            if (!empty($request->estado)) {
-                $estado = $request->estado;
-                if($estado == "activos"){
-                    $query->where('sk.state', '=', 1);
-                } else {
-                    $query->where('sk.state', '=', 0);
-                }
-            }
-            // busqueda por almacen
-            if(empty($almacen)){
-                $query->groupBy('sk.id');
-            } else {
-                if($almacen =="todos"){
-                    // se mostraran todos los productos del almacen
-                    $query->groupBy('sk.id');
-                } else {
-                    $query->where('dp.branch_offices_id', '=', $almacen);
-                    $query->groupBy('sk.id', 'sk.image', 'sk.code',  'sk.barcode',
-                        'sk.name',
-                        'sk.exempt_iva',
-                        'sk.stock_min',
-                        'sk.description',
-                        'dp.quantity',
-                        'dp.branch_offices_id', 'c.name','man.name', 'me.name','sk.category_id', 'sk.manufacturer_id');
-                }
-            }
-            // aqui pondria la logica para ordernar los productos
-            if(!empty($orderby)){
-                $query->orderBy('precioventa', $orderby);
-            } else {
-                $query->orderBy('sk.code', 'ASC');
-            }
-            $data = $query->paginate($pages);
-        } else {
-            $data = DB::table('stocks as sk')
-                ->leftJoin('categories as c', 'sk.category_id', 'c.id')
-                ->leftJoin('manufacturers as man', 'sk.manufacturer_id', 'man.id')
-                ->leftJoin('measures as me', 'sk.measures_id', 'me.id')
-                ->leftJoin('detalle_products as dp', 'sk.id', 'dp.stocks_id')
-                ->select(
-                    'sk.id',
-                    'sk.image',
-                    'sk.code',
-                    'sk.barcode',
-                    'sk.name',
-                    'sk.exempt_iva',
-                    'sk.stock_min',
-                    'sk.description',
-                    'dp.quantity',
-                    'dp.branch_offices_id',
-                    'c.name as category_name',
-                    'man.name as marca_name',
-                    'me.name as medida_name',
-                    DB::raw('SUM(dp.quantity) as cantidadnew'),
-                    DB::raw('(SELECT ds.id  FROM detalle_stock AS ds WHERE ds.stocks_id = sk.id  ORDER BY ds.created_at DESC LIMIT 1) as iddetalllestock'),
-                    DB::raw('(SELECT dp.cost_c_iva  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as costosiniva'),
-                    DB::raw('(SELECT dp.sale_price  FROM detalle_price AS dp WHERE dp.detalle_stock_id = iddetalllestock ORDER BY dp.created_at DESC LIMIT 1) as precioventa'),
-                    DB::raw('(SELECT p.costoconiva  FROM precios AS p WHERE p.producto_id = sk.id ORDER BY p.created_at DESC LIMIT 1) as costonuevo'),
-                    DB::raw('(SELECT p.precioventa  FROM precios AS p WHERE p.producto_id = sk.id ORDER BY p.created_at DESC LIMIT 1) as precionuevo'),
-                )
-                ->where('sk.state', '=', 1)
-                ->groupBy('sk.id')
-                ->orderBy('sk.code', 'ASC')
-                ->paginate($pages);
-
-        }
-        // para ver los ultimos registro  de ingresos
-        $almaceneslist = Sucursales::all();
-        return view('productos.empleados', compact('data', 'estado', 'codigo', 'codbarra', 'categoria', 'marca', 'nombre', 'almacen', 'pages', 'almaceneslist'));
-    }
     // para realizar los ajustes
-    public function ajusteproducto(Request $request)
-    {
+    public function ajusteproducto(Request $request) {
         $detalle_producto = '';
-        // foreach ($request['update_quantity'] as $key => $value) {
-        //     if (is_null($request['update_quantity'][$key])) {
-        //         # code...
-        //     } else {
+        foreach ($request['update_quantity'] as $key => $value) {
+            if (is_null($request['update_quantity'][$key])) {
+                # code...
+            } else {
                 $quantity = 0;
                 $valor = 0;
-                $detalle_pro = Almacenes::where('stocks_id', $request['idProducto'])->first();
+                $detalle_pro = Almacenes::where('stocks_id', $request['idProducto'][$key])->first();
 
-                $valor = $request['update_quantity'];
+                $valor = $request['update_quantity'][$key];
                 $quantity = $detalle_pro->quantity + $valor;
 
                 $detalle_producto =  Almacenes::find($detalle_pro->id);
                 $detalle_producto->quantity = $quantity;
                 $detalle_producto->save();
-        //     }
-        // }
-        return response()->json(['detalle_producto' => $request['update_quantity']]);
+            }
+         }
+         return response()->json(['detalle_producto' => $detalle_producto]);
     }
 
     // para ver el historial de compras realizadas recientemente
