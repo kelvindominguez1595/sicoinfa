@@ -382,17 +382,6 @@ class ProductosController extends Controller
         return response()->json(["message" =>  "succes", "precio" => $precios, "data" => $data, "price" => $resprice], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Productos  $productos
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Productos $productos)
-    {
-        //
-    }
-
     // listar proveedores
     public function proveedores(Request $request) {
         if($request->ajax()){
@@ -464,9 +453,7 @@ class ProductosController extends Controller
             return response()->json($results);
         }
     }
-    // listar categorias DET
-    // Listar Libros DET
-    // Listar sucursales
+
     public function sucursales(Request $request) {
         if ($request->ajax()) {
             $term = trim($request->term);
@@ -1110,8 +1097,5 @@ class ProductosController extends Controller
         $write->save('php://output');
         exit();
     }
-
-
-
 
 }

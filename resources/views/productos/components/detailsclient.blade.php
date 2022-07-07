@@ -97,31 +97,3 @@
         </div>
     </div>
 </div>
-{{-- <div class="row mb-3">
-    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
-        <div class="row">
-            <div class="col">
-                <label for="categoria" class="fw-bold">Ganancia (IVA INCLUIDO)</label>
-                <div class="input-group mb-3">
-                    <span class="input-group-text fw-bold" id="basic-addon1">$</span>
-                    <input type="number" min="0" step="any" class="form-control " name="earn_c_iva" id="earn_c_iva" value="0">
-                </div>
-            </div>
-
-            <div class="col">
-                <label for="categoria" class="fw-bold">Porcentaje de Ganancia</label>
-                <div class="input-group mb-3">
-                    <span class="input-group-text fw-bold" id="basic-addon1">%</span>
-                    <input type="number" min="0" step="any" class="form-control " name="earn_porcent" id="earn_porcent" value="0">
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
-        <label for="categoria" class="fw-bold">Precio de Venta a Consumidor (IVA INCLUIDO)</label>
-        <div class="input-group mb-3">
-            <span class="input-group-text fw-bold" id="basic-addon1">$</span>
-            <input type="number" min="0" step="any" class="form-control" name="sale_price" id="sale_price"  value="0">
-        </div>
-    </div>
-</div> --}}
