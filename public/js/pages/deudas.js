@@ -117,15 +117,22 @@ $(function () {
                     console.log(res)
                     AlerSuccess();
                     // AlertConfirmacin(res.message);
-                    $("#frmnuevo").trigger("reset");
+                   // $("#frmnuevo").trigger("reset");
 
-                    let numrecibo = $('#numero_recibonuevo')
-                    numrecibo.prop('readonly', true);
-                    if ($('input[type=radio][name=condicionespago_id]').val() == 2) {
-                        $('#contenedorpagos').removeClass('d-none');
-                    } else {
-                        $('#contenedorpagos').addClass('d-none');
-                    }
+                   $('#numero_factura').val('')
+                   $('#fecha_factura').val('')
+                   $('#fecha_pago').val('')
+                   $('#total_compra').val('')
+                   $('#numerochequenuevo').val('')
+                   $('#numero_recibonuevo').val('')
+
+                    // if ($('input[type=radio][name=condicionespago_id]').val() == 2) {
+                    //     $('#contenedorpagos').removeClass('d-none');
+                    //     numrecibo.prop('readonly', false);
+                    // } else {
+                    //     $('#contenedorpagos').addClass('d-none');
+                    //     numrecibo.prop('readonly', true);
+                    // }
                     listdata();
                    // $("#nuevoModal").modal("hide");
                 },
