@@ -228,6 +228,7 @@ class DeudasController extends Controller
     }
 
     public function loaddatadeuda(Request $request) {
+        $proveedorbuscar = $request->proveedorbuscar;
         $estadodeuda = $request->estadofacturadeuda;
         $numseafactura = $request->numfacturabuscar;
 
@@ -283,12 +284,13 @@ class DeudasController extends Controller
         $query->where('de.deleted_at', '=', null);
         if(!empty($estadodeuda)) {
             $query->where('de.estadodeuda', '=', $estadodeuda);
-         } else {
-            $query->where('de.estadodeuda', '=', 1);
          }
 
         if(!empty($numseafactura)){
             $query->where('de.numero_factura', 'LIKE', '%' . $numseafactura . '%');
+        }
+        if(!empty($proveedorbuscar)){
+            $query->where('cli.nombre_comercial', 'LIKE', '%' . $proveedorbuscar . '%');
         }
         $query->orderBy('dab.id', 'ASC');
         $data = $query->paginate(25);

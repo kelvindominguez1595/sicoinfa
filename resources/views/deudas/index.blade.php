@@ -28,14 +28,14 @@
                 <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#notacreditoModal">NOTA DE CRÉDITO</button>
                 <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#pagosModal">PAGOS</button>
                 <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#abonosModal">ABONOS</button>
-              </div>    
+              </div>
             <div>
                 <a class="btn btn-primary" href="{{ url('/deudasreportes') }}">Reporte de Deudas</a>
             </div>
         </div>
     </div>
     <div class="row mb-2">
-       
+
         {{-- columna 1 --}}
         <div class="col-xs-12 co-sm-12 col-md-12 col-lg-12 col-xl-12">
             <div class="card mb-4 border-primary">
@@ -43,9 +43,13 @@
                    Deudas
                 </div>
                 <div class="card-body">
-                    <div class="row mb-2 ">                 
+                    <div class="row mb-2 ">
 
                             <form id="frmbusquedadeuda" class="row d-flex justify-content-end ">
+                                <div class="col-3">
+                                    <label for="">Proveedor</label>
+                                    <input type="text" name="proveedorbuscar" id="proveedorbuscar" class="form-control">
+                                </div>
                                 <div class="col-3">
                                     <label for="">N° Factura</label>
                                     <input type="text" name="numfacturabuscar" id="numfacturabuscar" class="form-control">
@@ -54,6 +58,7 @@
                                 <div class="col-2">
                                     <label for="">Estado de Deuda</label>
                                     <select name="estadofacturadeuda" id="estadofacturadeuda" class="form-select">
+                                        <option value="0">TODOS</option>
                                         <option value="1">CRÉDITO</option>
                                         <option value="2">PAGADO</option>
                                     </select>
@@ -66,7 +71,7 @@
                                     <button class="btn btn-primary" id="mostrartododeuda" type="button">Mostrar Todo</button>
                                 </div>
                             </form>
-                     
+
                     </div>
                     <div class="row">
                         <div  id="tbcontentdata"></div>
