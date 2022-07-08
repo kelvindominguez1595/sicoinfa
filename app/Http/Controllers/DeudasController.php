@@ -292,7 +292,7 @@ class DeudasController extends Controller
         if(!empty($proveedorbuscar)){
             $query->where('cli.nombre_comercial', 'LIKE', '%' . $proveedorbuscar . '%');
         }
-        $query->orderBy('dab.id', 'ASC');
+        $query->orderBy('de.estadodeuda', 'ASC');
         $data = $query->paginate(25);
 
         if($request->ajax()){
