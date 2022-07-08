@@ -6,11 +6,11 @@ $(function () {
     });
 
     let global = $("#deuda_idglobal").val();
-    
+
     findabonos(global);
     findnotas(global);
     findpagos(global);
-    
+
     $('#proveedor_idedit').select2({
         theme: "bootstrap-5",
         dropdownParent: $('#editarDeudaModal'),
@@ -44,7 +44,7 @@ $(function () {
         if ($(this).val() == 2) {
             $('#contentpagos').removeClass('d-none');
         } else {
-            res = $.get('findpagoopt/'+idglobal, function (data) { 
+            res = $.get('findpagoopt/'+idglobal, function (data) {
                 return data;
                 })
                 if(res){
@@ -60,7 +60,7 @@ $(function () {
                 }
         }
     });
-    
+
     $('#presentafacturaeditpago').on('change', function () {
         let numrecibo = $('#numero_reciboedit')
         if($(this).is(':checked')){
@@ -72,30 +72,40 @@ $(function () {
     });
 
 
-        // actualizar deuda 
-        $("#formDeudasEdit").submit(function (event) {
-            event.preventDefault();   
-            var frm = $(this).serialize();          
-            $.ajax({
-                url: '/updatedDeudas',
-                type: 'GET',
-                dataType: "JSON",
-                data: frm,
-                success: function (res) {                 
-                    AlerSuccess();                 
-                    location.href = "/deudas";
-                },
-                error: function (err) {
-                    console.log(err)
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: '¡Error algo salio mal!'
-                    });
-                }
-            })
+    // actualizar deuda
+    $("#formDeudasEdit").submit(function (event) {
+        event.preventDefault();
+        var frm = $(this).serialize();
+        $.ajax({
+            url: '/updatedDeudas',
+            type: 'GET',
+            dataType: "JSON",
+            data: frm,
+            success: function (res) {
+                AlerSuccess();
+                location.href = "/deudas";
+            },
+            error: function (err) {
+                console.log(err)
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: '¡Error algo salio mal!'
+                });
+            }
+        })
+    });
+
+
+
+    $("#fecha_facturaupdate").change(function(){
+        let val = $(this).val();
+        let fechapago = $("#fecha_pagoupdate");
+        $.get("/addModdate/"+val, function(res){
+            console.log(res.dateforma);
+            fechapago.val(res.dateforma);
         });
-    
+    });
 
 });
 
@@ -150,22 +160,22 @@ $(function () {
 
     function findpagos(id) {
 
-        $.get('/findpagos/' + id, function(res) {  
+        $.get('/findpagos/' + id, function(res) {
             if(res.show) {
                 $("#contentpagos").removeClass('d-none');
                 let datares = res.data
-               
+
                 let present = false;
-                
+
                 datares.presentafactura == 'no' ? present == false :  present == true
-                
+
                 $('#presentafacturaeditpago').prop('checked', present);
                 $('#numero_reciboedit').prop('readonly', datares.presentafactura == 'si' ? false : true);
                 $('#numero_reciboedit').val(datares.numero_recibo);
-                $('#pagoidedit').val(datares.id);                
+                $('#pagoidedit').val(datares.id);
                 $('[name="forma_pagoedit"]').each(function(){
                     if($(this).val() == datares.formapago_id) {
-                        $(this).prop('checked', true) 
+                        $(this).prop('checked', true)
                     }
                 })
                 $('#numerochequeedit').prop('readonly', datares.formapago_id == 3 ? true : false);
@@ -210,8 +220,8 @@ $(function () {
                 }
                 return respo;
             });
-      
-        
+
+
     }
 
     function validateInput(){

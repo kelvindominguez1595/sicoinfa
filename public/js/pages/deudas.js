@@ -73,10 +73,7 @@ $(function () {
 
     $("#frmdata").submit(function (event) {
         let frm = $(this).serialize();
-        let id = $("#id").val();
-        let btnname = $("#btnmodal").text();
         let route, typ;
-        // guardar
         route = '/proveedores';
         typ = "POST";
         $.ajax({
@@ -88,9 +85,7 @@ $(function () {
                 AlertConfirmacin(res.message);
                 $("#frmdata").trigger("reset");
                 $("#modaldata").modal("hide");
-                // setTimeout(function (){
-                //     location.reload();
-                // }, 3000);
+
             },
             error: function (err) {
                 Swal.fire({
