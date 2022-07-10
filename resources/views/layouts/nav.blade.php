@@ -5,11 +5,6 @@
         </a>
     </li>
     @if(Auth::user()->hasRole('admin'))
-        {{-- <li class="nav-item">
-            <a class="nav-link " aria-current="page" href="{{ url('/productosearchajax') }}">
-                <i class="fas fa-cash-register"></i> Productos AJAX
-            </a>
-        </li> --}}
         <li class="nav-item">
             <a class="nav-link " aria-current="page" href="">
                 <i class="fas fa-cash-register"></i> Facturar
@@ -66,6 +61,15 @@
             <a class="nav-link " aria-current="page" href="{{ url('Reportes') }}">
                 <i class="fas fa-print"></i> Reportes
             </a>
+        </li>
+        <li class="nav-item dropdown dropdown-pull-right">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-cog"></i> Roles Conf.
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+                <li><a class="dropdown-item" href="{{ url('roles') }}"><i class="fas fa-users-cog"></i> Roles</a></li>
+                <li><a class="dropdown-item" href="{{ url('permisos') }}"><i class="fas fa-user-shield"></i> Permisos</a></li>
+            </ul>
         </li>
 
     @else
