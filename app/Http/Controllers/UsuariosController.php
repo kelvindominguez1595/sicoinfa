@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Spatie\Permission\Models\Role;
+use App\Models\Role;
 use App\Models\RoleUser;
 use App\Models\Sucursales;
 use App\Models\User;

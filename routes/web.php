@@ -15,8 +15,6 @@ use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\DeudasController;
 use App\Http\Controllers\NotificacionesController;
 use App\Http\Controllers\ProductosAJAXController;
-use App\Http\Controllers\RolesController;
-use App\Http\Controllers\PermissionsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,11 +38,6 @@ Route::get('/', function () {
 Auth::routes();
 Route::post('/customLogin', [UsuariosController::class, 'customLogin'])->name('customLogin');
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Route::resource('rols', RolesController::class)->names("rols");
-Route::resource('/permisos', PermissionsController::class);
-Route::get('/premissionasig/{id}', [RolesController::class, 'premissionasig'])->name('premissionasig');
-Route::post('/asignarpermiso', [RolesController::class, 'asignarpermiso'])->name('asignarpermiso');
 
 Route::group(['middleware' => ['auth', 'admin']], function () {
     /** TODO ESTO ES PARA HACER UN INGRESO Y FILTRO DE PRODUCTOS */
