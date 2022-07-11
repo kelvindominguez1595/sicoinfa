@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
+use Spatie\Permission\Models\Role;
 use App\Models\RoleUser;
 use App\Models\Sucursales;
 use App\Models\User;
@@ -58,10 +58,12 @@ class UsuariosController extends Controller
                 $imagen->move($ruta, $nombreimagen);
                 $data->picture          = $nombreimagen;
             }
+
             $data->save();
-            $r = Role::find($request->rol);
+            $rol = Role::find($request->rol);
+            $data->assignRole($rol->name);
             RoleUser::create([
-                'role_id' => $r->id,
+                'role_id' => $rol->id,
                 'user_id' => $data->id
             ]);
             $message = "Nuevo Usuario registrado";
@@ -80,6 +82,7 @@ class UsuariosController extends Controller
             }
             $data->state  = $sta;
 //            $data->roles()->attach(Role::where('id', $request->rol)->first());
+
             if($request->hasFile("picture")){
                 $imagen         = $request->file("picture");
                 $nombreimagen   = time().".".$imagen->guessExtension();
@@ -87,6 +90,10 @@ class UsuariosController extends Controller
                 $imagen->move($ruta, $nombreimagen);
                 $data->picture          = $nombreimagen;
             }
+
+
+            $rol = Role::find($request->rol);
+            $data->assignRole($rol->name);
             $data->save();
             $message = "Datos actualizados correctamente";
         }

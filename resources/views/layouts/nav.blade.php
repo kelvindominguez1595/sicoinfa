@@ -29,8 +29,7 @@
         </li>
         <li class="nav-item dropdown dropdown-pull-right">
             <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fas fa-industry"></i>
-                Sucursal
+                <i class="fas fa-industry"></i> Sucursal
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
                 <li><a class="dropdown-item" href="{{ url('sucursales') }}"><i class="fas fa-industry"></i> Sucursales</a></li>
@@ -62,15 +61,15 @@
                 <i class="fas fa-print"></i> Reportes
             </a>
         </li>
-        <li class="nav-item dropdown dropdown-pull-right">
+        {{-- <li class="nav-item dropdown dropdown-pull-right">
             <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-cog"></i> Roles Conf.
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-                <li><a class="dropdown-item" href="{{ url('roles') }}"><i class="fas fa-users-cog"></i> Roles</a></li>
+                <li><a class="dropdown-item" href="{{ url('rols') }}"><i class="fas fa-users-cog"></i> Roles</a></li>
                 <li><a class="dropdown-item" href="{{ url('permisos') }}"><i class="fas fa-user-shield"></i> Permisos</a></li>
             </ul>
-        </li>
+        </li> --}}
 
     @else
         <li class="nav-item">

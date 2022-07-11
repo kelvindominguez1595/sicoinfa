@@ -37,7 +37,7 @@ class RolesController extends Controller
      */
     public function store(Request $request)
     {
-        $role = Role::create($request->all());
+        Role::create($request->all());
         return redirect('/roles');
     }
 
@@ -91,5 +91,13 @@ class RolesController extends Controller
         $rol = Role::find($id);
         $data = Permission::all();
         return view('configs.roles.asignarpermiso', compact('rol', 'data'));
+    }
+
+    /** Registrar los permisos al usuarios */
+
+    public function asignarpermiso(Request $request) {
+        $role = Role::find($request->id);
+        $role->syncPermissions($request->permission);
+
     }
 }

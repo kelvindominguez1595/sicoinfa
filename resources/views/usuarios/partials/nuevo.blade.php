@@ -51,7 +51,7 @@
                         @foreach($rol as $item)
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="rol" id="rol{{$item->id}}" value="{{$item->id}}" @if($item->id == 2) checked @endif>
-                                <label class="form-check-label" for="rol">{{$item->name}}</label>
+                                <label class="form-check-label" for="rol{{$item->id}}">{{$item->name}}</label>
                             </div>
                         @endforeach
                     </div>

@@ -41,10 +41,10 @@ Auth::routes();
 Route::post('/customLogin', [UsuariosController::class, 'customLogin'])->name('customLogin');
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::resource('/roles', RolesController::class);
+Route::resource('rols', RolesController::class)->names("rols");
 Route::resource('/permisos', PermissionsController::class);
 Route::get('/premissionasig/{id}', [RolesController::class, 'premissionasig'])->name('premissionasig');
-Route::get('/asigpermissions', [RolesController::class, 'asignpermission'])->name('asigpermissions');
+Route::post('/asignarpermiso', [RolesController::class, 'asignarpermiso'])->name('asignarpermiso');
 
 Route::group(['middleware' => ['auth', 'admin']], function () {
     /** TODO ESTO ES PARA HACER UN INGRESO Y FILTRO DE PRODUCTOS */
@@ -159,4 +159,5 @@ Route::group(['middleware' => ['auth', 'user']], function () {
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/bandejaNotificaciones',[NotificacionesController::class, 'notify']);
     Route::get('/detalleProductoNotificaction/{id}',[NotificacionesController::class, 'detalleProductoNotificaction']);
+    Route::get('/showdetialsproduct/{id}', [ProductosController::class, 'showdetialsproduct']);
 });

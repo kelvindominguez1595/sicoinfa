@@ -24,6 +24,7 @@
                             type="button"
                             class="btn btn-outline-primary"
                             id="btnverdetalle"
+                            value="{{ $item->id }}"
                             data-productoid="{{ $item->id }}">
                              <span class="fas fa-eye"  ></span>
                         </button>

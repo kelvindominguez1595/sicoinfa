@@ -13,7 +13,7 @@
             <div class="card mb-4 border-primary">
                 <div class="card-header bg-primary text-white d-flex justify-content-between">
                     <div>Roles</div>
-                    <a class="btn btn btn-light btn-sm" href="{{ route('roles.create') }}">Nuevo rol&nbsp;<i class="fa fa-save"></i></a>
+                    <a class="btn btn btn-light btn-sm" href="{{ route('rols.create') }}">Nuevo rol&nbsp;<i class="fa fa-save"></i></a>
                 </div>
                 <div class="card-body table-responsive">
                     <table class="table table-bordered table-striped">

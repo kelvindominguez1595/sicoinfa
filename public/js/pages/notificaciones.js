@@ -5,26 +5,87 @@ $(function () {
         }
     });
 
-
-    $("#btnverdetalle").on('click', function(){
-        let id = $(this).data("productoid");
-        $.get("/detalleProductoNotificaction/"+id, function(res){
-            $("#categoriatxt").val(res.data.category_name)
-            $('#marcatxt').val(res.data.marca_name);
-            $('#codigotxt').val(res.data.code);
-            $('#unidadmedidatxt').val(res.data.medida_name);
-            $('#codigobarratxt').val(res.data.barcode);
-            $('#descripcciontxt').val(res.data.name);
-            $('#cantidadtxt').val(res.data.stock_min);
-            $('#detallestxt').html(res.data.description);
-            let precioventafinal = res.data.precioventa.toFixed(2)
-            $('#precioventafinaltxt').val("$"+precioventafinal);
-            if(res.existimage) {
-              let  pathroute = res.image;
-                $('#contentimage').html('<img class="img-fluid" src="'+ pathroute +'" width="350" height="350" alt="Hello Image" />');
-            }
-            $("#shownoti").modal("show")
-        })
-    });
 });
+
+    $(document).on('click', '#btnverdetalle', function (){
+        let id = $(this).val();
+
+        $.get('/showdetialsproduct/'+ id, function (res){
+            let data = res.query;
+
+            $("#showdetailsclient").modal('show');
+            $('#categoriashow').val(data.category_name);
+            $('#marcashow').val(data.marca_name);
+            $('#codigoshow').val(data.code);
+            $('#unidaddemedidashow').val(data.medida_name);
+            $('#codigobarrashow').val(data.barcode);
+            $('#nombreshow').val(data.name);
+            $('#contentshow').html(data.description);
+
+            let costosinniva = $("#costosinivashow")
+            let costoconiva = $("#costoconivashow")
+            let ganancia = $("#gananciashow")
+            let procentaje = $("#porcentajeshow")
+            let venta = $("#ventashow")
+
+            if(data.costosiniva !== null) {
+                costosinniva.val(data.costosiniva.toFixed(2))
+            } else {
+                costosinniva.val(data.cost_s_iva.toFixed(2))
+            }
+
+            if(data.costoconiva !== null) {
+                costoconiva.val(data.costoconiva.toFixed(2))
+            } else {
+                costoconiva.val(data.cost_c_iva.toFixed(2))
+            }
+
+            if(data.ganancia !== null) {
+                ganancia.val(data.ganancia.toFixed(2))
+            } else {
+                ganancia.val(data.earn_c_iva.toFixed(2))
+            }
+
+            if(data.porcentaje !== null) {
+                procentaje.val(data.porcentaje)
+            } else {
+                procentaje.val(data.earn_porcent)
+            }
+
+            if(data.precioventa !== null) {
+                venta.val(data.precioventa.toFixed(2))
+            } else {
+                venta.val(data.sale_price.toFixed(2))
+
+            }
+            let checkedimage;
+            if(data.state == 1) {
+                checkedimage = "/images/checkactive.png";
+            } else {
+                checkedimage = "/images/checkinactive.png";
+            }
+            let poster;
+            if(data.image !== '') {
+                poster = "/images/productos/"+data.image;
+            } else {
+                poster = "/images/logoFerreteria.png"
+            }
+
+            $('#statecheckedshow').attr('src', checkedimage);
+            $('#posteproductshow').attr('src', poster);
+            let contenhtml = '<div>';
+            res.quantity.map((item) => {
+                contenhtml  += '<strong>';
+                contenhtml  += item.almacen+": ";
+                contenhtml  += '</strong>';
+                contenhtml  += item.quantity;
+                contenhtml  += '<br>';
+            })
+            contenhtml  += '</div>';
+            $("#contenedorstock").html(contenhtml);
+
+        });
+    });
+
+
 

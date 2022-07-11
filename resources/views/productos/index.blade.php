@@ -18,7 +18,6 @@
             <div class="card mb-4 border-primary">
                 <div class="card-header bg-primary text-white">
                     Filtros de búsqueda
-
                 </div>
                 <div class="card-body">
                             @if(Auth::user()->hasRole('Admin'))
@@ -138,7 +137,9 @@
                                                         {!! $item->name !!}
                                                     </a>
                                                 @else
-                                                    {!! $item->name !!}
+                                                    <button type="button" class="btn btn-link" value="{{ $item->id }}" id="btnshowmodalproducto">
+                                                        {!! $item->name !!}
+                                                    </button>
                                                 @endif
                                             </td>
                                             <td class="small"> {{ $item->cantidadnew }}</td>
